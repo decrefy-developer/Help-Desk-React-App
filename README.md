@@ -1,7 +1,6 @@
-
 <h1 align="center">
   <br>
-  <img src="https://www.canva.com/design/DAE0ijCHU3g/mlejxyql6QkPCFZBzaHUcQ/view?utm_content=DAE0ijCHU3g&utm_campaign=designshare&utm_medium=link&utm_source=shareyourdesignpanel" alt="DecrefyLogo" width="200">
+  <img src="https://raw.githubusercontent.com/decrefy-developer/HelpDeskAPI-ExpressNodeJS/master/public/Black%20and%20Red%20Hashtag%20Band%20Logo.png" alt="DecrefyLogo" width="200">
 </h1>
 
 
@@ -14,3 +13,5 @@ A help desk is a web app or team of human agents that enable a company to suppor
 * Dark/Light mode
 
 ## How To Use
+
+
