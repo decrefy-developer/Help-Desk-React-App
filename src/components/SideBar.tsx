@@ -24,10 +24,14 @@ import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 
 const SideBar: React.FC = () => {
-  const { email } = useSelector((state: RootState) => state.userSlice);
+  const { email, priviledge } = useSelector(
+    (state: RootState) => state.userSlice
+  );
   const { borderLine } = useContext(StyleContext);
   const { toggleColorMode, colorMode } = useColorMode();
   const [isMobile] = useMediaQuery("(min-width: 767px)");
+
+  console.log(priviledge);
 
   let themeIcon =
     colorMode === "light" ? <FaMoon color="#a0aec0" /> : <FaSun />;

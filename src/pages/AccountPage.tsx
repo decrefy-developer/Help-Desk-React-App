@@ -394,6 +394,7 @@ const TableComponent: React.FC<{
                 borderColor={rowBgColor}
                 alignItems="center"
                 justifyContent="center"
+                bgColor={rowId === user._id ? "gray.700" : "none"}
               >
                 <Flex alignItems="center">
                   <Avatar name={user.email} size="sm" bg="accent" />
