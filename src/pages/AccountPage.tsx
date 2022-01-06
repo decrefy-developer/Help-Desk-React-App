@@ -37,6 +37,7 @@ import {
   CircularProgress,
   ModalFooter,
   useColorModeValue,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import Pagination from "@choc-ui/paginator";
 import React, {
@@ -92,7 +93,8 @@ const schema = yup.object().shape({
 const SubHeadingComponent: React.FC<{
   setSearch: React.Dispatch<React.SetStateAction<string>>;
   onOpen: () => void;
-}> = ({ setSearch, onOpen }) => {
+  padding: number;
+}> = ({ setSearch, onOpen, padding }) => {
   const { borderLine } = useContext(StyleContext);
 
   const [searchText, setSeachText] = useState<string>("");
@@ -105,8 +107,8 @@ const SubHeadingComponent: React.FC<{
       flexDirection="column"
       borderBottom="1px"
       borderColor={borderLine}
-      py={10}
-      px="20"
+      py={8}
+      px={padding}
     >
       <HStack justify="space-between">
         <Stack>
@@ -329,6 +331,7 @@ const TableComponent: React.FC<{
   ViewResetPassword: (_id: string) => void;
   ViewChangeStatus: (_id: string, isActive: boolean) => void;
   rowId: string;
+  padding: number;
 }> = ({
   data,
   viewTeamAndChannel,
@@ -336,11 +339,16 @@ const TableComponent: React.FC<{
   ViewChangeAccess,
   ViewResetPassword,
   ViewChangeStatus,
+  padding,
 }) => {
   const rowBgColor = useColorModeValue("gray.400", "gray.700");
+  const [isLargerThan1280] = useMediaQuery("(min-width: 1920px)");
 
   return (
-    <Flex px="20">
+    <Flex mx={padding} border="1px" borderColor={`rgba(0, 0, 0, 0.05)`}>
+      {/* <Text>
+        {isLargerThan1280 ? "larger than 1280px" : "smaller than 1280px"}
+      </Text> */}
       <Table variant="simple" size="sm">
         <Thead>
           <Tr>
@@ -575,6 +583,9 @@ const AccountPage = () => {
   const [isActive, setIsActive] = useState<boolean>(false); // holds the user account status
   const [isArchieve, setIsArchieve] = useState<boolean>(false);
 
+  const [screenPadding, setScreenPadding] = useState<number>(4);
+  const [isMobile] = useMediaQuery("(max-width: 600px)");
+
   const {
     isOpen: isDrawerOpen,
     onOpen: openDrawer,
@@ -688,21 +699,32 @@ const AccountPage = () => {
         return alert("An error has occurred!, please refresh the page");
     };
 
+    if (isMobile === false) {
+      setScreenPadding(20);
+    } else {
+      setScreenPadding(4);
+    }
+
     checkError();
-  }, [isError]);
+  }, [isError, isMobile]);
 
   return (
     <React.Fragment>
       <Flex w="full" flexDirection="column">
         <Heading title="Manage Members" />
-        <SubHeadingComponent setSearch={setSearch} onOpen={openDrawer} />
+        <SubHeadingComponent
+          setSearch={setSearch}
+          onOpen={openDrawer}
+          padding={screenPadding}
+        />
 
         <Flex
-          py={10}
-          px="20"
+          py={8}
+          px={screenPadding}
           w="full"
           alignItems="center"
           justifyContent="space-between"
+          direction={isMobile ? "column" : "row"}
         >
           {isLoading ? (
             <HStack>
@@ -760,6 +782,7 @@ const AccountPage = () => {
             ViewResetPassword={ViewResetPassword}
             ViewChangeStatus={ViewChangeStatus}
             rowId={rowId}
+            padding={screenPadding}
           />
         )}
       </Flex>
