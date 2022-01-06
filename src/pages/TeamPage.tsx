@@ -14,6 +14,7 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Skeleton,
   Stack,
   Text,
   useDisclosure,
@@ -27,6 +28,7 @@ import HeadingComponent from "../components/Heading";
 import StyleContext from "../context/StyleContext";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useAddTeamMutation, useListTeamQuery } from "../features/team-query";
 
 const schema = yup.object().shape({
   name: yup.string().required("Team name is required").min(5),
@@ -99,6 +101,7 @@ const DrawerComponent = ({
   onClose: () => void;
 }) => {
   const firstField = useRef(null);
+  const [addTeam] = useAddTeamMutation();
 
   const {
     register,
@@ -112,7 +115,13 @@ const DrawerComponent = ({
 
   const onSubmit = async (data: { name: string }) => {
     try {
-      console.log(data);
+      const result = await addTeam(data).unwrap();
+
+      if (result) {
+        onClose();
+        reset();
+        toast.success(`${result.name}  was successfully added.`);
+      }
     } catch (err: any) {
       toast.error(err.data.message);
     }
@@ -169,22 +178,35 @@ const DrawerComponent = ({
 };
 
 const TeamPage = () => {
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const [search, setSearch] = useState<string>("");
+  const [isArchieve, setIsArchieve] = useState<boolean>(false);
+  const [screenPadding, setScreenPadding] = useState<number>(4);
   const {
     isOpen: isDrawerOpen,
     onOpen: openDrawer,
     onClose: closeDrawer,
   } = useDisclosure(); // for the drawer
-  const [search, setSearch] = useState<string>("");
-  const [screenPadding, setScreenPadding] = useState<number>(4);
   const [isMobile] = useMediaQuery("(max-width: 600px)");
 
+  const { data, isError, isLoading, isFetching } = useListTeamQuery({
+    page,
+    limit,
+    search,
+    status: !isArchieve,
+  });
+
   useEffect(() => {
+    if (isError)
+      return alert("An error has occurred!, please refresh the page");
+
     if (isMobile === false) {
       setScreenPadding(20);
     } else {
       setScreenPadding(4);
     }
-  }, [isMobile]);
+  }, [isMobile, isError]);
 
   return (
     <React.Fragment>
@@ -196,6 +218,18 @@ const TeamPage = () => {
           padding={screenPadding}
           setSearch={setSearch}
         />
+
+        {isLoading ? (
+          <Stack w="full" py={10} px="20">
+            <Skeleton height="20px" />
+            <Skeleton height="20px" />
+            <Skeleton height="20px" />
+            <Skeleton height="20px" />
+            <Skeleton height="20px" />
+          </Stack>
+        ) : (
+          <Text>Table</Text>
+        )}
       </Flex>
 
       {isDrawerOpen && (
