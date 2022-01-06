@@ -33,7 +33,6 @@ import {
   Box,
   DrawerFooter,
   DrawerOverlay,
-  Select,
   CircularProgress,
   ModalFooter,
   useColorModeValue,
@@ -52,7 +51,6 @@ import { FaSearch, FaEllipsisH } from "react-icons/fa";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import StyleContext from "../context/StyleContext";
-import { useDispatch, useSelector } from "react-redux";
 import {
   IMember,
   useAddMemberMutation,
@@ -342,7 +340,6 @@ const TableComponent: React.FC<{
   padding,
 }) => {
   const rowBgColor = useColorModeValue("gray.400", "gray.700");
-  const [isLargerThan1280] = useMediaQuery("(min-width: 1920px)");
 
   return (
     <Flex mx={padding} border="1px" borderColor={`rgba(0, 0, 0, 0.05)`}>
@@ -691,7 +688,7 @@ const AccountPage = () => {
     } catch (err: any) {
       toast.error(err.data.message);
     }
-  }, [isActive, rowId, closeDialogChangeStatus]);
+  }, [isActive, rowId, closeDialogChangeStatus, changeAccountStatus]);
 
   useEffect(() => {
     const checkError = () => {
