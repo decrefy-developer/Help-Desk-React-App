@@ -5,8 +5,9 @@ import React, { ReactElement } from "react";
 interface IconAppProps {
   title: string;
   icon: ReactElement;
+  isActive: boolean;
 }
-const SideBarItem: React.FC<IconAppProps> = ({ title, icon }) => {
+const SideBarItem: React.FC<IconAppProps> = ({ title, icon, isActive }) => {
   const iconBg = useColorModeValue("gray.400", "gray.700");
 
   return (
@@ -26,12 +27,13 @@ const SideBarItem: React.FC<IconAppProps> = ({ title, icon }) => {
         }}
         _active={{
           transform: "scale(0.98)",
-          bg: "brand.600",
+          bg: "purple.600",
         }}
         _focus={{
           boxShadow: "0 0 1px 1px purple.500, 0 1px 1px rgba(0, 0, 0, .15)",
           bg: "purple.500",
         }}
+        bgColor={isActive ? "purple.600" : "none"}
       >
         {icon}
       </Box>

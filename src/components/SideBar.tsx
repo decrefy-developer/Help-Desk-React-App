@@ -13,25 +13,26 @@ import {
   FaSun,
   FaMoon,
   FaBell,
-  FaSearch,
+  FaSlack,
+  FaSlackHash,
   FaUserFriends,
   FaUserCog,
+  FaBars,
 } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import StyleContext from "../context/StyleContext";
 import SideBarItem from "./SideBarItem";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 
 const SideBar: React.FC = () => {
+  const { pathname } = useLocation();
   const { email, priviledge } = useSelector(
     (state: RootState) => state.userSlice
   );
   const { borderLine } = useContext(StyleContext);
   const { toggleColorMode, colorMode } = useColorMode();
   const [isMobile] = useMediaQuery("(min-width: 767px)");
-
-  console.log(priviledge);
 
   let themeIcon =
     colorMode === "light" ? <FaMoon color="#a0aec0" /> : <FaSun />;
@@ -49,22 +50,59 @@ const SideBar: React.FC = () => {
           <SideBarItem
             title="Home"
             icon={<FaHome size="20px" color="white" />}
+            isActive={pathname === "/home" ? true : false}
           />
         </NavLink>
-        <SideBarItem
-          title="Setting"
-          icon={<FaCog size="20px" color="white" />}
-        />
-        <NavLink to="/members">
-          <SideBarItem
-            title="Members"
-            icon={<FaUserCog size="20px" color="white" />}
-          />
-        </NavLink>
-        <SideBarItem
-          title="Teams"
-          icon={<FaUserFriends size="20px" color="white" />}
-        />
+
+        {priviledge.includes("MEMBERS") && (
+          <NavLink to="/members">
+            <SideBarItem
+              title="Members"
+              icon={<FaUserCog size="20px" color="white" />}
+              isActive={pathname === "/members" ? true : false}
+            />
+          </NavLink>
+        )}
+
+        {priviledge.includes("TEAMS") && (
+          <NavLink to="/teams">
+            <SideBarItem
+              title="Teams"
+              icon={<FaSlack size="20px" color="white" />}
+              isActive={pathname === "/teams" ? true : false}
+            />
+          </NavLink>
+        )}
+
+        {priviledge.includes("CHANNELS") && (
+          <NavLink to="/channels">
+            <SideBarItem
+              title="Channels"
+              icon={<FaSlackHash size="25px" color="white" />}
+              isActive={pathname === "/channels" ? true : false}
+            />
+          </NavLink>
+        )}
+
+        {priviledge.includes("CUSTOMERS") && (
+          <NavLink to="/customers">
+            <SideBarItem
+              title="Customers"
+              icon={<FaUserFriends size="20px" color="white" />}
+              isActive={pathname === "/customers" ? true : false}
+            />
+          </NavLink>
+        )}
+
+        {priviledge.includes("CATEGORY") && (
+          <NavLink to="/category">
+            <SideBarItem
+              title="Categories"
+              icon={<FaBars size="20px" color="white" />}
+              isActive={pathname === "/category" ? true : false}
+            />
+          </NavLink>
+        )}
       </VStack>
 
       <Spacer />
