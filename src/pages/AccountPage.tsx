@@ -49,9 +49,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import Heading from "../components/Heading";
-import { FaSearch, FaEllipsisH } from "react-icons/fa";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaSearch, FaEllipsisH, FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import StyleContext from "../context/StyleContext";
 import {
@@ -71,6 +69,7 @@ import { ListResponse } from "../features/data-types";
 import ModalComponent from "../components/Modal";
 import Dialog from "../components/AlertDialog";
 import moment from "moment";
+import HeadingComponent from "../components/Heading";
 
 export interface IFormInputs {
   email: string;
@@ -103,6 +102,7 @@ const SubHeadingComponent: React.FC<{
   const SearchSubmit = () => {
     setSearch(searchText);
   };
+
   return (
     <Flex
       flexDirection="column"
@@ -146,7 +146,7 @@ const SubHeadingComponent: React.FC<{
   );
 };
 
-const DrawerNewMember = ({
+const DrawerNewMemberComponent = ({
   isOpen,
   onClose,
 }: {
@@ -749,7 +749,7 @@ const AccountPage = () => {
   return (
     <React.Fragment>
       <Flex w="full" flexDirection="column">
-        <Heading title="Manage Members" />
+        <HeadingComponent title="Manage Members" />
         <SubHeadingComponent
           setSearch={setSearch}
           onOpen={openDrawer}
@@ -826,7 +826,7 @@ const AccountPage = () => {
       </Flex>
 
       {isDrawerOpen && (
-        <DrawerNewMember isOpen={isDrawerOpen} onClose={closeDrawer} />
+        <DrawerNewMemberComponent isOpen={isDrawerOpen} onClose={closeDrawer} />
       )}
 
       {isViewTeamOpen && (
