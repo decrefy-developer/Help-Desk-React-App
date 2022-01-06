@@ -37,6 +37,9 @@ import {
   ModalFooter,
   useColorModeValue,
   useMediaQuery,
+  SimpleGrid,
+  chakra,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import Pagination from "@choc-ui/paginator";
 import React, {
@@ -340,44 +343,81 @@ const TableComponent: React.FC<{
   padding,
 }) => {
   const rowBgColor = useColorModeValue("gray.400", "gray.700");
-
   return (
-    <Flex mx={padding} border="1px" borderColor={`rgba(0, 0, 0, 0.05)`}>
-      {/* <Text>
-        {isLargerThan1280 ? "larger than 1280px" : "smaller than 1280px"}
-      </Text> */}
-      <Table variant="simple" size="sm">
-        <Thead>
-          <Tr>
-            <Th>Email</Th>
-            <Th>Account Access</Th>
-            <Th>Status</Th>
-            <Th>Last Modified</Th>
-            <Th></Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {data?.docs.map((user) => (
-            <Tr
-              key={user._id}
-              bgColor={user._id === rowId ? rowBgColor : undefined}
-            >
-              <Td>
+    <Flex mx={padding}>
+      <Stack
+        direction={{ base: "column" }}
+        w="full"
+        spacing={{ base: "3", md: "0" }}
+      >
+        <SimpleGrid
+          display={{ base: "none", md: "grid" }}
+          spacingY={3}
+          columns={{ base: 1, md: 5 }}
+          w="full"
+          py={2}
+          px={10}
+          fontWeight="hairline"
+          border="1px"
+          borderColor={rowBgColor}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Text color="accent" fontWeight="normal">
+            Email
+          </Text>
+          <Text color="accent" fontWeight="normal">
+            Account Access
+          </Text>
+          <Text color="accent" fontWeight="normal">
+            Status
+          </Text>
+          <Text color="accent" fontWeight="normal">
+            Last Modified
+          </Text>
+          <Text></Text>
+        </SimpleGrid>
+        {data?.docs.map((user) => {
+          return (
+            <Flex direction={{ base: "row", md: "column" }} key={user._id}>
+              <SimpleGrid
+                spacingY={3}
+                columns={{ base: 1, md: 5 }}
+                w="full"
+                py={2}
+                px={10}
+                fontWeight="hairline"
+                borderBottom="1px"
+                borderRight="1px"
+                borderLeft="1px"
+                borderTop={{ base: "1px", md: "0px" }}
+                borderColor={rowBgColor}
+                alignItems="center"
+                justifyContent="center"
+              >
                 <Flex alignItems="center">
                   <Avatar name={user.email} size="sm" bg="accent" />
-                  <Text mx={2}>{user.email}</Text>
+                  <Text mx={2} fontSize="sm" fontWeight="normal">
+                    {user.email}
+                  </Text>
                 </Flex>
-              </Td>
-              <Td>[ {user.priviledge.join(" , ").toLowerCase()} ]</Td>
-              <Td>
-                {user.isActive ? (
-                  <Badge colorScheme="green">Active</Badge>
-                ) : (
-                  <Badge colorScheme="red">Deactivated</Badge>
-                )}
-              </Td>
-              <Td>{moment(user.updatedAt).format("MMM DD, YYYY")}</Td>
-              <Td>
+
+                <Text fontSize="sm" fontWeight="normal">
+                  [ {user.priviledge.join(" , ").toLowerCase()} ]
+                </Text>
+
+                <Text fontSize="sm" fontWeight="normal">
+                  {user.isActive ? (
+                    <Badge colorScheme="green">Active</Badge>
+                  ) : (
+                    <Badge colorScheme="red">Deactivated</Badge>
+                  )}
+                </Text>
+
+                <Text fontSize="sm" fontWeight="normal">
+                  {moment(user.updatedAt).format("MMM DD, YYYY")}
+                </Text>
+
                 <Menu isLazy>
                   <MenuButton>
                     <Icon as={FaEllipsisH} />
@@ -403,11 +443,11 @@ const TableComponent: React.FC<{
                     </MenuItem>
                   </MenuList>
                 </Menu>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
+              </SimpleGrid>
+            </Flex>
+          );
+        })}
+      </Stack>
     </Flex>
   );
 };
