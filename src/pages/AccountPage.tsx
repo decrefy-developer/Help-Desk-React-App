@@ -113,7 +113,7 @@ const SubHeadingComponent: React.FC<{
     >
       <HStack justify="space-between">
         <Stack>
-          <Text fontSize="x-large">Memberlist</Text>
+          <Text fontSize="x-large">Members List</Text>
         </Stack>
         <Stack direction="row" spacing={2}>
           <Button size="sm" variant="outline">

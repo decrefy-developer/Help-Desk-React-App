@@ -12,7 +12,11 @@ export const store = configureStore({
     userSlice,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware, memberApi.middleware),
+    getDefaultMiddleware().concat(
+      authApi.middleware,
+      memberApi.middleware,
+      teamApi.middleware
+    ),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

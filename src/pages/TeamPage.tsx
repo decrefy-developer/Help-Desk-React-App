@@ -33,7 +33,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { FaSearch, FaEllipsisH } from "react-icons/fa";
+import { FaSearch, FaEllipsisH, FaSlack } from "react-icons/fa";
 import { toast } from "react-toastify";
 import HeadingComponent from "../components/Heading";
 import StyleContext from "../context/StyleContext";
@@ -195,8 +195,6 @@ const DrawerComponent = ({
   );
 };
 
-const PaginationComponent = () => {};
-
 const TableComponent = ({
   data,
   padding,
@@ -217,7 +215,7 @@ const TableComponent = ({
         <SimpleGrid
           display={{ base: "none", md: "grid" }}
           spacingY={3}
-          columns={{ base: 1, md: 4 }}
+          columns={{ base: 1, md: 5 }}
           w="full"
           py={2}
           px={10}
@@ -234,6 +232,9 @@ const TableComponent = ({
             Status
           </Text>
           <Text color="accent" fontWeight="normal">
+            Number of Channels
+          </Text>
+          <Text color="accent" fontWeight="normal">
             Last Modified
           </Text>
           <Text></Text>
@@ -243,7 +244,7 @@ const TableComponent = ({
             <Flex direction={{ base: "row", md: "column" }} key={user._id}>
               <SimpleGrid
                 spacingY={3}
-                columns={{ base: 1, md: 4 }}
+                columns={{ base: 1, md: 5 }}
                 w="full"
                 py={2}
                 px={10}
@@ -257,11 +258,9 @@ const TableComponent = ({
                 justifyContent="center"
                 bgColor={rowId === user._id ? "gray.700" : "none"}
               >
-                <Flex alignItems="center">
-                  <Text mx={2} fontSize="sm" fontWeight="normal">
-                    {user.name}
-                  </Text>
-                </Flex>
+                <Text fontSize="sm" fontWeight="normal">
+                  {user.name}
+                </Text>
 
                 <Text fontSize="sm" fontWeight="normal">
                   {user.isActive ? (
@@ -269,6 +268,10 @@ const TableComponent = ({
                   ) : (
                     <Badge colorScheme="red">Deactivated</Badge>
                   )}
+                </Text>
+
+                <Text fontSize="sm" fontWeight="normal">
+                  {user.numberOfChannels}
                 </Text>
 
                 <Text fontSize="sm" fontWeight="normal">
@@ -336,6 +339,7 @@ const TeamPage = () => {
     }
   }, [isMobile, isError]);
 
+  console.log(data);
   return (
     <React.Fragment>
       <Flex w="full" flexDirection="column">
