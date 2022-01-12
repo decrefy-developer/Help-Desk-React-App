@@ -26,12 +26,24 @@ import {
   SimpleGrid,
   Skeleton,
   Stack,
+  Table,
+  Tbody,
+  Td,
   Text,
+  Th,
+  Thead,
+  Tr,
   useColorModeValue,
   useDisclosure,
   useMediaQuery,
 } from "@chakra-ui/react";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useForm } from "react-hook-form";
 import { FaSearch, FaEllipsisH, FaSlack } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -47,6 +59,7 @@ import {
 import { ListResponse } from "../features/data-types";
 import moment from "moment";
 import Pagination from "@choc-ui/paginator";
+import ModalComponent from "../components/Modal";
 
 const schema = yup.object().shape({
   name: yup.string().required("Team name is required").min(5),
@@ -199,10 +212,12 @@ const TableComponent = ({
   data,
   padding,
   rowId,
+  ViewChannelsHandler,
 }: {
   data: ListResponse<ITeam> | undefined;
   padding: number;
   rowId: string;
+  ViewChannelsHandler: (_id: string) => void;
 }) => {
   const rowBgColor = useColorModeValue("gray.400", "gray.700");
   return (
@@ -283,7 +298,9 @@ const TableComponent = ({
                     <Icon as={FaEllipsisH} />
                   </MenuButton>
                   <MenuList>
-                    <MenuItem>View channels</MenuItem>
+                    <MenuItem onClick={() => ViewChannelsHandler(user._id)}>
+                      View channels
+                    </MenuItem>
                     <MenuItem color="warning">Reset password</MenuItem>
                     <MenuItem color="danger">Deactivate account</MenuItem>
                   </MenuList>
@@ -294,6 +311,63 @@ const TableComponent = ({
         })}
       </Stack>
     </Flex>
+  );
+};
+
+const ModalComponentViewChannels = ({
+  data,
+  userId,
+  isOpen,
+  onClosed,
+}: {
+  data: Array<ITeam>;
+  userId: string;
+  isOpen: boolean;
+  onClosed: () => void;
+}) => {
+  const [channels, setChannels] = useState<ITeam>();
+
+  useEffect(() => {
+    let selectedChannel = data.filter(({ _id }) => _id === userId);
+
+    setChannels(selectedChannel[0]);
+  }, [data, userId]);
+
+  console.log(channels);
+
+  return (
+    <ModalComponent
+      title="Channels List"
+      isOpen={isOpen}
+      onClose={onClosed}
+      size="sm"
+      isCentered={false}
+    >
+      <Table borderColor="white" size="sm">
+        <Thead>
+          <Tr>
+            <Th>Channel Name</Th>
+            <Th>Status</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {channels?.channels.map((item) => (
+            <Tr key={item._id}>
+              <Td>{item.name}</Td>
+              <Td>
+                <Text>
+                  {item.isActive ? (
+                    <Badge colorScheme="green">Active</Badge>
+                  ) : (
+                    <Badge colorScheme="red">Deactivated</Badge>
+                  )}
+                </Text>
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
+    </ModalComponent>
   );
 };
 
@@ -310,6 +384,11 @@ const TeamPage = () => {
     onOpen: openDrawer,
     onClose: closeDrawer,
   } = useDisclosure(); // for the drawer
+  const {
+    isOpen: isModelChannelOpen,
+    onOpen: openModelChannel,
+    onClose: closeModalChannel, // used for modal view channel
+  } = useDisclosure();
   const [isMobile] = useMediaQuery("(max-width: 600px)");
 
   const { data, isError, isLoading, isFetching, refetch } = useListTeamQuery({
@@ -328,6 +407,14 @@ const TeamPage = () => {
     refetch();
   };
 
+  const ViewChannelsHandler = useCallback(
+    (_id: string) => {
+      setRowId(_id);
+      openModelChannel();
+    },
+    [openModelChannel]
+  );
+
   useEffect(() => {
     if (isError)
       return alert("An error has occurred!, please refresh the page");
@@ -339,7 +426,6 @@ const TeamPage = () => {
     }
   }, [isMobile, isError]);
 
-  console.log(data);
   return (
     <React.Fragment>
       <Flex w="full" flexDirection="column">
@@ -408,12 +494,26 @@ const TeamPage = () => {
             <Skeleton height="20px" />
           </Stack>
         ) : (
-          <TableComponent data={data} rowId={rowId} padding={screenPadding} />
+          <TableComponent
+            data={data}
+            rowId={rowId}
+            padding={screenPadding}
+            ViewChannelsHandler={ViewChannelsHandler}
+          />
         )}
       </Flex>
 
       {isDrawerOpen && (
         <DrawerComponent isOpen={isDrawerOpen} onClose={closeDrawer} />
+      )}
+
+      {isModelChannelOpen && (
+        <ModalComponentViewChannels
+          data={data !== undefined ? data?.docs : []}
+          isOpen={isModelChannelOpen}
+          onClosed={closeModalChannel}
+          userId={rowId}
+        />
       )}
     </React.Fragment>
   );
