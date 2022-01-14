@@ -70,6 +70,7 @@ import ModalComponent from "../components/Modal";
 import Dialog from "../components/AlertDialog";
 import moment from "moment";
 import HeadingComponent from "../components/Heading";
+import SubHeadingComponent from "../components/SubHeading";
 
 export interface IFormInputs {
   email: string;
@@ -89,62 +90,6 @@ const schema = yup.object().shape({
     .string()
     .oneOf([yup.ref("password"), null], "Passwords must match"),
 });
-
-const SubHeadingComponent: React.FC<{
-  setSearch: React.Dispatch<React.SetStateAction<string>>;
-  onOpen: () => void;
-  padding: number;
-}> = ({ setSearch, onOpen, padding }) => {
-  const { borderLine } = useContext(StyleContext);
-
-  const [searchText, setSeachText] = useState<string>("");
-
-  const SearchSubmit = () => {
-    setSearch(searchText);
-  };
-
-  return (
-    <Flex
-      flexDirection="column"
-      borderBottom="1px"
-      borderColor={borderLine}
-      py={8}
-      px={padding}
-    >
-      <HStack justify="space-between">
-        <Stack>
-          <Text fontSize="x-large">Members List</Text>
-        </Stack>
-        <Stack direction="row" spacing={2}>
-          <Button size="sm" variant="outline">
-            Export
-          </Button>
-          <Button size="sm" bg="primary" onClick={onOpen}>
-            Add Member
-          </Button>
-        </Stack>
-      </HStack>
-
-      <HStack mt={5}>
-        <InputGroup>
-          <InputLeftElement
-            pointerEvents="none"
-            children={<FaSearch color="gray.300" />}
-          />
-          <Input
-            type="text"
-            placeholder="Seach member: Enter email"
-            variant="filled"
-            onChange={(e) => setSeachText(e.target.value)}
-          />
-        </InputGroup>
-        <Button bg="#1dddcb" fontSize="sm" onClick={SearchSubmit}>
-          Search
-        </Button>
-      </HStack>
-    </Flex>
-  );
-};
 
 const DrawerNewMemberComponent = ({
   isOpen,
@@ -427,20 +372,29 @@ const TableComponent: React.FC<{
                     <MenuItem onClick={() => viewTeamAndChannel(user._id)}>
                       View channels
                     </MenuItem>
-                    <MenuItem onClick={() => ViewChangeAccess(user._id)}>
-                      Change account access
-                    </MenuItem>
+
+                    {/* it's will show when the status is active */}
+                    {user.isActive === true && (
+                      <div>
+                        <MenuItem onClick={() => ViewChangeAccess(user._id)}>
+                          Change account access
+                        </MenuItem>
+                        <MenuItem
+                          color="warning"
+                          onClick={() => ViewResetPassword(user._id)}
+                        >
+                          Reset password
+                        </MenuItem>
+                      </div>
+                    )}
+
                     <MenuItem
-                      color="warning"
-                      onClick={() => ViewResetPassword(user._id)}
-                    >
-                      Reset password
-                    </MenuItem>
-                    <MenuItem
-                      color="danger"
+                      color={user.isActive === true ? "danger" : "success"}
                       onClick={() => ViewChangeStatus(user._id, user.isActive)}
                     >
-                      Deactivate account
+                      {user.isActive === true
+                        ? "Deactivate account"
+                        : "Activate account"}
                     </MenuItem>
                   </MenuList>
                 </Menu>

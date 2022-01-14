@@ -37,92 +37,29 @@ import {
   useDisclosure,
   useMediaQuery,
 } from "@chakra-ui/react";
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { FaSearch, FaEllipsisH, FaSlack } from "react-icons/fa";
+import { FaSearch, FaEllipsisH } from "react-icons/fa";
 import { toast } from "react-toastify";
 import HeadingComponent from "../components/Heading";
-import StyleContext from "../context/StyleContext";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   ITeam,
   useAddTeamMutation,
   useListTeamQuery,
+  useChangeStatusMutation,
 } from "../features/team-query";
 import { ListResponse } from "../features/data-types";
 import moment from "moment";
 import Pagination from "@choc-ui/paginator";
 import ModalComponent from "../components/Modal";
+import Dialog from "../components/AlertDialog";
+import SubHeadingComponent from "../components/SubHeading";
 
 const schema = yup.object().shape({
   name: yup.string().required("Team name is required").min(5),
 });
-
-const SubHeadingComponent = ({
-  setSearch,
-  onOpen,
-  padding,
-}: {
-  setSearch: React.Dispatch<React.SetStateAction<string>>;
-  onOpen: () => void;
-  padding: number;
-}) => {
-  const { borderLine } = useContext(StyleContext);
-  const [text, setText] = useState<string>("");
-
-  const SearchSubmitHandler = () => {
-    setSearch(text);
-  };
-
-  return (
-    <Flex
-      flexDirection="column"
-      borderBottom="1px"
-      borderColor={borderLine}
-      py={8}
-      px={padding}
-    >
-      <HStack justify="space-between">
-        <Stack>
-          <Text fontSize="x-large">Team List</Text>
-        </Stack>
-        <Stack direction="row" spacing={2}>
-          <Button size="sm" variant="outline">
-            Export
-          </Button>
-          <Button size="sm" bg="primary" onClick={onOpen}>
-            Add Team
-          </Button>
-        </Stack>
-      </HStack>
-
-      <HStack mt={5}>
-        <InputGroup>
-          <InputLeftElement
-            pointerEvents="none"
-            children={<FaSearch color="gray.300" />}
-          />
-          <Input
-            type="text"
-            placeholder="Seach a team: Enter team name"
-            variant="filled"
-            onChange={(e) => setText(e.target.value)}
-          />
-        </InputGroup>
-        <Button bg="#1dddcb" fontSize="sm" onClick={SearchSubmitHandler}>
-          Search
-        </Button>
-      </HStack>
-    </Flex>
-  );
-};
 
 const DrawerComponent = ({
   isOpen,
@@ -131,7 +68,6 @@ const DrawerComponent = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const firstField = useRef(null);
   const [addTeam] = useAddTeamMutation();
 
   const {
@@ -162,7 +98,6 @@ const DrawerComponent = ({
     <Drawer
       isOpen={isOpen}
       placement="right"
-      initialFocusRef={firstField}
       onClose={onClose}
       closeOnOverlayClick={false}
     >
@@ -213,11 +148,13 @@ const TableComponent = ({
   padding,
   rowId,
   ViewChannelsHandler,
+  ChangeStatusHandler,
 }: {
   data: ListResponse<ITeam> | undefined;
   padding: number;
   rowId: string;
   ViewChannelsHandler: (_id: string) => void;
+  ChangeStatusHandler: (_id: string, isActive: boolean) => void;
 }) => {
   const rowBgColor = useColorModeValue("gray.400", "gray.700");
   return (
@@ -254,9 +191,9 @@ const TableComponent = ({
           </Text>
           <Text></Text>
         </SimpleGrid>
-        {data?.docs.map((user) => {
+        {data?.docs.map((team) => {
           return (
-            <Flex direction={{ base: "row", md: "column" }} key={user._id}>
+            <Flex direction={{ base: "row", md: "column" }} key={team._id}>
               <SimpleGrid
                 spacingY={3}
                 columns={{ base: 1, md: 5 }}
@@ -271,14 +208,14 @@ const TableComponent = ({
                 borderColor={rowBgColor}
                 alignItems="center"
                 justifyContent="center"
-                bgColor={rowId === user._id ? "gray.700" : "none"}
+                bgColor={rowId === team._id ? "gray.700" : "none"}
               >
                 <Text fontSize="sm" fontWeight="normal">
-                  {user.name}
+                  {team.name}
                 </Text>
 
                 <Text fontSize="sm" fontWeight="normal">
-                  {user.isActive ? (
+                  {team.isActive ? (
                     <Badge colorScheme="green">Active</Badge>
                   ) : (
                     <Badge colorScheme="red">Deactivated</Badge>
@@ -286,11 +223,11 @@ const TableComponent = ({
                 </Text>
 
                 <Text fontSize="sm" fontWeight="normal">
-                  {user.numberOfChannels}
+                  {team.numberOfChannels}
                 </Text>
 
                 <Text fontSize="sm" fontWeight="normal">
-                  {moment(user.updatedAt).format("MMM DD, YYYY")}
+                  {moment(team.updatedAt).format("MMM DD, YYYY")}
                 </Text>
 
                 <Menu isLazy>
@@ -298,11 +235,20 @@ const TableComponent = ({
                     <Icon as={FaEllipsisH} />
                   </MenuButton>
                   <MenuList>
-                    <MenuItem onClick={() => ViewChannelsHandler(user._id)}>
+                    <MenuItem onClick={() => ViewChannelsHandler(team._id)}>
                       View channels
                     </MenuItem>
-                    <MenuItem color="warning">Reset password</MenuItem>
-                    <MenuItem color="danger">Deactivate account</MenuItem>
+
+                    <MenuItem
+                      color={team.isActive === true ? "danger" : "success"}
+                      onClick={() =>
+                        ChangeStatusHandler(team._id, team.isActive)
+                      }
+                    >
+                      {team.isActive === true
+                        ? "Deactivate team"
+                        : "Restore team"}
+                    </MenuItem>
                   </MenuList>
                 </Menu>
               </SimpleGrid>
@@ -332,8 +278,6 @@ const ModalComponentViewChannels = ({
 
     setChannels(selectedChannel[0]);
   }, [data, userId]);
-
-  console.log(channels);
 
   return (
     <ModalComponent
@@ -378,6 +322,7 @@ const TeamPage = () => {
   const [isArchieve, setIsArchieve] = useState<boolean>(false);
   const [screenPadding, setScreenPadding] = useState<number>(4);
   const [rowId, setRowId] = useState<string>(""); // use for highlight the row of the table
+  const [isActive, setIsActive] = useState<boolean>(false); // holds the user account status
 
   const {
     isOpen: isDrawerOpen,
@@ -389,6 +334,11 @@ const TeamPage = () => {
     onOpen: openModelChannel,
     onClose: closeModalChannel, // used for modal view channel
   } = useDisclosure();
+  const {
+    isOpen: isDialogChangeStatuOpen,
+    onOpen: openDialogChangeStatus,
+    onClose: closeDialogChangeStatus,
+  } = useDisclosure();
   const [isMobile] = useMediaQuery("(max-width: 600px)");
 
   const { data, isError, isLoading, isFetching, refetch } = useListTeamQuery({
@@ -397,6 +347,7 @@ const TeamPage = () => {
     search,
     status: !isArchieve,
   });
+  const [changeStatus] = useChangeStatusMutation();
 
   const onChangePageHandler = (pageNumber: any) => {
     setPage(Number(pageNumber));
@@ -414,6 +365,33 @@ const TeamPage = () => {
     },
     [openModelChannel]
   );
+
+  const ChangeStatusHandler = useCallback(
+    (_id: string, isActive: boolean) => {
+      setRowId(_id);
+      openDialogChangeStatus();
+      setIsActive(!isActive);
+    },
+    [openDialogChangeStatus]
+  );
+
+  const changeStatusSubmit = useCallback(async () => {
+    try {
+      const result = await changeStatus({
+        _id: rowId,
+        isActive: isActive,
+      }).unwrap();
+
+      if (result) {
+        closeDialogChangeStatus();
+        toast.success(
+          `${result.name} was ${isActive ? "actived" : "deactivated"}`
+        );
+      }
+    } catch (err: any) {
+      toast.error(err.data.message);
+    }
+  }, [closeDialogChangeStatus, isActive, rowId, changeStatus]);
 
   useEffect(() => {
     if (isError)
@@ -499,6 +477,7 @@ const TeamPage = () => {
             rowId={rowId}
             padding={screenPadding}
             ViewChannelsHandler={ViewChannelsHandler}
+            ChangeStatusHandler={ChangeStatusHandler}
           />
         )}
       </Flex>
@@ -513,6 +492,24 @@ const TeamPage = () => {
           isOpen={isModelChannelOpen}
           onClosed={closeModalChannel}
           userId={rowId}
+        />
+      )}
+
+      {isDialogChangeStatuOpen && (
+        <Dialog
+          title="Changing status"
+          isOpen={isDialogChangeStatuOpen}
+          onClose={closeDialogChangeStatus}
+          onSubmit={changeStatusSubmit}
+          children={
+            <Text>
+              Do you want to
+              <i style={{ color: "#d65db1" }}>
+                {isActive ? " activate " : " deactive "}
+              </i>
+              this team?
+            </Text>
+          }
         />
       )}
     </React.Fragment>

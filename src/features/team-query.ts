@@ -43,7 +43,16 @@ export const teamApi = createApi({
       }),
       invalidatesTags: ["Team"],
     }),
+    changeStatus: builder.mutation<ITeam, Partial<ITeam>>({
+      query: ({ _id, ...patch }) => ({
+        url: `/team/status/${_id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      invalidatesTags: (result, error, { _id }) => [{ type: "Team", _id }],
+    }),
   }),
 });
 
-export const { useAddTeamMutation, useListTeamQuery } = teamApi;
+export const { useAddTeamMutation, useListTeamQuery, useChangeStatusMutation } =
+  teamApi;

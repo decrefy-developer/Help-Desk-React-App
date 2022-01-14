@@ -18,6 +18,7 @@ const theme = extendTheme(
       accent: "#d65db1",
       warning: "#eed202",
       danger: "#F56565",
+      success: "#48BB78",
     },
     fonts: {
       heading: `Montserrat, ${base.fonts?.heading}`,
