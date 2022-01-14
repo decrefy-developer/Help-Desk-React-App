@@ -705,6 +705,7 @@ const AccountPage = () => {
       <Flex w="full" flexDirection="column">
         <HeadingComponent title="Manage Members" />
         <SubHeadingComponent
+          title="Members List"
           setSearch={setSearch}
           onOpen={openDrawer}
           padding={screenPadding}

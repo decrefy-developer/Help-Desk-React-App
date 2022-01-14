@@ -16,10 +16,12 @@ const SubHeadingComponent = ({
   setSearch,
   onOpen,
   padding,
+  title,
 }: {
   setSearch: React.Dispatch<React.SetStateAction<string>>;
   onOpen: () => void;
   padding: number;
+  title: string;
 }) => {
   const { borderLine } = useContext(StyleContext);
   const [text, setText] = useState<string>("");
@@ -38,7 +40,7 @@ const SubHeadingComponent = ({
     >
       <HStack justify="space-between">
         <Stack>
-          <Text fontSize="x-large">Team List</Text>
+          <Text fontSize="x-large">{title}</Text>
         </Stack>
         <Stack direction="row" spacing={2}>
           <Button size="sm" variant="outline">

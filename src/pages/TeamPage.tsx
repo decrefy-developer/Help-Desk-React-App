@@ -157,6 +157,14 @@ const TableComponent = ({
   ChangeStatusHandler: (_id: string, isActive: boolean) => void;
 }) => {
   const rowBgColor = useColorModeValue("gray.400", "gray.700");
+
+  const styleAsTd = {
+    fontSize: "sm",
+    fontWeight: "normal",
+    display: "flex",
+    alignItems: "baseline",
+  };
+
   return (
     <Flex mx={padding}>
       <Stack
@@ -210,28 +218,57 @@ const TableComponent = ({
                 justifyContent="center"
                 bgColor={rowId === team._id ? "gray.700" : "none"}
               >
-                <Text fontSize="sm" fontWeight="normal">
+                <Box {...styleAsTd}>
+                  <Text
+                    color="accent"
+                    display={{ base: "inline", md: "none" }}
+                    mr={2}
+                  >
+                    Name:
+                  </Text>
                   {team.name}
-                </Text>
+                </Box>
 
-                <Text fontSize="sm" fontWeight="normal">
+                <Box {...styleAsTd}>
+                  <Text
+                    color="accent"
+                    display={{ base: "inline", md: "none" }}
+                    mr={2}
+                  >
+                    Status:
+                  </Text>
+
                   {team.isActive ? (
                     <Badge colorScheme="green">Active</Badge>
                   ) : (
                     <Badge colorScheme="red">Deactivated</Badge>
                   )}
-                </Text>
+                </Box>
 
-                <Text fontSize="sm" fontWeight="normal">
+                <Box {...styleAsTd}>
+                  <Text
+                    color="accent"
+                    display={{ base: "inline", md: "none" }}
+                    mr={2}
+                  >
+                    No of channels:
+                  </Text>
                   {team.numberOfChannels}
-                </Text>
+                </Box>
 
-                <Text fontSize="sm" fontWeight="normal">
+                <Box {...styleAsTd}>
+                  <Text
+                    color="accent"
+                    display={{ base: "inline", md: "none" }}
+                    mr={2}
+                  >
+                    Last Modified:
+                  </Text>
                   {moment(team.updatedAt).format("MMM DD, YYYY")}
-                </Text>
+                </Box>
 
                 <Menu isLazy>
-                  <MenuButton>
+                  <MenuButton color="primary">
                     <Icon as={FaEllipsisH} />
                   </MenuButton>
                   <MenuList>
@@ -410,6 +447,7 @@ const TeamPage = () => {
         <HeadingComponent title="Manage Teams" />
 
         <SubHeadingComponent
+          title="Teams List"
           onOpen={openDrawer}
           padding={screenPadding}
           setSearch={setSearch}
