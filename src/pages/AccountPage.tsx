@@ -720,10 +720,7 @@ const AccountPage = () => {
           direction={isMobile ? "column" : "row"}
         >
           {isLoading ? (
-            <HStack>
-              <CircularProgress isIndeterminate color="primary" size="30px" />
-              <Text color="gray.500">Pagination loading..</Text>
-            </HStack>
+            <Text color="gray.500">Pagination loading..</Text>
           ) : (
             <HStack>
               <Pagination
