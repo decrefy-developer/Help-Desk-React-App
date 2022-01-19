@@ -2,7 +2,6 @@ import {
   Flex,
   Input,
   InputGroup,
-  InputLeftElement,
   Button,
   Stack,
   HStack,
@@ -38,20 +37,11 @@ import {
   useColorModeValue,
   useMediaQuery,
   SimpleGrid,
-  chakra,
-  useBreakpointValue,
 } from "@chakra-ui/react";
 import Pagination from "@choc-ui/paginator";
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { FaSearch, FaEllipsisH, FaEye, FaEyeSlash } from "react-icons/fa";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { FaEllipsisH, FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
-import StyleContext from "../context/StyleContext";
 import {
   IMember,
   useAddMemberMutation,
@@ -71,6 +61,7 @@ import Dialog from "../components/AlertDialog";
 import moment from "moment";
 import HeadingComponent from "../components/Heading";
 import SubHeadingComponent from "../components/SubHeading";
+import PageContentScroll from "../components/PageContentScroll";
 
 export interface IFormInputs {
   email: string;
@@ -165,7 +156,9 @@ const DrawerNewMemberComponent = ({
           <DrawerBody>
             <Stack spacing="24px">
               <Box>
-                <FormLabel htmlFor="email">Email</FormLabel>
+                <FormLabel htmlFor="email" fontSize="sm" color="gray.400">
+                  Email
+                </FormLabel>
                 <Input
                   type="email"
                   autoComplete="flase"
@@ -179,7 +172,9 @@ const DrawerNewMemberComponent = ({
               </Box>
 
               <Box>
-                <FormLabel htmlFor="password">Password</FormLabel>
+                <FormLabel htmlFor="password" fontSize="sm" color="gray.400">
+                  Password
+                </FormLabel>
                 <InputGroup>
                   <Input
                     type={showPassword ? "text" : "password"}
@@ -201,7 +196,11 @@ const DrawerNewMemberComponent = ({
               </Box>
 
               <Box>
-                <FormLabel htmlFor="confirm-password">
+                <FormLabel
+                  htmlFor="confirm-password"
+                  fontSize="sm"
+                  color="gray.400"
+                >
                   Confirm-password
                 </FormLabel>
                 <Input
@@ -217,7 +216,9 @@ const DrawerNewMemberComponent = ({
 
               <Box>
                 <Stack spacing={2}>
-                  <FormLabel>Access</FormLabel>
+                  <FormLabel fontSize="sm" color="gray.400">
+                    Access
+                  </FormLabel>
                   <Checkbox
                     onChange={(e) => setAccess(e.target.checked, "MEMBERS")}
                   >
@@ -703,78 +704,81 @@ const AccountPage = () => {
   return (
     <React.Fragment>
       <Flex w="full" flexDirection="column">
-        <HeadingComponent title="Manage Members" />
+        {!isMobile && <HeadingComponent title="Manage Members" />}
         <SubHeadingComponent
           title="Members List"
           setSearch={setSearch}
           onOpen={openDrawer}
           padding={screenPadding}
+          placeHolder="Search an email: admin@gmail.com"
         />
 
-        <Flex
-          py={8}
-          px={screenPadding}
-          w="full"
-          alignItems="center"
-          justifyContent="space-between"
-          direction={isMobile ? "column" : "row"}
-        >
-          {isLoading ? (
-            <Text color="gray.500">Pagination loading..</Text>
-          ) : (
-            <HStack>
-              <Pagination
-                currentPage={page}
-                total={data?.totalDocs}
-                paginationProps={{ display: "flex" }}
-                baseStyles={{ border: "1px" }}
-                activeStyles={{ bg: "primary" }}
-                onChange={(page) => onChangePage(page)}
-                pageSize={limit}
-                showSizeChanger
-                onShowSizeChange={(__, size) => {
-                  onChangeLimit(size);
-                  onChangePage(1);
-                }}
-              />
-              <Text fontSize="sm" color="gray.500">
-                Items: {data?.totalDocs}
-              </Text>
-            </HStack>
-          )}
-
-          <HStack alignContent="center">
-            {isFetching && (
-              <CircularProgress isIndeterminate color="primary" size="30px" />
+        <PageContentScroll>
+          <Flex
+            py={8}
+            px={screenPadding}
+            w="full"
+            alignItems="center"
+            justifyContent="space-between"
+            direction={isMobile ? "column" : "row"}
+          >
+            {isLoading ? (
+              <Text color="gray.500">Pagination loading..</Text>
+            ) : (
+              <HStack>
+                <Pagination
+                  currentPage={page}
+                  total={data?.totalDocs}
+                  paginationProps={{ display: "flex" }}
+                  baseStyles={{ border: "1px" }}
+                  activeStyles={{ bg: "primary" }}
+                  onChange={(page) => onChangePage(page)}
+                  pageSize={limit}
+                  showSizeChanger
+                  onShowSizeChange={(__, size) => {
+                    onChangeLimit(size);
+                    onChangePage(1);
+                  }}
+                />
+                <Text fontSize="sm" color="gray.500">
+                  Items: {data?.totalDocs}
+                </Text>
+              </HStack>
             )}
 
-            <Checkbox onChange={(e) => setIsArchieve(e.target.checked)}>
-              <Text fontSize="sm" color="gray.500">
-                show archived
-              </Text>
-            </Checkbox>
-          </HStack>
-        </Flex>
+            <HStack alignContent="center">
+              {isFetching && (
+                <CircularProgress isIndeterminate color="primary" size="30px" />
+              )}
 
-        {isLoading ? (
-          <Stack w="full" py={10} px="20">
-            <Skeleton height="20px" />
-            <Skeleton height="20px" />
-            <Skeleton height="20px" />
-            <Skeleton height="20px" />
-            <Skeleton height="20px" />
-          </Stack>
-        ) : (
-          <TableComponent
-            data={data}
-            viewTeamAndChannel={viewTeamAndChannel}
-            ViewChangeAccess={ViewChangeAccess}
-            ViewResetPassword={ViewResetPassword}
-            ViewChangeStatus={ViewChangeStatus}
-            rowId={rowId}
-            padding={screenPadding}
-          />
-        )}
+              <Checkbox onChange={(e) => setIsArchieve(e.target.checked)}>
+                <Text fontSize="sm" color="gray.500">
+                  show archived
+                </Text>
+              </Checkbox>
+            </HStack>
+          </Flex>
+
+          {isLoading ? (
+            <Stack w="full" py={10} px="20">
+              <Skeleton height="20px" />
+              <Skeleton height="20px" />
+              <Skeleton height="20px" />
+              <Skeleton height="20px" />
+              <Skeleton height="20px" />
+            </Stack>
+          ) : (
+            <TableComponent
+              data={data}
+              viewTeamAndChannel={viewTeamAndChannel}
+              ViewChangeAccess={ViewChangeAccess}
+              ViewResetPassword={ViewResetPassword}
+              ViewChangeStatus={ViewChangeStatus}
+              rowId={rowId}
+              padding={screenPadding}
+            />
+          )}
+        </PageContentScroll>
       </Flex>
 
       {isDrawerOpen && (

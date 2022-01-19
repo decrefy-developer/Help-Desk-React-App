@@ -1,4 +1,4 @@
-import { Login, Home, Account, NotFound, Team } from "./pages";
+import { Login, Home, Account, NotFound, Team, Channel } from "./pages";
 import { Navigate } from "react-router";
 import LoginLayout from "./layouts/LoginLayout";
 import MainLayout from "./layouts/MainLayout";
@@ -29,6 +29,10 @@ const Router = ({ accessToken }: { accessToken: any }) => [
       {
         path: "teams",
         element: accessToken ? <Team /> : <Navigate to="/login" />,
+      },
+      {
+        path: "channels",
+        element: accessToken ? <Channel /> : <Navigate to="/login" />,
       },
     ],
   },

@@ -12,16 +12,25 @@ import React, { useContext, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import StyleContext from "../context/StyleContext";
 
-const SubHeadingComponent = ({
+interface IsubHeading {
+  /** @type {setSearch} - type of setState */
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
+  /** @return {()=> void}*/
+  onOpen: () => void;
+  /** @prop {padding} - type number, padding of the sub Header */
+  padding: number;
+  /** @prop {title} - type string, title of the heading */
+  title: string;
+  /** @prop {placeholder} - type string, placeholder of search input */
+  placeHolder: string;
+}
+
+const SubHeadingComponent: React.FC<IsubHeading> = ({
   setSearch,
   onOpen,
   padding,
   title,
-}: {
-  setSearch: React.Dispatch<React.SetStateAction<string>>;
-  onOpen: () => void;
-  padding: number;
-  title: string;
+  placeHolder,
 }) => {
   const { borderLine } = useContext(StyleContext);
   const [text, setText] = useState<string>("");
@@ -47,7 +56,7 @@ const SubHeadingComponent = ({
             Export
           </Button>
           <Button size="sm" bg="primary" onClick={onOpen}>
-            Add Team
+            Add
           </Button>
         </Stack>
       </HStack>
@@ -60,7 +69,7 @@ const SubHeadingComponent = ({
           />
           <Input
             type="text"
-            placeholder="Seach a team: Enter team name"
+            placeholder={placeHolder}
             variant="filled"
             onChange={(e) => setText(e.target.value)}
           />
