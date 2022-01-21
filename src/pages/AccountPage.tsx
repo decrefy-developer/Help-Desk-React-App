@@ -62,6 +62,7 @@ import moment from "moment";
 import HeadingComponent from "../components/Heading";
 import SubHeadingComponent from "../components/SubHeading";
 import PageContentScroll from "../components/PageContentScroll";
+import Socket from "../services/Socket";
 
 export interface IFormInputs {
   email: string;
@@ -122,6 +123,8 @@ const DrawerNewMemberComponent = ({
         reset();
         toast.success(`${result.email} has been successfully added`);
       }
+
+      await Socket.emit("send", result.email);
     } catch (err: any) {
       toast.error(err.data.message);
     }
@@ -692,14 +695,16 @@ const AccountPage = () => {
         return alert("An error has occurred!, please refresh the page");
     };
 
+    checkError();
+  }, [isError]);
+
+  useEffect(() => {
     if (isMobile === false) {
       setScreenPadding(20);
     } else {
       setScreenPadding(4);
     }
-
-    checkError();
-  }, [isError, isMobile]);
+  }, [isMobile]);
 
   return (
     <React.Fragment>

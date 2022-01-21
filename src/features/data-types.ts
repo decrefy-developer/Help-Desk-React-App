@@ -18,7 +18,13 @@ export interface PageArgs {
   status: boolean;
 }
 
-export interface ListOfChannels {
+export interface ITeamChannel {
   _id: string;
-  channels: Array<string>;
+  team: string;
+  channels: [
+    {
+      _id: string;
+      name: string;
+    }
+  ];
 }

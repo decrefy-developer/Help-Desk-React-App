@@ -25,7 +25,6 @@ const schema = yup.object().shape({
 });
 
 const LoginPage = () => {
-  console.log("RENDER LOGIN");
   return (
     <Flex minH="100vh" w="full" align="center" justifyContent="center">
       <Box

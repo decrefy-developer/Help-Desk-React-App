@@ -540,13 +540,15 @@ const ChannelPage = () => {
   useEffect(() => {
     if (isError)
       return alert("An error has occured!, please reafresh the page ");
+  }, [isError]);
 
+  useEffect(() => {
     if (isMobile === false) {
       setScreenPadding(20);
     } else {
       setScreenPadding(4);
     }
-  }, [isError, isMobile]);
+  }, [isMobile]);
 
   return (
     <React.Fragment>

@@ -32,19 +32,21 @@ function App() {
   }, [showSideBar]);
 
   useEffect(() => {
-    const checkTheLayout = () => {
-      isMobile ? setShowSideBar(false) : setShowSideBar(true);
-    };
-
-    checkTheLayout();
-
     const decoded: any = DecodeToken();
     if (decoded) {
       dispatch(setUser(decoded));
     } else {
       navigate("/login");
     }
-  }, [dispatch, navigate, isMobile]);
+  }, [dispatch, navigate]);
+
+  useEffect(() => {
+    const checkTheLayout = () => {
+      isMobile ? setShowSideBar(false) : setShowSideBar(true);
+    };
+
+    checkTheLayout();
+  }, [isMobile]);
 
   return (
     <StyleContext.Provider

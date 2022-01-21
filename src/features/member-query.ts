@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { IFormInputs } from "../pages/AccountPage";
 import { baseQuery } from "../services/auth-header";
-import { ListOfChannels, ListResponse, PageArgs } from "./data-types";
+import { ITeamChannel, ListResponse, PageArgs } from "./data-types";
 
 export interface IMember {
   _id: string;
@@ -43,7 +43,7 @@ export const memberApi = createApi({
       }),
       invalidatesTags: ["Member"],
     }),
-    ChannelsOfTheUser: builder.query<ListOfChannels[], string>({
+    ChannelsOfTheUser: builder.query<ITeamChannel[], string>({
       query: (id) => `team/user/${id}`,
     }),
     updateMemberAcess: builder.mutation<

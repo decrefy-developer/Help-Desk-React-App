@@ -435,13 +435,15 @@ const TeamPage = () => {
     refetch();
     if (isError)
       return alert("An error has occurred!, please refresh the page");
+  }, [isError, refetch]);
 
+  useEffect(() => {
     if (isMobile === false) {
       setScreenPadding(20);
     } else {
       setScreenPadding(4);
     }
-  }, [isMobile, isError, refetch]);
+  }, [isMobile]);
 
   return (
     <React.Fragment>
