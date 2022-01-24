@@ -26,8 +26,9 @@ import {
   FormHelperText,
   Button,
   Flex,
+  useMediaQuery,
 } from "@chakra-ui/react";
-import { FaPlus, FaHashtag } from "react-icons/fa";
+import { FaPlus, FaHashtag, FaEllipsisH } from "react-icons/fa";
 import StyleContext from "../context/StyleContext";
 import ModalComponent from "../components/Modal";
 import Heading from "../components/Heading";
@@ -39,28 +40,17 @@ import { useChannelsOfTheUserQuery } from "../features/member-query";
 import { ITeamChannel } from "../features/data-types";
 import StringTruncate from "../utils/StringTruncate";
 
-const ChannelItem = ({ name }: { name: string }) => {
-  const { bgColor } = useContext(StyleContext);
-  return (
-    <HStack
-      w="full"
-      alignItems="center"
-      pl={5}
-      _hover={{ bg: bgColor, cursor: "pointer" }}
-    >
-      <Icon as={FaHashtag} />
-      <Text>{name}</Text>
-    </HStack>
-  );
-};
-
-const SubBar: React.FC<{ onOpen: () => void; userId: string }> = ({
-  onOpen,
-  userId,
-}) => {
+const SubBar: React.FC<{
+  onOpen: () => void;
+  userId: string;
+  selectedChannel: string;
+  setSelectedChannel: React.Dispatch<React.SetStateAction<string>>;
+  isMobile: boolean;
+}> = ({ onOpen, userId, selectedChannel, setSelectedChannel, isMobile }) => {
   const { borderLine } = useContext(StyleContext);
   const [state, setState] = useState<ITeamChannel>();
   const { data, isLoading } = useChannelsOfTheUserQuery(userId);
+  const { bgColor } = useContext(StyleContext);
 
   const onChangeTeam = (team: ITeamChannel) => {
     setState(team);
@@ -73,7 +63,13 @@ const SubBar: React.FC<{ onOpen: () => void; userId: string }> = ({
   }, [data]);
 
   return (
-    <VStack borderRight="1px" borderColor={borderLine} w="15rem" height="full">
+    <Flex
+      borderRight="1px"
+      borderColor={borderLine}
+      w="15rem"
+      height="full"
+      flexDirection="column"
+    >
       {/* TEAM */}
       <Box w="full" borderBottom="1px" borderColor={borderLine}>
         {isLoading ? (
@@ -83,7 +79,9 @@ const SubBar: React.FC<{ onOpen: () => void; userId: string }> = ({
         ) : (
           <Menu>
             <MenuButton size="md" p={3}>
-              <Text fontSize="xl">{state && StringTruncate(state?.team)}</Text>
+              <Text fontSize={isMobile ? "xs" : "xl"}>
+                {state && StringTruncate(state?.team)}
+              </Text>
             </MenuButton>
             <MenuList>
               <MenuGroup title="Team Name">
@@ -95,7 +93,7 @@ const SubBar: React.FC<{ onOpen: () => void; userId: string }> = ({
               </MenuGroup>
               <MenuDivider />
               <MenuGroup>
-                <MenuItem>Sign out of 'Team Name'</MenuItem>
+                <MenuItem>Manage Teams</MenuItem>
               </MenuGroup>
             </MenuList>
           </Menu>
@@ -104,43 +102,39 @@ const SubBar: React.FC<{ onOpen: () => void; userId: string }> = ({
 
       {/* CHANNEL */}
       {state !== undefined ? (
-        <VStack alignItems="flex-start" w="full">
-          <HStack justifyContent="space-between" w="full" px={3}>
+        <Flex alignItems="flex-start" w="full" flexDirection="column">
+          <HStack justifyContent="space-between" w="full" p={3}>
             <Text>Channels</Text>
 
-            <Popover placement="bottom-start" preventOverflow>
-              <PopoverTrigger>
-                <Box aria-label="Some box">
-                  <Icon as={FaPlus} _hover={{ cursor: "pointer" }} />
-                </Box>
-              </PopoverTrigger>
-              <PopoverContent w="12rem">
-                <PopoverArrow bg="purple.500" />
-                <PopoverBody>
-                  <Text _hover={{ cursor: "pointer", color: "purple.300" }}>
-                    Browse channel
-                  </Text>
-                  <Text
-                    onClick={onOpen}
-                    _hover={{ cursor: "pointer", color: "purple.300" }}
-                  >
-                    Create a channel
-                  </Text>
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
+            <Icon as={FaPlus} _hover={{ cursor: "pointer" }} />
           </HStack>
 
           {state.channels.map((channel) => (
-            <ChannelItem key={channel._id} name={channel.name} />
+            <Flex
+              key={channel._id}
+              w="full"
+              pl={3}
+              pt={2}
+              pb={2}
+              alignItems="center"
+              _hover={{
+                bg: channel.name === selectedChannel ? "primary" : bgColor,
+                cursor: "pointer",
+              }}
+              bgColor={channel.name === selectedChannel ? "primary" : "none"}
+              onClick={() => setSelectedChannel(channel.name)}
+            >
+              <Icon as={FaHashtag} />
+              <Text>{channel.name}</Text>
+            </Flex>
           ))}
-        </VStack>
+        </Flex>
       ) : (
         <Text p={4} color="gray.500" fontSize="sm">
           no channels available
         </Text>
       )}
-    </VStack>
+    </Flex>
   );
 };
 
@@ -187,9 +181,40 @@ const SubBar: React.FC<{ onOpen: () => void; userId: string }> = ({
 //   </ModalComponent>;
 // };
 
+const HeadingComponent = ({
+  title,
+  isMobile,
+}: {
+  title: string;
+  isMobile: boolean;
+}) => {
+  const { borderLine } = useContext(StyleContext);
+  return (
+    <HStack
+      borderBottom="1px"
+      borderColor={borderLine}
+      p={3}
+      justifyContent="space-between"
+    >
+      <HStack>
+        <Icon as={FaHashtag} />
+        <Text fontSize={isMobile ? "xs" : "xl"} fontWeight="light">
+          {title !== "" ? `${title}` : "Please select channel"}
+        </Text>
+      </HStack>
+
+      <HStack>
+        <Icon as={FaEllipsisH} cursor="pointer" />
+      </HStack>
+    </HStack>
+  );
+};
+
 const HomePage: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedChannel, setSelectedChannel] = useState<string>("");
   const dispatch = useDispatch<appDispatch>();
+  const [isMobile] = useMediaQuery("(max-width: 600px)");
 
   const user = useSelector((state: RootState) => state.userSlice);
 
@@ -202,9 +227,17 @@ const HomePage: React.FC = () => {
 
   return (
     <React.Fragment>
-      {user._id !== "" && <SubBar onOpen={onOpen} userId={user._id} />}
+      {user._id !== "" && (
+        <SubBar
+          isMobile={isMobile}
+          onOpen={onOpen}
+          userId={user._id}
+          selectedChannel={selectedChannel}
+          setSelectedChannel={setSelectedChannel}
+        />
+      )}
       <Flex w="full" flexDirection="column">
-        <Heading title="Home" />
+        <HeadingComponent title={selectedChannel} isMobile={isMobile} />
       </Flex>
     </React.Fragment>
   );
