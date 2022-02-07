@@ -1,10 +1,5 @@
 import { useRoutes, useNavigate } from "react-router-dom";
-import {
-  ScaleFade,
-  SlideFade,
-  useColorModeValue,
-  useMediaQuery,
-} from "@chakra-ui/react";
+import { SlideFade, useColorModeValue, useMediaQuery } from "@chakra-ui/react";
 
 import StyleContext from "./context/StyleContext";
 import Router from "./routes";

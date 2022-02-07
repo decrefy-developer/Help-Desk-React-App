@@ -72,7 +72,7 @@ const AccountPage = () => {
     onClose: closeDialogChangeStatus,
   } = useDisclosure(); // for dialog deactive or active account
 
-  const { data, isLoading, isFetching, isError, refetch } = useListMemberQuery({
+  const { data, isLoading, isFetching, isError } = useListMemberQuery({
     page,
     limit: pageLimit,
     search,
@@ -87,7 +87,7 @@ const AccountPage = () => {
       openTeamModal();
       setSelectedRow(id);
     },
-    [openTeamModal]
+    [openTeamModal, setSelectedRow]
   );
 
   const ViewChangeAccess = useCallback(
@@ -95,7 +95,7 @@ const AccountPage = () => {
       openChangeAcessModal();
       setSelectedRow(id);
     },
-    [openChangeAcessModal]
+    [openChangeAcessModal, setSelectedRow]
   );
 
   const ViewResetPassword = useCallback(
@@ -103,7 +103,7 @@ const AccountPage = () => {
       openDialogResetPassword();
       setSelectedRow(id);
     },
-    [openDialogResetPassword]
+    [openDialogResetPassword, setSelectedRow]
   );
 
   const ViewChangeStatus = useCallback(
@@ -112,7 +112,7 @@ const AccountPage = () => {
       setSelectedRow(id);
       setIsActive(!isActive);
     },
-    [openDialogChangeStatus]
+    [openDialogChangeStatus, setSelectedRow]
   );
 
   const ResetPassword = useCallback(async () => {

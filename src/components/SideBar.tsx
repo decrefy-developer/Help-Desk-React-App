@@ -1,14 +1,6 @@
 import React, { useContext } from "react";
 import { Flex, Spacer, VStack } from "@chakra-ui/layout";
-import {
-  useColorMode,
-  IconButton,
-  Icon,
-  Avatar,
-  useMediaQuery,
-  Slide,
-  SlideFade,
-} from "@chakra-ui/react";
+import { useColorMode, IconButton, Icon, Avatar } from "@chakra-ui/react";
 import {
   FaHome,
   FaSun,

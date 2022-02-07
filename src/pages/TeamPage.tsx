@@ -1,358 +1,45 @@
 import {
-  Badge,
-  Box,
-  Button,
   Checkbox,
   CircularProgress,
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
   Flex,
-  FormLabel,
   HStack,
-  Icon,
-  Input,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  SimpleGrid,
   Skeleton,
   Stack,
-  Table,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
-  Tr,
-  useColorModeValue,
   useDisclosure,
   useMediaQuery,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { FaEllipsisH } from "react-icons/fa";
 import { toast } from "react-toastify";
 import HeadingComponent from "../components/Heading";
-import { yupResolver } from "@hookform/resolvers/yup";
 import {
-  useAddTeamMutation,
   useListTeamQuery,
   useChangeStatusMutation,
 } from "../features/team-query";
-import moment from "moment";
 import Pagination from "@choc-ui/paginator";
-import ModalComponent from "../components/Modal";
 import Dialog from "../components/AlertDialog";
 import SubHeadingComponent from "../components/SubHeading";
 import PageContentScroll from "../components/PageContentScroll";
-import { ITeam, ListResponse } from "../models/interface";
-import { schemaTeam } from "../models/schemas";
-
-const DrawerComponent = ({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) => {
-  const [addTeam] = useAddTeamMutation();
-
-  const {
-    register,
-    reset,
-    handleSubmit,
-    formState: { errors, isDirty, isValid },
-  } = useForm<{ name: string }>({
-    mode: "onChange",
-    resolver: yupResolver(schemaTeam),
-  });
-
-  const onSubmit = async (data: { name: string }) => {
-    try {
-      const result = await addTeam(data).unwrap();
-
-      if (result) {
-        onClose();
-        reset();
-        toast.success(`${result.name}  was successfully added.`);
-      }
-    } catch (err: any) {
-      toast.error(err.data.message);
-    }
-  };
-
-  return (
-    <Drawer
-      isOpen={isOpen}
-      placement="right"
-      onClose={onClose}
-      closeOnOverlayClick={false}
-    >
-      <DrawerOverlay />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader borderBottomWidth="1px">Create a new team</DrawerHeader>
-
-          <DrawerBody>
-            <Stack spacing="24px">
-              <Box>
-                <FormLabel htmlFor="email">Team Name</FormLabel>
-                <Input
-                  autoComplete="off"
-                  id="name"
-                  placeholder="Please enter name"
-                  {...register("name")}
-                />
-                <Text textAlign="left" fontSize="xs" p={1} color="danger">
-                  {errors.name?.message}
-                </Text>
-              </Box>
-            </Stack>
-          </DrawerBody>
-
-          <DrawerFooter borderTopWidth="1px">
-            <Button variant="outline" mr={3} onClick={onClose}>
-              Cancel
-            </Button>
-            <Button
-              disabled={!isDirty || !isValid}
-              colorScheme="blue"
-              type="submit"
-              // isLoading={isLoading}
-            >
-              Submit
-            </Button>
-          </DrawerFooter>
-        </DrawerContent>
-      </form>
-    </Drawer>
-  );
-};
-
-const TableComponent = ({
-  data,
-  padding,
-  rowId,
-  ViewChannelsHandler,
-  ChangeStatusHandler,
-}: {
-  data: ListResponse<ITeam> | undefined;
-  padding: number;
-  rowId: string;
-  ViewChannelsHandler: (_id: string) => void;
-  ChangeStatusHandler: (_id: string, isActive: boolean) => void;
-}) => {
-  const rowBgColor = useColorModeValue("gray.400", "gray.700");
-
-  const styleAsTd = {
-    fontSize: "sm",
-    fontWeight: "normal",
-    display: "flex",
-    alignItems: "baseline",
-  };
-
-  return (
-    <Flex mx={padding}>
-      <Stack
-        direction={{ base: "column" }}
-        w="full"
-        spacing={{ base: "3", md: "0" }}
-      >
-        <SimpleGrid
-          display={{ base: "none", md: "grid" }}
-          spacingY={3}
-          columns={{ base: 1, md: 5 }}
-          w="full"
-          py={2}
-          px={10}
-          fontWeight="hairline"
-          border="1px"
-          borderColor={rowBgColor}
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Text color="accent" fontWeight="normal">
-            Name
-          </Text>
-          <Text color="accent" fontWeight="normal">
-            Status
-          </Text>
-          <Text color="accent" fontWeight="normal">
-            Number of Channels
-          </Text>
-          <Text color="accent" fontWeight="normal">
-            Last Modified
-          </Text>
-          <Text></Text>
-        </SimpleGrid>
-        {data?.docs.map((team) => {
-          return (
-            <Flex direction={{ base: "row", md: "column" }} key={team._id}>
-              <SimpleGrid
-                spacingY={3}
-                columns={{ base: 1, md: 5 }}
-                w="full"
-                py={2}
-                px={10}
-                fontWeight="hairline"
-                borderBottom="1px"
-                borderRight="1px"
-                borderLeft="1px"
-                borderTop={{ base: "1px", md: "0px" }}
-                borderColor={rowBgColor}
-                alignItems="center"
-                justifyContent="center"
-                bgColor={rowId === team._id ? "gray.700" : "none"}
-              >
-                <Box {...styleAsTd}>
-                  <Text
-                    color="accent"
-                    display={{ base: "inline", md: "none" }}
-                    mr={2}
-                  >
-                    Name:
-                  </Text>
-                  {team.name}
-                </Box>
-
-                <Box {...styleAsTd}>
-                  <Text
-                    color="accent"
-                    display={{ base: "inline", md: "none" }}
-                    mr={2}
-                  >
-                    Status:
-                  </Text>
-
-                  {team.isActive ? (
-                    <Badge colorScheme="green">Active</Badge>
-                  ) : (
-                    <Badge colorScheme="red">Deactivated</Badge>
-                  )}
-                </Box>
-
-                <Box {...styleAsTd}>
-                  <Text
-                    color="accent"
-                    display={{ base: "inline", md: "none" }}
-                    mr={2}
-                  >
-                    No of channels:
-                  </Text>
-                  {team.numberOfChannels}
-                </Box>
-
-                <Box {...styleAsTd}>
-                  <Text
-                    color="accent"
-                    display={{ base: "inline", md: "none" }}
-                    mr={2}
-                  >
-                    Last Modified:
-                  </Text>
-                  {moment(team.updatedAt).format("MMM DD, YYYY")}
-                </Box>
-
-                <Menu isLazy>
-                  <MenuButton color="primary">
-                    <Icon as={FaEllipsisH} />
-                  </MenuButton>
-                  <MenuList>
-                    <MenuItem onClick={() => ViewChannelsHandler(team._id)}>
-                      View channels
-                    </MenuItem>
-
-                    <MenuItem
-                      color={team.isActive === true ? "danger" : "success"}
-                      onClick={() =>
-                        ChangeStatusHandler(team._id, team.isActive)
-                      }
-                    >
-                      {team.isActive === true
-                        ? "Deactivate team"
-                        : "Restore team"}
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-              </SimpleGrid>
-            </Flex>
-          );
-        })}
-      </Stack>
-    </Flex>
-  );
-};
-
-const ModalComponentViewChannels = ({
-  data,
-  userId,
-  isOpen,
-  onClosed,
-}: {
-  data: Array<ITeam>;
-  userId: string;
-  isOpen: boolean;
-  onClosed: () => void;
-}) => {
-  const [channels, setChannels] = useState<ITeam>();
-
-  useEffect(() => {
-    let selectedChannel = data.filter(({ _id }) => _id === userId);
-
-    setChannels(selectedChannel[0]);
-  }, [data, userId]);
-
-  return (
-    <ModalComponent
-      title="Channels List"
-      isOpen={isOpen}
-      onClose={onClosed}
-      size="sm"
-      isCentered={false}
-    >
-      <Table borderColor="white" size="sm">
-        <Thead>
-          <Tr>
-            <Th>Channel Name</Th>
-            <Th>Status</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {channels?.channels.map((item) => (
-            <Tr key={item._id}>
-              <Td>{item.name}</Td>
-              <Td>
-                <Text>
-                  {item.isActive ? (
-                    <Badge colorScheme="green">Active</Badge>
-                  ) : (
-                    <Badge colorScheme="red">Deactivated</Badge>
-                  )}
-                </Text>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </ModalComponent>
-  );
-};
+import useTableControl from "../hooks/useTableControl";
+import TableComponent from "./TeamComponent/TableComponent";
+import ModalComponentViewChannels from "./TeamComponent/ModalViewChannels";
+import DrawerComponent from "./TeamComponent/DrawerComponent";
 
 const TeamPage = () => {
-  const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(10);
-  const [search, setSearch] = useState<string>("");
   const [isArchieve, setIsArchieve] = useState<boolean>(false);
   const [screenPadding, setScreenPadding] = useState<number>(4);
-  const [rowId, setRowId] = useState<string>(""); // use for highlight the row of the table
   const [isActive, setIsActive] = useState<boolean>(false); // holds the user account status before submitting
+
+  const {
+    page,
+    pageLimit,
+    search,
+    setSearch,
+    selectedRow,
+    onChangePage,
+    onChangeLimit,
+    setSelectedRow,
+  } = useTableControl();
 
   const {
     isOpen: isDrawerOpen,
@@ -373,42 +60,33 @@ const TeamPage = () => {
 
   const { data, isError, isLoading, isFetching, refetch } = useListTeamQuery({
     page,
-    limit,
+    limit: pageLimit,
     search,
     status: !isArchieve,
   });
   const [changeStatus] = useChangeStatusMutation();
 
-  const onChangePageHandler = (pageNumber: any) => {
-    setPage(Number(pageNumber));
-  };
-
-  const onChangeLimitHandler = (limitNumber: any) => {
-    setLimit(Number(limitNumber));
-    refetch();
-  };
-
   const ViewChannelsHandler = useCallback(
     (_id: string) => {
-      setRowId(_id);
+      setSelectedRow(_id);
       openModelChannel();
     },
-    [openModelChannel]
+    [openModelChannel, setSelectedRow]
   );
 
   const ChangeStatusHandler = useCallback(
     (_id: string, isActive: boolean) => {
-      setRowId(_id);
+      setSelectedRow(_id);
       openDialogChangeStatus();
       setIsActive(!isActive);
     },
-    [openDialogChangeStatus]
+    [openDialogChangeStatus, setSelectedRow]
   );
 
   const changeStatusSubmit = useCallback(async () => {
     try {
       const result = await changeStatus({
-        _id: rowId,
+        _id: selectedRow,
         isActive: isActive,
       }).unwrap();
 
@@ -421,7 +99,7 @@ const TeamPage = () => {
     } catch (err: any) {
       toast.error(err.data.message);
     }
-  }, [closeDialogChangeStatus, isActive, rowId, changeStatus]);
+  }, [closeDialogChangeStatus, isActive, selectedRow, changeStatus]);
 
   useEffect(() => {
     refetch();
@@ -469,12 +147,12 @@ const TeamPage = () => {
                   paginationProps={{ display: "flex" }}
                   baseStyles={{ border: "1px" }}
                   activeStyles={{ bg: "primary" }}
-                  onChange={(page) => onChangePageHandler(page)}
-                  pageSize={limit}
+                  onChange={(page) => onChangePage(page)}
+                  pageSize={pageLimit}
                   showSizeChanger
                   onShowSizeChange={(__, size) => {
-                    onChangeLimitHandler(size);
-                    onChangePageHandler(1);
+                    onChangeLimit(size);
+                    onChangePage(1);
                   }}
                 />
                 <Text fontSize="sm" color="gray.500">
@@ -507,7 +185,7 @@ const TeamPage = () => {
           ) : (
             <TableComponent
               data={data}
-              rowId={rowId}
+              rowId={selectedRow}
               padding={screenPadding}
               ViewChannelsHandler={ViewChannelsHandler}
               ChangeStatusHandler={ChangeStatusHandler}
@@ -525,7 +203,7 @@ const TeamPage = () => {
           data={data !== undefined ? data?.docs : []}
           isOpen={isModelChannelOpen}
           onClosed={closeModalChannel}
-          userId={rowId}
+          userId={selectedRow}
         />
       )}
 

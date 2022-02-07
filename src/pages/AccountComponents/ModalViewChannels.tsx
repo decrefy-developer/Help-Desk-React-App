@@ -17,7 +17,7 @@ const ModalViewTeamsandChannels: React.FC<{
   onClose: () => void;
   userId: string;
 }> = ({ isOpen, onClose, userId }) => {
-  const { data: datas, isFetching } = useChannelsOfTheUserQuery(userId);
+  const { data, isFetching } = useChannelsOfTheUserQuery(userId);
   return (
     <ModalComponent
       title="Teams & Channels"
@@ -34,7 +34,7 @@ const ModalViewTeamsandChannels: React.FC<{
           <Skeleton height="20px" />
           <Skeleton height="20px" />
         </Stack>
-      ) : datas && datas?.length <= 0 ? (
+      ) : data && data?.length <= 0 ? (
         <Text color="danger" as="em">
           No teams and channels found.
         </Text>
@@ -47,10 +47,12 @@ const ModalViewTeamsandChannels: React.FC<{
             </Tr>
           </Thead>
           <Tbody>
-            {datas?.map((item) => (
+            {data?.map((item) => (
               <Tr key={item._id}>
-                <Td>{item._id}</Td>
-                <Td>[ {item.channels.join(" , ")} ]</Td>
+                <Td>{item.team}</Td>
+                <Td>
+                  [ {item.channels.flatMap((channel) => `${channel.name} , `)} ]
+                </Td>
               </Tr>
             ))}
           </Tbody>

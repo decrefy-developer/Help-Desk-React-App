@@ -19,12 +19,8 @@ import {
   InputLeftElement,
   Stack,
   Checkbox,
-  VStack,
-  Grid,
-  GridItem,
   useColorModeValue,
   SimpleGrid,
-  Avatar,
   Circle,
   Tooltip,
   Drawer,
@@ -33,24 +29,14 @@ import {
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
-  FormLabel,
-  InputLeftAddon,
-  InputRightAddon,
   DrawerFooter,
-  CircularProgress,
-  Textarea,
 } from "@chakra-ui/react";
 import {
   FaHashtag,
   FaEllipsisH,
   FaSearch,
   FaPlus,
-  FaAddressBook,
   FaClock,
-  FaEye,
-  FaAngleLeft,
-  FaAngleRight,
-  FaCaretDown,
 } from "react-icons/fa";
 import StyleContext from "../context/StyleContext";
 import { useDispatch, useSelector } from "react-redux";
@@ -64,10 +50,8 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IChannel, ITeamChannel } from "../models/interface";
 import { schemaTicket } from "../models/schemas";
-import { useListCustomerQuery } from "../features/customer-query";
 import SelectTeam from "./HomeComponents/SelectTeam";
 import SelectChannel from "./HomeComponents/SelectChannel";
-import { Select } from "chakra-react-select";
 import SelectCustomer from "./HomeComponents/SelectCustomer";
 import SelectCategory from "./HomeComponents/SelectCategory";
 import TextAreaConcern from "./HomeComponents/TextAreaConcern";
