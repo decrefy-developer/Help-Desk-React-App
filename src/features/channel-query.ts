@@ -1,24 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
+import { IChannel, ListResponse, PageArgs } from "../models/interface";
 import { baseQuery } from "../services/auth-header";
-import { ListResponse, PageArgs } from "./data-types";
-import { ITeam } from "./team-query";
-
-export interface IChannel {
-  _id: string;
-  isActive: boolean;
-  name: string;
-  members: Array<IMember>;
-  team: Partial<ITeam>;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface IMember {
-  _id: string;
-  isAdmin: boolean;
-  userId: string;
-  email: string;
-}
 
 export const channelApi = createApi({
   reducerPath: "channelApi",
@@ -55,6 +37,10 @@ export const channelApi = createApi({
       }),
       invalidatesTags: (result, error, { _id }) => [{ type: "Channel", _id }],
     }),
+    getChannel: builder.query<IChannel, string>({
+      query: (_id) => `channel/${_id}`,
+      // providesTags: (result, error, _id) => [{ type: "Channel", _id }],
+    }),
   }),
 });
 
@@ -62,4 +48,5 @@ export const {
   useListChannelQuery,
   useAddChannelMutation,
   useChangeStatusMutation,
+  useGetChannelQuery,
 } = channelApi;

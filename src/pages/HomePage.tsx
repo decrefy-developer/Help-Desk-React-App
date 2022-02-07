@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
-  VStack,
   Box,
   Menu,
   MenuButton,
@@ -10,35 +9,70 @@ import {
   MenuItem,
   MenuDivider,
   HStack,
-  Popover,
-  PopoverTrigger,
   Icon,
-  PopoverContent,
-  PopoverArrow,
-  PopoverBody,
   useDisclosure,
-  Stack,
-  FormControl,
-  FormLabel,
-  InputGroup,
-  InputLeftElement,
-  Input,
-  FormHelperText,
-  Button,
   Flex,
   useMediaQuery,
+  Button,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Stack,
+  Checkbox,
+  VStack,
+  Grid,
+  GridItem,
+  useColorModeValue,
+  SimpleGrid,
+  Avatar,
+  Circle,
+  Tooltip,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
+  FormLabel,
+  InputLeftAddon,
+  InputRightAddon,
+  DrawerFooter,
+  CircularProgress,
+  Textarea,
 } from "@chakra-ui/react";
-import { FaPlus, FaHashtag, FaEllipsisH } from "react-icons/fa";
+import {
+  FaHashtag,
+  FaEllipsisH,
+  FaSearch,
+  FaPlus,
+  FaAddressBook,
+  FaClock,
+  FaEye,
+  FaAngleLeft,
+  FaAngleRight,
+  FaCaretDown,
+} from "react-icons/fa";
 import StyleContext from "../context/StyleContext";
-import ModalComponent from "../components/Modal";
-import Heading from "../components/Heading";
 import { useDispatch, useSelector } from "react-redux";
 import { DecodeToken } from "../services/decode-token";
 import { appDispatch, RootState } from "../app/store";
 import { setUser } from "../features/user-slice";
 import { useChannelsOfTheUserQuery } from "../features/member-query";
-import { ITeamChannel } from "../features/data-types";
 import StringTruncate from "../utils/StringTruncate";
+import Pagination from "@choc-ui/paginator";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { IChannel, ITeamChannel } from "../models/interface";
+import { schemaTicket } from "../models/schemas";
+import { useListCustomerQuery } from "../features/customer-query";
+import SelectTeam from "./HomeComponents/SelectTeam";
+import SelectChannel from "./HomeComponents/SelectChannel";
+import { Select } from "chakra-react-select";
+import SelectCustomer from "./HomeComponents/SelectCustomer";
+import SelectCategory from "./HomeComponents/SelectCategory";
+import TextAreaConcern from "./HomeComponents/TextAreaConcern";
+import SelectCoworker from "./HomeComponents/SelectCoworker";
+import SelectStartDate from "./HomeComponents/SelectStartDate";
 
 const SubBar: React.FC<{
   onOpen: () => void;
@@ -110,13 +144,12 @@ const SubBar: React.FC<{
           </HStack>
 
           {state.channels.map((channel) => (
-            <Flex
+            <HStack
               key={channel._id}
               w="full"
               pl={3}
               pt={2}
               pb={2}
-              alignItems="center"
               _hover={{
                 bg: channel.name === selectedChannel ? "primary" : bgColor,
                 cursor: "pointer",
@@ -126,7 +159,7 @@ const SubBar: React.FC<{
             >
               <Icon as={FaHashtag} />
               <Text>{channel.name}</Text>
-            </Flex>
+            </HStack>
           ))}
         </Flex>
       ) : (
@@ -201,6 +234,9 @@ const HeadingComponent = ({
         <Text fontSize={isMobile ? "xs" : "xl"} fontWeight="light">
           {title !== "" ? `${title}` : "Please select channel"}
         </Text>
+        <Text fontSize="xs" color="accent">
+          (14 Participants)
+        </Text>
       </HStack>
 
       <HStack>
@@ -210,11 +246,261 @@ const HeadingComponent = ({
   );
 };
 
+const ContentHeading = ({
+  screenPadding,
+  openDrawer,
+}: {
+  screenPadding: number;
+  openDrawer: () => void;
+}) => {
+  return (
+    <Flex w="full" flexDirection="column" padding={screenPadding}>
+      <Stack direction={["column", "row"]}>
+        <HStack w="full">
+          <InputGroup>
+            <InputLeftElement
+              pointerEvents="none"
+              children={<FaSearch color="gray.300" />}
+            />
+            <Input
+              type="text"
+              placeholder="search"
+              variant="filled"
+              onChange={(e) => console.log(e.target.value)}
+            />
+          </InputGroup>
+          <Button
+            leftIcon={<FaPlus />}
+            bgColor="primary"
+            w={["full", "100px"]}
+            onClick={openDrawer}
+          >
+            New
+          </Button>
+        </HStack>
+      </Stack>
+
+      <Stack
+        direction={["column", "row"]}
+        justifyContent="space-between"
+        mt={5}
+        alignItems="center"
+      >
+        <Stack>
+          <Stack direction="row" spacing={3}>
+            <Text fontSize="sm" color="accent">
+              State:
+            </Text>
+            <Checkbox size="sm">Done</Checkbox>
+            <Checkbox size="sm">Pending</Checkbox>
+          </Stack>
+
+          <Stack direction="row" spacing={3}>
+            <Text fontSize="sm" color="accent">
+              Status:
+            </Text>
+            <Checkbox size="sm">Open</Checkbox>
+            <Checkbox size="sm">Closed</Checkbox>
+            <Checkbox size="sm">Cancelled</Checkbox>
+          </Stack>
+        </Stack>
+
+        <Pagination
+          currentPage={1}
+          total={10}
+          paginationProps={{ display: "flex" }}
+          baseStyles={{ border: "1px" }}
+          activeStyles={{ bg: "primary" }}
+          // onChange={(page) => onChangePageHandler(page)}
+          pageSize={10}
+          showSizeChanger
+          // onShowSizeChange={(__, size) => {
+          //   onChangeLimitHandler(size);
+          //   onChangePageHandler(1);
+          // }}
+        />
+      </Stack>
+    </Flex>
+  );
+};
+
+const DrawerComponent = ({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
+  const [channels, setChannel] = useState<
+    Array<Pick<IChannel, "name" | "_id" | "isActive">>
+  >([]);
+  const [selectedChannel, setSelectedChannel] = useState<string>("");
+
+  const {
+    reset,
+    handleSubmit,
+    watch,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    mode: "onChange",
+    resolver: yupResolver(schemaTicket),
+  });
+
+  useEffect(() => {
+    if (watch("channelId")) {
+      let channelId = watch("channelId");
+      setSelectedChannel(channelId.value);
+    }
+  }, [watch("channelId")]);
+
+  const watchAllFields = watch();
+  console.log(watchAllFields);
+  console.log("errors", errors);
+
+  return (
+    <Drawer
+      isOpen={isOpen}
+      placement="right"
+      onClose={onClose}
+      closeOnOverlayClick={false}
+      size="xl"
+    >
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerCloseButton />
+        <DrawerHeader borderBottomWidth="1px">New Ticket</DrawerHeader>
+
+        <DrawerBody>
+          <Stack direction={{ base: "column", md: "row" }} mt={5}>
+            <Stack spacing="24px" w="full" p={4} borderWidth="1px">
+              <Text color="success">Concern Details</Text>
+
+              <SelectCustomer control={control} />
+              <SelectCategory control={control} />
+              <TextAreaConcern />
+            </Stack>
+            <Stack spacing="24px" w="full" p={4} borderWidth="1px">
+              <Text color="success">Set Ticket Details</Text>
+              <SelectTeam
+                control={control}
+                setChannel={setChannel}
+                watch={watch}
+              />
+              <SelectChannel channels={channels} control={control} />
+
+              {selectedChannel !== "" && (
+                <SelectCoworker
+                  control={control}
+                  setValue={setValue}
+                  channelId={selectedChannel}
+                />
+              )}
+
+              <SelectStartDate control={control} />
+            </Stack>
+          </Stack>
+        </DrawerBody>
+
+        <DrawerFooter borderTopWidth="1px">
+          <Button variant="outline" mr={3} onClick={onClose}>
+            Cancel
+          </Button>
+          <Button colorScheme="blue">Submit</Button>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  );
+};
+
+const ContentMain = () => {
+  const bgColor = useColorModeValue("gray.400", "gray.700");
+  const { borderLine } = useContext(StyleContext);
+
+  return (
+    <Flex w="full" padding={8} flexDirection="row">
+      <Stack w="40%" pr={5} spacing={8}>
+        <SimpleGrid border="1px" w="full" borderColor={borderLine}>
+          <HStack
+            w="full"
+            borderBottom="1px"
+            borderColor={borderLine}
+            borderStyle="dashed"
+            p={2}
+          >
+            <Flex alignItems="center">
+              <Tooltip label="2 days left">
+                <Circle size="15px" bg="success" />
+              </Tooltip>
+              <Text mx={2} fontSize="sm" fontWeight="light">
+                erwin@gmail.com
+              </Text>
+            </Flex>
+          </HStack>
+
+          <HStack p={2}>
+            <Stack p={2}>
+              <Text fontSize="20px"># 1446</Text>
+            </Stack>
+            <Flex direction="column">
+              <Text fontWeight="bold" color="accent">
+                Central Depot
+              </Text>
+              <Text fontWeight="light" fontSize="sm">
+                Category: Hardware Failure
+              </Text>
+            </Flex>
+          </HStack>
+
+          <HStack
+            borderTop="1px"
+            borderColor={borderLine}
+            borderStyle="dashed"
+            p={2}
+            justifyContent="space-between"
+          >
+            <HStack>
+              <Icon as={FaClock} />
+              <Text fontSize="xs" fontWeight="light" color="gray.500">
+                Feb 28 10:05 AM
+              </Text>
+            </HStack>
+
+            <HStack>
+              <Text
+                fontSize="xs"
+                fontWeight="light"
+                color="primary"
+                cursor="pointer"
+              >
+                View Details
+              </Text>
+            </HStack>
+          </HStack>
+        </SimpleGrid>
+      </Stack>
+
+      <Flex w="60%" bgColor="gray.700">
+        2
+      </Flex>
+    </Flex>
+  );
+};
+
+const ContentRighBar = () => {};
+
 const HomePage: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedChannel, setSelectedChannel] = useState<string>("");
   const dispatch = useDispatch<appDispatch>();
+  const [screenPadding, setScreenPadding] = useState<number>(4);
   const [isMobile] = useMediaQuery("(max-width: 600px)");
+  const {
+    isOpen: isDrawerOpen,
+    onOpen: openDrawer,
+    onClose: closeDrawer,
+  } = useDisclosure();
 
   const user = useSelector((state: RootState) => state.userSlice);
 
@@ -225,8 +511,17 @@ const HomePage: React.FC = () => {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    if (isMobile === false) {
+      setScreenPadding(10);
+    } else {
+      setScreenPadding(4);
+    }
+  }, [isMobile]);
+
   return (
     <React.Fragment>
+      <DrawerComponent isOpen={isDrawerOpen} onClose={closeDrawer} />
       {user._id !== "" && (
         <SubBar
           isMobile={isMobile}
@@ -236,8 +531,21 @@ const HomePage: React.FC = () => {
           setSelectedChannel={setSelectedChannel}
         />
       )}
-      <Flex w="full" flexDirection="column">
-        <HeadingComponent title={selectedChannel} isMobile={isMobile} />
+      <Flex w="full">
+        <Flex w="full" flexDirection="column">
+          <HeadingComponent title={selectedChannel} isMobile={isMobile} />
+
+          <ContentHeading
+            screenPadding={screenPadding}
+            openDrawer={openDrawer}
+          />
+
+          <ContentMain />
+        </Flex>
+
+        {/* <Flex w="20rem" bgColor="gray.700">
+          e
+        </Flex> */}
       </Flex>
     </React.Fragment>
   );

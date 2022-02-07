@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Badge,
   Box,
   Button,
@@ -17,8 +16,6 @@ import {
   HStack,
   Icon,
   Input,
-  InputGroup,
-  InputLeftElement,
   Menu,
   MenuButton,
   MenuItem,
@@ -37,30 +34,25 @@ import {
   useDisclosure,
   useMediaQuery,
 } from "@chakra-ui/react";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { FaSearch, FaEllipsisH } from "react-icons/fa";
+import { FaEllipsisH } from "react-icons/fa";
 import { toast } from "react-toastify";
 import HeadingComponent from "../components/Heading";
-import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
-  ITeam,
   useAddTeamMutation,
   useListTeamQuery,
   useChangeStatusMutation,
 } from "../features/team-query";
-import { ListResponse } from "../features/data-types";
 import moment from "moment";
 import Pagination from "@choc-ui/paginator";
 import ModalComponent from "../components/Modal";
 import Dialog from "../components/AlertDialog";
 import SubHeadingComponent from "../components/SubHeading";
 import PageContentScroll from "../components/PageContentScroll";
-
-const schema = yup.object().shape({
-  name: yup.string().required("Team name is required").min(5),
-});
+import { ITeam, ListResponse } from "../models/interface";
+import { schemaTeam } from "../models/schemas";
 
 const DrawerComponent = ({
   isOpen,
@@ -78,7 +70,7 @@ const DrawerComponent = ({
     formState: { errors, isDirty, isValid },
   } = useForm<{ name: string }>({
     mode: "onChange",
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schemaTeam),
   });
 
   const onSubmit = async (data: { name: string }) => {
@@ -103,8 +95,8 @@ const DrawerComponent = ({
       closeOnOverlayClick={false}
     >
       <DrawerOverlay />
-      <DrawerContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader borderBottomWidth="1px">Create a new team</DrawerHeader>
 
@@ -138,8 +130,8 @@ const DrawerComponent = ({
               Submit
             </Button>
           </DrawerFooter>
-        </form>
-      </DrawerContent>
+        </DrawerContent>
+      </form>
     </Drawer>
   );
 };

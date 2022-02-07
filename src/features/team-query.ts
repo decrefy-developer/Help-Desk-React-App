@@ -1,16 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
+import { ITeam, ListResponse, PageArgs } from "../models/interface";
 import { baseQuery } from "../services/auth-header";
-import { ListResponse, PageArgs } from "./data-types";
-
-export interface ITeam {
-  _id: string;
-  isActive: boolean;
-  name: string;
-  numberOfChannels: number;
-  channels: Array<{ _id: string; name: string; isActive: boolean }>;
-  createdAt?: string;
-  updatedAt?: string;
-}
 
 export const teamApi = createApi({
   reducerPath: "teamApi",

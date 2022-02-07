@@ -4,7 +4,6 @@ import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { Box, Flex, Heading, Stack, Text } from "@chakra-ui/layout";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { Checkbox } from "@chakra-ui/checkbox";
 import { toast } from "react-toastify";
 import React, { useState } from "react";
@@ -13,16 +12,8 @@ import Icon from "@chakra-ui/icon";
 import { useNavigate } from "react-router";
 import { useLoginMutation } from "../features/auth-query";
 import Cookies from "js-cookie";
-
-interface IFormInputs {
-  email: string;
-  password: string;
-}
-
-const schema = yup.object().shape({
-  email: yup.string().email().required(),
-  password: yup.string().required(),
-});
+import { schemaLogin } from "../models/schemas";
+import { IFormInputsLogin } from "../models/interface";
 
 const LoginPage = () => {
   return (
@@ -61,13 +52,13 @@ const LoginForm = () => {
     handleSubmit,
     register,
     formState: { errors, isValid, isDirty },
-  } = useForm<IFormInputs>({
+  } = useForm<IFormInputsLogin>({
     mode: "onChange",
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schemaLogin),
     defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
+  const onSubmit: SubmitHandler<IFormInputsLogin> = async (data) => {
     try {
       const res = await login(data).unwrap();
       Cookies.set("token", res.accessToken);

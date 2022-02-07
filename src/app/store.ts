@@ -4,6 +4,8 @@ import { authApi } from "../features/auth-query";
 import { memberApi } from "../features/member-query";
 import { teamApi } from "../features/team-query";
 import { channelApi } from "../features/channel-query";
+import { customerApi } from "../features/customer-query";
+import { categoryConcernApi } from "../features/category-query";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +13,8 @@ export const store = configureStore({
     [memberApi.reducerPath]: memberApi.reducer,
     [teamApi.reducerPath]: teamApi.reducer,
     [channelApi.reducerPath]: channelApi.reducer,
+    [customerApi.reducerPath]: customerApi.reducer,
+    [categoryConcernApi.reducerPath]: categoryConcernApi.reducer,
     userSlice,
   },
   middleware: (getDefaultMiddleware) =>
@@ -18,7 +22,9 @@ export const store = configureStore({
       authApi.middleware,
       memberApi.middleware,
       teamApi.middleware,
-      channelApi.middleware
+      channelApi.middleware,
+      customerApi.middleware,
+      categoryConcernApi.middleware
     ),
 });
 

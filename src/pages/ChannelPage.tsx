@@ -30,7 +30,6 @@ import {
   Text,
   Th,
   Thead,
-  Tooltip,
   Tr,
   useColorModeValue,
   useDisclosure,
@@ -44,30 +43,23 @@ import {
   FaAngleRight,
   FaCaretDown,
   FaEllipsisH,
-  FaSlack,
 } from "react-icons/fa";
 import HeadingComponent from "../components/Heading";
 import SubHeadingComponent from "../components/SubHeading";
 import Dialog from "../components/AlertDialog";
 import {
-  IChannel,
   useAddChannelMutation,
   useChangeStatusMutation,
   useListChannelQuery,
 } from "../features/channel-query";
-import { ListResponse } from "../features/data-types";
 import { toast } from "react-toastify";
 import ModalComponent from "../components/Modal";
-import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useListTeamQuery } from "../features/team-query";
 import PageContentScroll from "../components/PageContentScroll";
-
-const schema = yup.object().shape({
-  teamId: yup.string().required("Team is required"),
-  name: yup.string().required("Channel name is required").min(5),
-});
+import { IChannel, ListResponse } from "../models/interface";
+import { schemaChannel } from "../models/schemas";
 
 const DrawerComponent = ({
   isOpen,
@@ -93,7 +85,7 @@ const DrawerComponent = ({
     formState: { errors, isDirty, isValid },
   } = useForm<{ teamId: string; name: string }>({
     mode: "onChange",
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schemaChannel),
   });
 
   const nextPageHandler = () => {
@@ -133,8 +125,8 @@ const DrawerComponent = ({
       closeOnOverlayClick={false}
     >
       <DrawerOverlay />
-      <DrawerContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader borderBottomWidth="1px">
             Create a new channel
@@ -228,8 +220,8 @@ const DrawerComponent = ({
               Submit
             </Button>
           </DrawerFooter>
-        </form>
-      </DrawerContent>
+        </DrawerContent>
+      </form>
     </Drawer>
   );
 };

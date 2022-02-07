@@ -1,16 +1,12 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { IFormInputs } from "../pages/AccountPage";
+import {
+  IFormInputMember,
+  IMember,
+  ITeamChannel,
+  ListResponse,
+  PageArgs,
+} from "../models/interface";
 import { baseQuery } from "../services/auth-header";
-import { ITeamChannel, ListResponse, PageArgs } from "./data-types";
-
-export interface IMember {
-  _id: string;
-  isActive: boolean;
-  priviledge: Array<string>;
-  email: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
 
 export const memberApi = createApi({
   reducerPath: "memberApi",
@@ -35,7 +31,7 @@ export const memberApi = createApi({
       query: (_id) => `user/${_id}`,
       providesTags: (result, error, _id) => [{ type: "Member", _id }],
     }),
-    addMember: builder.mutation<IMember, IFormInputs>({
+    addMember: builder.mutation<IMember, IFormInputMember>({
       query: (body) => ({
         url: "/user",
         method: "POST",
