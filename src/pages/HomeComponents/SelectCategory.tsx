@@ -1,24 +1,25 @@
-import { Box, FormLabel } from "@chakra-ui/react";
+import { FormControl, FormErrorMessage, FormLabel } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { Select } from "chakra-react-select";
 import { useListCategoryConcernQuery } from "../../features/category-query";
-import { Control, Controller, FieldValues } from "react-hook-form";
+import { Control, Controller, FieldErrors, FieldValues } from "react-hook-form";
 
 const SelectCategory: React.FC<{
   control: Control<FieldValues, object>;
-}> = ({ control }) => {
+  errors: FieldErrors<FieldValues>;
+}> = ({ control, errors }) => {
   const [page, setPage] = useState<number>(1);
   const [searchText, setSearchText] = useState<string>("");
   const { data } = useListCategoryConcernQuery({
     page: page,
-    limit: 100,
+    limit: 1000,
     search: searchText,
     status: true,
   });
 
   return (
-    <Box>
-      <FormLabel htmlFor="channel" fontSize="sm" color="gray.400">
+    <FormControl isInvalid={errors?.categoryId ? true : false}>
+      <FormLabel htmlFor="categoryId" fontSize="sm" color="gray.400">
         Major Category Concern
       </FormLabel>
       <Controller
@@ -26,7 +27,8 @@ const SelectCategory: React.FC<{
         name="categoryId"
         render={({ field }) => (
           <Select
-            {...field}
+            id="categoryId"
+            onChange={(e) => field.onChange(e?.value)}
             selectedOptionStyle="color"
             placeholder="Select Concern"
             options={data?.docs.map(function (customer) {
@@ -37,7 +39,10 @@ const SelectCategory: React.FC<{
           />
         )}
       />
-    </Box>
+      <FormErrorMessage justifyContent="flex-end">
+        {errors?.categoryId?.message}
+      </FormErrorMessage>
+    </FormControl>
   );
 };
 

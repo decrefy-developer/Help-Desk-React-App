@@ -1,31 +1,29 @@
 import {
-  Box,
-  Button,
-  CircularProgress,
+  FormControl,
+  FormErrorMessage,
   FormLabel,
   HStack,
-  Icon,
-  Input,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
   Control,
   Controller,
+  FieldErrors,
   FieldValues,
-  UseFormWatch,
+  UseFormGetValues,
 } from "react-hook-form";
-import { FaAngleLeft, FaAngleRight, FaCaretDown } from "react-icons/fa";
 import { useListTeamQuery } from "../../features/team-query";
-import { IChannel } from "../../models/interface";
 import { Select } from "chakra-react-select";
+import { IChannel } from "../../models/interface";
 
 const SelectTeam: React.FC<{
   control: Control<FieldValues, object>;
+  errors: FieldErrors<FieldValues>;
+  getValues: UseFormGetValues<FieldValues>;
   setChannel: React.Dispatch<
-    React.SetStateAction<Array<Pick<IChannel, "name" | "_id" | "isActive">>>
+    React.SetStateAction<Pick<IChannel, "name" | "_id" | "isActive">[]>
   >;
-  watch: UseFormWatch<FieldValues>;
-}> = ({ control, setChannel, watch }) => {
+}> = ({ control, errors, getValues, setChannel }) => {
   const [page, setPage] = useState<number>(1);
   const [searchText, setSearchText] = useState<string>("");
   const { data, isError, isFetching } = useListTeamQuery({
@@ -46,26 +44,20 @@ const SelectTeam: React.FC<{
   };
 
   useEffect(() => {
-    if (watch("teamId")) {
-      let teamId = watch("teamId");
-      const selectedTeam = data?.docs.filter(
-        (team) => team._id === teamId.value
-      );
+    if (getValues("teamId")) {
+      let teamId = getValues("teamId");
 
+      const selectedTeam = data?.docs.filter((team) => team._id === teamId);
       if (selectedTeam) setChannel(selectedTeam[0].channels);
     }
-  }, [watch("teamId")]);
+  }, [getValues("teamId")]);
 
   return (
-    <Box>
+    <FormControl isInvalid={errors?.teamId ? true : false}>
       <HStack justifyContent="space-between" alignItems="center">
-        <FormLabel htmlFor="Team" fontSize="sm" color="gray.400">
+        <FormLabel htmlFor="teamId" fontSize="sm" color="gray.400">
           Team
         </FormLabel>
-
-        {isFetching && (
-          <CircularProgress isIndeterminate color="primary" size="20px" />
-        )}
       </HStack>
 
       <Controller
@@ -73,7 +65,9 @@ const SelectTeam: React.FC<{
         name="teamId"
         render={({ field }) => (
           <Select
-            {...field}
+            id="teamId"
+            isLoading={isFetching}
+            onChange={(e) => field.onChange(e?.value)}
             onMenuScrollToBottom={handleScrollBottom}
             onMenuScrollToTop={handleSrollTop}
             selectedOptionStyle="color"
@@ -86,7 +80,10 @@ const SelectTeam: React.FC<{
           />
         )}
       />
-    </Box>
+      <FormErrorMessage justifyContent="flex-end">
+        {errors?.teamId?.message}
+      </FormErrorMessage>
+    </FormControl>
   );
 };
 

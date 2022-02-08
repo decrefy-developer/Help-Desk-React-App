@@ -6,19 +6,21 @@ import {
   Control,
   Controller,
   FieldValues,
-  UseFormSetValue,
+  UseFormGetValues,
+  UseFormWatch,
 } from "react-hook-form";
 
 const SelectCoworker: React.FC<{
-  channelId: string;
   control: Control<FieldValues, object>;
-  setValue: UseFormSetValue<FieldValues>;
-}> = ({ channelId, control, setValue }) => {
+  getValues: UseFormGetValues<FieldValues>;
+  watch: UseFormWatch<FieldValues>;
+}> = ({ control, getValues, watch }) => {
+  const channelId = watch("channelId");
   const { data } = useGetChannelQuery(channelId);
 
   return (
     <Box>
-      <FormLabel htmlFor="channel" fontSize="sm" color="gray.400">
+      <FormLabel htmlFor="coworkers" fontSize="sm" color="gray.400">
         Co-workers
       </FormLabel>
 
@@ -27,7 +29,14 @@ const SelectCoworker: React.FC<{
         name="coworkers"
         render={({ field }) => (
           <Select
-            {...field}
+            id="coworkers"
+            onChange={(e) =>
+              field.onChange(
+                e.map((item) => {
+                  return item.value;
+                })
+              )
+            }
             isMulti
             colorScheme="purple"
             selectedOptionStyle="check"

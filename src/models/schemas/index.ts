@@ -29,13 +29,12 @@ export const schemaTeam = yup.object().shape({
 });
 
 export const schemaTicket = yup.object().shape({
-  customerId: yup.string().required("Channel is required"),
+  customerId: yup.string().required("Customer is required"),
   categoryId: yup.string().required("Major Category is required"),
   description: yup.string().required("Description is required"),
   teamId: yup.string().required("Team is required"),
   channelId: yup.string().required("Channel is required"),
   coworkers: yup.array().of(yup.string()),
-  // startDate: yup.string().required(),
   startDate: yup
     .date()
     .required("The start date is required")
@@ -50,5 +49,5 @@ export const schemaTicket = yup.object().shape({
       dateNow,
       "Please check the target date; it should not be lower today. "
     ),
-  createdBy: yup.string().required("created by is required"),
+  // createdBy: yup.string().required("created by is required"),
 });

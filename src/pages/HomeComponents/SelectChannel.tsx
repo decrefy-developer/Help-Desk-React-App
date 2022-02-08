@@ -1,10 +1,16 @@
-import { Box, FormLabel } from "@chakra-ui/react";
+import {
+  Box,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+} from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import { IChannel } from "../../models/interface";
 import { Select, OptionBase, GroupBase } from "chakra-react-select";
 import {
   Control,
   Controller,
+  FieldErrors,
   FieldValues,
   UseFormWatch,
 } from "react-hook-form";
@@ -12,10 +18,11 @@ import {
 const SelectChannel: React.FC<{
   control: Control<FieldValues, object>;
   channels: Array<Pick<IChannel, "name" | "_id" | "isActive">>;
-}> = ({ channels, control }) => {
+  errors: FieldErrors<FieldValues>;
+}> = ({ channels, control, errors }) => {
   return (
-    <Box>
-      <FormLabel htmlFor="channel" fontSize="sm" color="gray.400">
+    <FormControl isInvalid={errors?.channelId ? true : false}>
+      <FormLabel htmlFor="channelId" fontSize="sm" color="gray.400">
         Channel
       </FormLabel>
 
@@ -24,7 +31,8 @@ const SelectChannel: React.FC<{
         name="channelId"
         render={({ field }) => (
           <Select
-            {...field}
+            id="channelId"
+            onChange={(e) => field.onChange(e?.value)}
             escapeClearsValue={true}
             selectedOptionStyle="color"
             placeholder={
@@ -38,7 +46,10 @@ const SelectChannel: React.FC<{
           />
         )}
       />
-    </Box>
+      <FormErrorMessage justifyContent="flex-end">
+        {errors?.channelId?.message}
+      </FormErrorMessage>
+    </FormControl>
   );
 };
 

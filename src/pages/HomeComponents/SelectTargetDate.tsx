@@ -1,33 +1,31 @@
 import {
-  Box,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Input,
 } from "@chakra-ui/react";
+import moment from "moment";
 import React from "react";
 import { Control, Controller, FieldErrors, FieldValues } from "react-hook-form";
-import "react-calendar/dist/Calendar.css";
-import moment from "moment";
 
-const dateNow = moment().format("YYYY-MM-DD"); // this is just to disables previews date
+const dateNow = moment().format("YYYY-MM-DD"); // th
 
-const SelectStartDate: React.FC<{
+const SelectTargetDate: React.FC<{
   control: Control<FieldValues, object>;
   errors: FieldErrors<FieldValues>;
 }> = ({ control, errors }) => {
   return (
-    <FormControl isInvalid={errors?.startDate ? true : false}>
-      <FormLabel htmlFor="startDate" fontSize="sm" color="gray.400">
-        Start Date
+    <FormControl isInvalid={errors?.targetDate ? true : false}>
+      <FormLabel htmlFor="targetDate" fontSize="sm" color="gray.400">
+        Target Date
       </FormLabel>
 
       <Controller
         control={control}
-        name="startDate"
+        name="targetDate"
         render={({ field: { onChange } }) => (
           <Input
-            id="startDate"
+            id="targetDate"
             onChange={onChange}
             type="datetime-local"
             min={dateNow}
@@ -35,10 +33,10 @@ const SelectStartDate: React.FC<{
         )}
       />
       <FormErrorMessage justifyContent="flex-end">
-        {errors?.startDate?.message}
+        {errors?.targetDate?.message}
       </FormErrorMessage>
     </FormControl>
   );
 };
 
-export default SelectStartDate;
+export default SelectTargetDate;

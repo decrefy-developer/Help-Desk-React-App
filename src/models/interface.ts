@@ -98,3 +98,18 @@ export interface IFormInputsLogin {
   email: string;
   password: string;
 }
+
+export interface IFormInputTicket {
+  teamId: string;
+  channelId: string;
+  customerId: string;
+  categoryId: string;
+  userId: string;
+  description: string;
+  state: "PENDING" | "DONE";
+  status: "OPEN" | "CLOSED" | "CANCELLED";
+  coworkers: Array<string>;
+  startDate: Date;
+  targetDate: Date;
+  createdBy: string;
+}

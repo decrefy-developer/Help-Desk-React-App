@@ -46,9 +46,9 @@ import { setUser } from "../features/user-slice";
 import { useChannelsOfTheUserQuery } from "../features/member-query";
 import StringTruncate from "../utils/StringTruncate";
 import Pagination from "@choc-ui/paginator";
-import { Controller, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { IChannel, ITeamChannel } from "../models/interface";
+import { IChannel, IFormInputTicket, ITeamChannel } from "../models/interface";
 import { schemaTicket } from "../models/schemas";
 import SelectTeam from "./HomeComponents/SelectTeam";
 import SelectChannel from "./HomeComponents/SelectChannel";
@@ -57,6 +57,9 @@ import SelectCategory from "./HomeComponents/SelectCategory";
 import TextAreaConcern from "./HomeComponents/TextAreaConcern";
 import SelectCoworker from "./HomeComponents/SelectCoworker";
 import SelectStartDate from "./HomeComponents/SelectStartDate";
+import SelectTargetDate from "./HomeComponents/SelectTargetDate";
+import { useAddTicketMutation } from "../features/ticket-query";
+import { toast } from "react-toastify";
 
 const SubBar: React.FC<{
   onOpen: () => void;
@@ -318,7 +321,9 @@ const DrawerComponent = ({
   const [channels, setChannel] = useState<
     Array<Pick<IChannel, "name" | "_id" | "isActive">>
   >([]);
-  const [selectedChannel, setSelectedChannel] = useState<string>("");
+
+  const { _id } = useSelector((state: RootState) => state.userSlice);
+  const [addTicket] = useAddTicketMutation();
 
   const {
     reset,
@@ -326,22 +331,32 @@ const DrawerComponent = ({
     watch,
     control,
     setValue,
-    formState: { errors },
+    getValues,
+    formState: { errors, isValid },
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schemaTicket),
   });
 
-  useEffect(() => {
-    if (watch("channelId")) {
-      let channelId = watch("channelId");
-      setSelectedChannel(channelId.value);
-    }
-  }, [watch("channelId")]);
-
   const watchAllFields = watch();
   console.log(watchAllFields);
-  console.log("errors", errors);
+
+  const onSubmit: SubmitHandler<IFormInputTicket> = async (data) => {
+    try {
+      data.state = "PENDING";
+      data.status = "OPEN";
+      data.userId = "616677155d19f646703aa82b";
+      data.createdBy = _id;
+
+      const newTicket = await addTicket(data).unwrap();
+
+      if (newTicket) {
+        console.log("submitted", newTicket);
+      }
+    } catch (err: any) {
+      toast.error(err.data.message);
+    }
+  };
 
   return (
     <Drawer
@@ -352,48 +367,58 @@ const DrawerComponent = ({
       size="xl"
     >
       <DrawerOverlay />
-      <DrawerContent>
-        <DrawerCloseButton />
-        <DrawerHeader borderBottomWidth="1px">New Ticket</DrawerHeader>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader borderBottomWidth="1px">New Ticket</DrawerHeader>
 
-        <DrawerBody>
-          <Stack direction={{ base: "column", md: "row" }} mt={5}>
-            <Stack spacing="24px" w="full" p={4} borderWidth="1px">
-              <Text color="success">Concern Details</Text>
+          <DrawerBody>
+            <Stack direction={{ base: "column", md: "row" }} mt={5}>
+              <Stack spacing="24px" w="full" p={4} borderWidth="1px">
+                <Text color="success">Concern Details</Text>
 
-              <SelectCustomer control={control} />
-              <SelectCategory control={control} />
-              <TextAreaConcern />
-            </Stack>
-            <Stack spacing="24px" w="full" p={4} borderWidth="1px">
-              <Text color="success">Set Ticket Details</Text>
-              <SelectTeam
-                control={control}
-                setChannel={setChannel}
-                watch={watch}
-              />
-              <SelectChannel channels={channels} control={control} />
+                <SelectCustomer control={control} errors={errors} />
 
-              {selectedChannel !== "" && (
+                <SelectCategory control={control} errors={errors} />
+                <TextAreaConcern control={control} errors={errors} />
+              </Stack>
+
+              <Stack spacing="24px" w="full" p={4} borderWidth="1px">
+                <Text color="success">Set Ticket Details</Text>
+                <SelectTeam
+                  control={control}
+                  errors={errors}
+                  getValues={getValues}
+                  setChannel={setChannel}
+                />
+                <SelectChannel
+                  channels={channels}
+                  control={control}
+                  errors={errors}
+                />
+
                 <SelectCoworker
                   control={control}
-                  setValue={setValue}
-                  channelId={selectedChannel}
+                  getValues={getValues}
+                  watch={watch}
                 />
-              )}
 
-              <SelectStartDate control={control} />
+                <SelectStartDate control={control} errors={errors} />
+                <SelectTargetDate control={control} errors={errors} />
+              </Stack>
             </Stack>
-          </Stack>
-        </DrawerBody>
+          </DrawerBody>
 
-        <DrawerFooter borderTopWidth="1px">
-          <Button variant="outline" mr={3} onClick={onClose}>
-            Cancel
-          </Button>
-          <Button colorScheme="blue">Submit</Button>
-        </DrawerFooter>
-      </DrawerContent>
+          <DrawerFooter borderTopWidth="1px">
+            <Button variant="outline" mr={3} onClick={onClose}>
+              Cancel
+            </Button>
+            <Button bgColor="primary" type="submit" disabled={!isValid}>
+              Submit
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </form>
     </Drawer>
   );
 };
