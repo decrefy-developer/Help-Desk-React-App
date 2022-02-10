@@ -326,7 +326,6 @@ const DrawerComponent = ({
   const [addTicket] = useAddTicketMutation();
 
   const {
-    reset,
     handleSubmit,
     watch,
     control,

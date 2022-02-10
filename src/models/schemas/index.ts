@@ -1,5 +1,6 @@
 import * as yup from "yup";
 import moment from "moment";
+import { string } from "yup/lib/locale";
 const dateNow = moment().toISOString();
 
 export const schemaAccount = yup.object().shape({
@@ -50,4 +51,15 @@ export const schemaTicket = yup.object().shape({
       "Please check the target date; it should not be lower today. "
     ),
   // createdBy: yup.string().required("created by is required"),
+});
+
+export const schemaAddMemberToChannel = yup.object().shape({
+  member: yup
+    .object()
+    .shape({
+      value: yup.string(),
+      label: yup.string(),
+    })
+    .required("member is required"),
+  isAdmin: yup.boolean().required("Role is required"),
 });

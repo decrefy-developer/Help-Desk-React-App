@@ -12,25 +12,27 @@ interface ModalProps {
   title: string;
   isOpen: boolean;
   onClose: () => void;
-  size?: string;
+  size?:
+    | "xs"
+    | "sm"
+    | "md"
+    | "lg"
+    | "xl"
+    | "2xl"
+    | "3xl"
+    | "4xl"
+    | "5xl"
+    | "6xl"
+    | "full"
+    | undefined;
   isCentered?: boolean;
+  [x: string]: any;
 }
 
-const ModalComponent: React.FC<ModalProps> = ({
-  title,
-  isOpen,
-  onClose,
-  children,
-  size,
-  isCentered,
-}) => {
+const ModalComponent: React.FC<ModalProps> = (props) => {
+  const { title, children } = props;
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size={size}
-      isCentered={isCentered}
-    >
+    <Modal {...props}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>{title}</ModalHeader>

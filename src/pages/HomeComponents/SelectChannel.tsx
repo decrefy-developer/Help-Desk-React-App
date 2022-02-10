@@ -6,7 +6,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import { IChannel } from "../../models/interface";
-import { Select, OptionBase, GroupBase } from "chakra-react-select";
+import { Select } from "chakra-react-select";
 import {
   Control,
   Controller,

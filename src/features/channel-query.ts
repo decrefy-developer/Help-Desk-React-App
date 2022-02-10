@@ -1,5 +1,10 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { IChannel, ListResponse, PageArgs } from "../models/interface";
+import {
+  IChannel,
+  IFormInputChannelMember,
+  ListResponse,
+  PageArgs,
+} from "../models/interface";
 import { baseQuery } from "../services/auth-header";
 
 export const channelApi = createApi({
@@ -41,6 +46,14 @@ export const channelApi = createApi({
       query: (_id) => `channel/${_id}`,
       // providesTags: (result, error, _id) => [{ type: "Channel", _id }],
     }),
+    addMembertoChannel: builder.mutation<IChannel, IFormInputChannelMember>({
+      query: ({ _id, ...patch }) => ({
+        url: `/channel/${_id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      invalidatesTags: (result, error, { _id }) => [{ type: "Channel", _id }],
+    }),
   }),
 });
 
@@ -49,4 +62,5 @@ export const {
   useAddChannelMutation,
   useChangeStatusMutation,
   useGetChannelQuery,
+  useAddMembertoChannelMutation,
 } = channelApi;

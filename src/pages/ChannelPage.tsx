@@ -29,6 +29,7 @@ const ChannelPage = () => {
   const [screenPadding, setScreenPadding] = useState<number>(4);
   const [isArchieve, setIsArchieve] = useState<boolean>(false);
   const [isActive, setIsActive] = useState<boolean>(false); // holds the user account status before submitting
+  const [isMobile] = useMediaQuery("(max-width: 600px)");
 
   const {
     page,
@@ -56,7 +57,6 @@ const ChannelPage = () => {
     onOpen: openModal,
     onClose: closeModal,
   } = useDisclosure();
-  const [isMobile] = useMediaQuery("(max-width: 600px)");
 
   const { data, isError, isLoading, isFetching } = useListChannelQuery({
     page,
@@ -64,6 +64,7 @@ const ChannelPage = () => {
     search,
     status: !isArchieve,
   });
+
   const [changeStatus] = useChangeStatusMutation();
 
   const ChangeStatusHandler = useCallback(
@@ -212,7 +213,7 @@ const ChannelPage = () => {
 
       {isModalOpen && (
         <ModalComponentViewMembers
-          userId={selectedRow}
+          selectedRow={selectedRow}
           onClosed={closeModal}
           isOpen={isModalOpen}
           data={data !== undefined ? data?.docs : []}

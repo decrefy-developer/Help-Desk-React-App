@@ -113,3 +113,11 @@ export interface IFormInputTicket {
   targetDate: Date;
   createdBy: string;
 }
+
+// used in adding member to a channel
+export interface IFormInputChannelMember {
+  _id: string;
+  userId: string;
+  email: string;
+  isAdmin: string;
+}

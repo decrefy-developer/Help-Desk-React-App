@@ -8,6 +8,7 @@ import { ButtonStyle } from "./Button";
 import { CheckboxStyle } from "./Checkbox";
 import { HeadingStyle } from "./Heading";
 import { InpuStyle } from "./Input";
+import { RadioStyle } from "./Radio";
 import { SelectStyle } from "./Select";
 
 const theme = extendTheme(
@@ -30,6 +31,7 @@ const theme = extendTheme(
       Button: { ...ButtonStyle },
       Checkbox: { ...CheckboxStyle },
       Select: { ...SelectStyle },
+      Radio: { ...RadioStyle },
     },
   },
   withDefaultColorScheme({
