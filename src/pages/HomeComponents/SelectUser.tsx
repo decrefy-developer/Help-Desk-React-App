@@ -9,7 +9,7 @@ import {
   UseFormWatch,
 } from "react-hook-form";
 
-const SelectCoworker: React.FC<{
+const SelectUser: React.FC<{
   control: Control<FieldValues, object>;
   watch: UseFormWatch<FieldValues>;
 }> = ({ control, watch }) => {
@@ -18,26 +18,18 @@ const SelectCoworker: React.FC<{
 
   return (
     <Box>
-      <FormLabel htmlFor="coworkers" fontSize="sm" color="gray.400">
-        Co-workers
+      <FormLabel htmlFor="userId" fontSize="sm" color="gray.400">
+        Assign User
       </FormLabel>
 
       <Controller
         control={control}
-        name="coworkers"
+        name="userId"
         render={({ field }) => (
           <Select
-            id="coworkers"
-            onChange={(e) =>
-              field.onChange(
-                e.map((item) => {
-                  return item.value;
-                })
-              )
-            }
-            isMulti
-            colorScheme="purple"
-            selectedOptionStyle="check"
+            id="userId"
+            onChange={(e) => field.onChange(e?.value)}
+            selectedOptionStyle="color"
             placeholder={
               data?.members !== undefined && data?.members.length > 0
                 ? "Select Concern"
@@ -55,4 +47,4 @@ const SelectCoworker: React.FC<{
   );
 };
 
-export default SelectCoworker;
+export default SelectUser;

@@ -23,7 +23,7 @@ import { Select } from "chakra-react-select";
 import { useListMemberQuery } from "../../features/member-query";
 import { Icon } from "@chakra-ui/icons";
 import { FaCross, FaPen, FaTrashAlt } from "react-icons/fa";
-import { useAddMembertoChannelMutation } from "../../features/channel-query";
+import { useManageMembertoChannelMutation } from "../../features/channel-query";
 import {
   Controller,
   SubmitErrorHandler,
@@ -58,7 +58,8 @@ const ModalComponentViewMembers: React.FC<IModal> = ({
     search: "",
     status: true,
   });
-  const [addMembertoChannel] = useAddMembertoChannelMutation();
+
+  const [ManageMembertoChannel] = useManageMembertoChannelMutation();
 
   const {
     handleSubmit,
@@ -75,17 +76,39 @@ const ModalComponentViewMembers: React.FC<IModal> = ({
       //  TODO: transform the data into API requirement
       const newMember = {
         _id: selectedRow,
-        userId: data.member["value"],
-        email: data.member["label"],
-        isAdmin: data.isAdmin,
+        mode: "ADD",
+        data: {
+          userId: data.member["value"],
+          email: data.member["label"],
+          isAdmin: data.isAdmin,
+        },
       };
 
-      const result = await addMembertoChannel(newMember).unwrap();
+      const result = await ManageMembertoChannel(newMember).unwrap();
       if (result) {
-        console.log("result", result);
+        toast.success(`${data.member["label"]} successfully added as member`);
       }
+    } catch (err: any) {
+      toast.error(err.data.message);
+    }
+  };
 
-      console.log(newMember);
+  const removeMemberHandler = async (data: any) => {
+    try {
+      const member = {
+        _id: selectedRow,
+        mode: "REMOVE",
+        data: {
+          userId: data.userId,
+          email: data.email,
+          isAdmin: data.isAdmin,
+        },
+      };
+
+      const result = await ManageMembertoChannel(member).unwrap();
+      if (result) {
+        toast.success(`${data.email} successfully removed as member`);
+      }
     } catch (err: any) {
       toast.error(err.data.message);
     }
@@ -187,14 +210,8 @@ const ModalComponentViewMembers: React.FC<IModal> = ({
               <Td>
                 <HStack>
                   <Tooltip label="remove member">
-                    <Button size="xs">
+                    <Button size="xs" onClick={() => removeMemberHandler(item)}>
                       <Icon as={FaTrashAlt} cursor="pointer" />
-                    </Button>
-                  </Tooltip>
-
-                  <Tooltip label="edit role">
-                    <Button size="xs">
-                      <Icon as={FaPen} cursor="pointer" />
                     </Button>
                   </Tooltip>
                 </HStack>

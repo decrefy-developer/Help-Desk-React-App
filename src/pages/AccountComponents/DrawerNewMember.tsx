@@ -164,6 +164,13 @@ const DrawerNewMemberComponent: React.FC<{
                     Access
                   </FormLabel>
                   <Checkbox
+                    onChange={(e) =>
+                      setAccess(e.target.checked, "CREATE TICKET")
+                    }
+                  >
+                    Create Ticket
+                  </Checkbox>
+                  <Checkbox
                     onChange={(e) => setAccess(e.target.checked, "MEMBERS")}
                   >
                     Manage Members

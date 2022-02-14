@@ -66,6 +66,59 @@ export interface ITeamChannel {
   channels: Array<Pick<IChannel, "_id" | "name">>;
 }
 
+export interface ITicket {
+  _id: string;
+  ticketNumber: string;
+  doneDate: Date;
+  coworkers: [
+    {
+      _id: string;
+      email: string;
+    }
+  ];
+  seen: boolean;
+  closeDate: Date;
+  comments: [
+    {
+      userId: string;
+      message: string;
+      createdAt: Date;
+    }
+  ];
+  tags: Array<string>;
+  targetDate: Date;
+  startDate: Date;
+  description: string;
+  state: "PENDING" | "DONE";
+  status: "OPEN" | "CLOSED" | "CANCELLED";
+  createdBy: {
+    _id: string;
+    email: string;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+  team: {
+    _id: string;
+    name: string;
+  };
+  channel: {
+    _id: string;
+    name: string;
+  };
+  customer: {
+    _id: string;
+    name: string;
+  };
+  category: {
+    _id: string;
+    name: string;
+  };
+  user: {
+    _id: string;
+    email: string;
+  };
+}
+
 export interface ListResponse<T> {
   docs: T[];
   hasNextPage: boolean;
@@ -117,7 +170,10 @@ export interface IFormInputTicket {
 // used in adding member to a channel
 export interface IFormInputChannelMember {
   _id: string;
-  userId: string;
-  email: string;
-  isAdmin: string;
+  mode: string;
+  data: {
+    userId: string;
+    email: string;
+    isAdmin: string;
+  };
 }

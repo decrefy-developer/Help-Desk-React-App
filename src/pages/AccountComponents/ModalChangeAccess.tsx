@@ -35,7 +35,7 @@ const ModalChangeAccess: React.FC<{
   };
 
   const onSubmit = async () => {
-    if (checkedAccess.length <= 0) return setIsError(true);
+    // if (checkedAccess.length <= 0) return setIsError(true);
 
     try {
       const result = await updateMemberAcess({
@@ -66,7 +66,7 @@ const ModalChangeAccess: React.FC<{
       isCentered={true}
     >
       {isFetching ? (
-        <Stack w="full" py={10} px="20">
+        <Stack w="full" py={10} px="5">
           <Skeleton height="20px" />
           <Skeleton height="20px" />
           <Skeleton height="20px" />
@@ -75,6 +75,12 @@ const ModalChangeAccess: React.FC<{
         <Box pb={5}>
           <Stack spacing={2}>
             <FormLabel>Access</FormLabel>
+            <Checkbox
+              isChecked={checkedAccess.includes("CREATE TICKET") ? true : false}
+              onChange={(e) => setAccess(e.target.checked, "CREATE TICKET")}
+            >
+              Create Ticket
+            </Checkbox>
             <Checkbox
               isChecked={checkedAccess.includes("MEMBERS") ? true : false}
               onChange={(e) => setAccess(e.target.checked, "MEMBERS")}

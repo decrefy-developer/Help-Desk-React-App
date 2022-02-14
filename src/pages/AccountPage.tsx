@@ -27,6 +27,7 @@ import TableComponent from "./AccountComponents/TableComponent";
 import ModalChangeAccess from "./AccountComponents/ModalChangeAccess";
 import ModalViewTeamsandChannels from "./AccountComponents/ModalViewChannels";
 import DrawerNewMemberComponent from "./AccountComponents/DrawerNewMember";
+import SkeletonPlaceHolder from "../components/SkeletonPlaceHolder";
 
 const AccountPage = () => {
   const [isActive, setIsActive] = useState<boolean>(false); // holds the user account status
@@ -173,7 +174,7 @@ const AccountPage = () => {
           placeHolder="Search an email: admin@gmail.com"
         />
 
-        <PageContentScroll>
+        <PageContentScroll minH="550px">
           <Flex
             py={8}
             px={screenPadding}
@@ -220,12 +221,8 @@ const AccountPage = () => {
           </Flex>
 
           {isLoading ? (
-            <Stack w="full" py={10} px="20">
-              <Skeleton height="20px" />
-              <Skeleton height="20px" />
-              <Skeleton height="20px" />
-              <Skeleton height="20px" />
-              <Skeleton height="20px" />
+            <Stack w="full" py={10} px={screenPadding}>
+              <SkeletonPlaceHolder count={7} />
             </Stack>
           ) : (
             <TableComponent

@@ -24,6 +24,7 @@ import useTableControl from "../hooks/useTableControl";
 import DrawerComponent from "./ChannelComponents/DrawerComponent";
 import TableComponent from "./ChannelComponents/TableComponent";
 import ModalComponentViewMembers from "./ChannelComponents/ModalComponentViewMembers";
+import SkeletonPlaceHolder from "../components/SkeletonPlaceHolder";
 
 const ChannelPage = () => {
   const [screenPadding, setScreenPadding] = useState<number>(4);
@@ -128,7 +129,7 @@ const ChannelPage = () => {
           placeHolder="Seach name"
         />
 
-        <PageContentScroll>
+        <PageContentScroll minH="550px">
           <Flex
             py={8}
             px={screenPadding}
@@ -174,12 +175,8 @@ const ChannelPage = () => {
           </Flex>
 
           {isLoading ? (
-            <Stack w="full" py={10} px="20">
-              <Skeleton height="20px" />
-              <Skeleton height="20px" />
-              <Skeleton height="20px" />
-              <Skeleton height="20px" />
-              <Skeleton height="20px" />
+            <Stack w="full" py={10} px={screenPadding}>
+              <SkeletonPlaceHolder count={7} />
             </Stack>
           ) : (
             <TableComponent

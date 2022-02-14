@@ -46,7 +46,7 @@ export const channelApi = createApi({
       query: (_id) => `channel/${_id}`,
       // providesTags: (result, error, _id) => [{ type: "Channel", _id }],
     }),
-    addMembertoChannel: builder.mutation<IChannel, IFormInputChannelMember>({
+    ManageMembertoChannel: builder.mutation<IChannel, IFormInputChannelMember>({
       query: ({ _id, ...patch }) => ({
         url: `/channel/${_id}`,
         method: "PUT",
@@ -62,5 +62,5 @@ export const {
   useAddChannelMutation,
   useChangeStatusMutation,
   useGetChannelQuery,
-  useAddMembertoChannelMutation,
+  useManageMembertoChannelMutation,
 } = channelApi;

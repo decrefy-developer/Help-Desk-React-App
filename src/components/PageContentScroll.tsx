@@ -1,14 +1,18 @@
 import { Box } from "@chakra-ui/react";
 import React from "react";
 
-const PageContentScroll: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+interface IProps {
+  children: React.ReactNode;
+  [x: string]: any;
+}
+
+const PageContentScroll: React.FC<IProps> = (props) => {
+  const { children } = props;
   return (
     <Box
+      {...props}
       flexDirection="column"
       overflowY="auto"
-      mh="600px"
       sx={{
         "&::-webkit-scrollbar": {
           width: "5px",

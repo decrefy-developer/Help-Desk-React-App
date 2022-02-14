@@ -5,9 +5,15 @@ import React, { ReactElement } from "react";
 interface IconAppProps {
   title: string;
   icon: ReactElement;
-  isActive: boolean;
+  isActive?: boolean;
+  borderRadius?: string;
 }
-const SideBarItem: React.FC<IconAppProps> = ({ title, icon, isActive }) => {
+const SideBarItem: React.FC<IconAppProps> = ({
+  title,
+  icon,
+  isActive,
+  borderRadius,
+}) => {
   const iconBg = useColorModeValue("gray.400", "gray.700");
 
   return (
@@ -20,7 +26,7 @@ const SideBarItem: React.FC<IconAppProps> = ({ title, icon, isActive }) => {
         h="45px"
         w="45px"
         transition="all 0.2s cubic-bezier(0.8,.52,.52,1)"
-        borderRadius="1px"
+        borderRadius={borderRadius ? borderRadius : "1px"}
         bg={iconBg}
         _hover={{
           transform: "scale(1.2)",

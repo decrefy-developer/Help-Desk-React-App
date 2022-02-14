@@ -1,5 +1,10 @@
 import { useRoutes, useNavigate } from "react-router-dom";
-import { SlideFade, useColorModeValue, useMediaQuery } from "@chakra-ui/react";
+import {
+  SlideFade,
+  useColorModeValue,
+  useDisclosure,
+  useMediaQuery,
+} from "@chakra-ui/react";
 
 import StyleContext from "./context/StyleContext";
 import Router from "./routes";
@@ -13,6 +18,7 @@ import { DecodeToken } from "./services/decode-token";
 import { setUser } from "./features/user-slice";
 import Cookies from "js-cookie";
 import FloatingButton from "./components/FloatingButton";
+import DrawerTicket from "./pages/HomeComponents/DrawerTicket";
 
 function App() {
   const color = useColorModeValue("gray.300", "gray.700");
@@ -21,6 +27,11 @@ function App() {
   const navigate = useNavigate();
   const [isMobile] = useMediaQuery("(max-width: 767px)");
   const [showSideBar, setShowSideBar] = useState<boolean>(false); // used if the sidebar is show or not
+  const {
+    isOpen: isDrawerOpen,
+    onOpen: openDrawer,
+    onClose: closeDrawer,
+  } = useDisclosure();
 
   const showNavitationHandler = useCallback(() => {
     setShowSideBar(!showSideBar);
@@ -45,7 +56,12 @@ function App() {
 
   return (
     <StyleContext.Provider
-      value={{ borderLine: color, bgColor: color, isSideBarShow: showSideBar }}
+      value={{
+        borderLine: color,
+        bgColor: color,
+        isSideBarShow: showSideBar,
+        openTicketDrawer: openDrawer,
+      }}
     >
       {routing}
       <Toast />
@@ -54,6 +70,10 @@ function App() {
         <SlideFade in={isMobile} offsetY="20px">
           <FloatingButton showNavitation={showNavitationHandler} />
         </SlideFade>
+      )}
+
+      {isDrawerOpen && (
+        <DrawerTicket isOpen={isDrawerOpen} onClose={closeDrawer} />
       )}
     </StyleContext.Provider>
   );

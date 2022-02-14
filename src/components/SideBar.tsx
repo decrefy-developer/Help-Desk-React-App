@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Flex, Spacer, VStack } from "@chakra-ui/layout";
-import { useColorMode, IconButton, Icon, Avatar } from "@chakra-ui/react";
+import { useColorMode, IconButton, Icon, Avatar, Box } from "@chakra-ui/react";
 import {
   FaHome,
   FaSun,
@@ -11,6 +11,7 @@ import {
   FaUserFriends,
   FaUserCog,
   FaBars,
+  FaPlus,
 } from "react-icons/fa";
 import { NavLink, useLocation } from "react-router-dom";
 import StyleContext from "../context/StyleContext";
@@ -23,7 +24,8 @@ const SideBar: React.FC = () => {
   const { email, priviledge } = useSelector(
     (state: RootState) => state.userSlice
   );
-  const { borderLine, isSideBarShow } = useContext(StyleContext);
+  const { borderLine, isSideBarShow, openTicketDrawer } =
+    useContext(StyleContext);
   const { toggleColorMode, colorMode } = useColorMode();
 
   let themeIcon =
@@ -39,6 +41,14 @@ const SideBar: React.FC = () => {
       p={4}
     >
       <VStack spacing={5}>
+        <Box onClick={openTicketDrawer}>
+          <SideBarItem
+            title=""
+            icon={<FaPlus size="20px" color="white" />}
+            borderRadius="50%"
+          />
+        </Box>
+
         <NavLink to="/home">
           <SideBarItem
             title="Home"

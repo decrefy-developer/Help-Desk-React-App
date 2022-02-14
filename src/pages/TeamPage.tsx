@@ -24,6 +24,7 @@ import useTableControl from "../hooks/useTableControl";
 import TableComponent from "./TeamComponent/TableComponent";
 import ModalComponentViewChannels from "./TeamComponent/ModalViewChannels";
 import DrawerComponent from "./TeamComponent/DrawerComponent";
+import SkeletonPlaceHolder from "../components/SkeletonPlaceHolder";
 
 const TeamPage = () => {
   const [isArchieve, setIsArchieve] = useState<boolean>(false);
@@ -128,7 +129,7 @@ const TeamPage = () => {
           placeHolder="Search a name: Juan"
         />
 
-        <PageContentScroll>
+        <PageContentScroll minH="550px">
           <Flex
             py={8}
             px={screenPadding}
@@ -175,12 +176,8 @@ const TeamPage = () => {
           </Flex>
 
           {isLoading ? (
-            <Stack w="full" py={10} px="20">
-              <Skeleton height="20px" />
-              <Skeleton height="20px" />
-              <Skeleton height="20px" />
-              <Skeleton height="20px" />
-              <Skeleton height="20px" />
+            <Stack w="full" py={10} px={screenPadding}>
+              <SkeletonPlaceHolder count={7} />
             </Stack>
           ) : (
             <TableComponent
