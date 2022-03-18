@@ -21,6 +21,18 @@ const theme = extendTheme(
       warning: "#eed202",
       danger: "#F56565",
       success: "#48BB78",
+      brand: {
+        50: "#f5fee5",
+        100: "#e1fbb2",
+        200: "#cdf781",
+        300: "#b8ee56",
+        400: "#a2e032",
+        500: "#8ac919",
+        600: "#71ab09",
+        700: "#578602",
+        800: "#3c5e00",
+        900: "#203300",
+      },
     },
     fonts: {
       heading: `Montserrat, ${base.fonts?.heading}`,

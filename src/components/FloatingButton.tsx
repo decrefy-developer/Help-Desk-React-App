@@ -1,14 +1,14 @@
 import React from "react";
 import CSS from "csstype";
 import { Icon } from "@chakra-ui/icons";
-import { FaAlignJustify } from "react-icons/fa";
+import { FaAlignJustify, FaPlus } from "react-icons/fa";
 
-const styles: CSS.Properties = {
+const burgerStyle: CSS.Properties = {
   position: "fixed",
   width: "60px",
   height: "60px",
-  bottom: "15px",
-  left: "15px",
+  bottom: "90px",
+  right: "15px",
   backgroundColor: "#845ec2",
   color: "#fff",
   borderRadius: "50px",
@@ -17,12 +17,40 @@ const styles: CSS.Properties = {
   cursor: "pointer",
 };
 
-const FloatingButton = ({ showNavitation }: { showNavitation: () => void }) => {
+const AddButtonStyle: CSS.Properties = {
+  position: "fixed",
+  width: "60px",
+  height: "60px",
+  bottom: "15px",
+  right: "15px",
+  backgroundColor: "#845ec2",
+  color: "#fff",
+  borderRadius: "50px",
+  textAlign: "center",
+  boxShadow: "2px 2px 3px rgb(15, 15, 15)",
+  cursor: "pointer",
+};
+
+export const BurgerFloatingButton = ({
+  showNavitation,
+}: {
+  showNavitation: () => void;
+}) => {
   return (
-    <div style={styles} onClick={showNavitation}>
+    <div style={burgerStyle} onClick={showNavitation}>
       <Icon as={FaAlignJustify} w={5} h={5} mt="20px" />
     </div>
   );
 };
 
-export default FloatingButton;
+export const AddFloatingButton = ({
+  openDrawer,
+}: {
+  openDrawer: () => void;
+}) => {
+  return (
+    <div style={AddButtonStyle} onClick={openDrawer}>
+      <Icon as={FaPlus} w={5} h={5} mt="20px" />
+    </div>
+  );
+};

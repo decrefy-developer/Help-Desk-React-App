@@ -13,5 +13,7 @@ export const RadioStyle = {
   // Styles for the visual style variations
   variants: {},
   // The default `size` or `variant` values
-  defaultProps: {},
+  defaultProps: {
+    colorScheme: "purple",
+  },
 };

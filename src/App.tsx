@@ -14,16 +14,19 @@ import { useDispatch } from "react-redux";
 import { appDispatch } from "./app/store";
 import "react-toastify/dist/ReactToastify.css";
 import { useCallback, useEffect, useState } from "react";
-import { DecodeToken } from "./services/decode-token";
-import { setUser } from "./features/user-slice";
+import { DecodeToken } from "./utils/decode-token";
 import Cookies from "js-cookie";
-import FloatingButton from "./components/FloatingButton";
-import DrawerTicket from "./pages/HomeComponents/DrawerTicket";
+import DrawerTicket from "./components/DrawerTicket/DrawerTicket";
+import {
+  AddFloatingButton,
+  BurgerFloatingButton,
+} from "./components/FloatingButton";
+import useNotification from "./hooks/useNotification";
+import { IUser } from "./models/interface";
 
 function App() {
   const color = useColorModeValue("gray.300", "gray.700");
   const routing = useRoutes(Router({ accessToken: Cookies.get("token") }));
-  const dispatch = useDispatch<appDispatch>();
   const navigate = useNavigate();
   const [isMobile] = useMediaQuery("(max-width: 767px)");
   const [showSideBar, setShowSideBar] = useState<boolean>(false); // used if the sidebar is show or not
@@ -32,19 +35,16 @@ function App() {
     onOpen: openDrawer,
     onClose: closeDrawer,
   } = useDisclosure();
+  const { requestPermission } = useNotification();
 
   const showNavitationHandler = useCallback(() => {
     setShowSideBar(!showSideBar);
   }, [showSideBar]);
 
   useEffect(() => {
-    const decoded: any = DecodeToken();
-    if (decoded) {
-      dispatch(setUser(decoded));
-    } else {
-      navigate("/login");
-    }
-  }, [dispatch, navigate]);
+    const decoded: IUser | null = DecodeToken();
+    if (!decoded) navigate("/login");
+  }, [navigate]);
 
   useEffect(() => {
     const checkTheLayout = () => {
@@ -53,6 +53,10 @@ function App() {
 
     checkTheLayout();
   }, [isMobile]);
+
+  useEffect(() => {
+    requestPermission();
+  }, [requestPermission]);
 
   return (
     <StyleContext.Provider
@@ -68,12 +72,16 @@ function App() {
 
       {isMobile && (
         <SlideFade in={isMobile} offsetY="20px">
-          <FloatingButton showNavitation={showNavitationHandler} />
+          <BurgerFloatingButton showNavitation={showNavitationHandler} />
         </SlideFade>
       )}
 
       {isDrawerOpen && (
-        <DrawerTicket isOpen={isDrawerOpen} onClose={closeDrawer} />
+        <DrawerTicket
+          formData={null}
+          isOpen={isDrawerOpen}
+          onClose={closeDrawer}
+        />
       )}
     </StyleContext.Provider>
   );

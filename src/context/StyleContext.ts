@@ -11,7 +11,7 @@ const StyleContext = React.createContext<Icontext>({
   borderLine: "gray.300",
   bgColor: "gray.300",
   isSideBarShow: false,
-  openTicketDrawer: () => {},
+  openTicketDrawer: () => { },
 });
 
 export default StyleContext;

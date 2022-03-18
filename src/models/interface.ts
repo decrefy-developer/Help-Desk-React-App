@@ -3,9 +3,85 @@ export interface IAuth {
   refreshToken: string;
 }
 
+export interface IUser {
+  _id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  isActive: boolean;
+  unitId: string;
+  departmentId: string;
+  priviledge: string[];
+  session: string;
+  iat: number;
+  exp: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ICred {
   email: string;
   password: string;
+}
+
+export enum STATUS {
+  OPEN = "OPEN",
+  CLOSED = "CLOSED",
+  CANCELLED = "CANCELLED",
+}
+
+export enum STATE {
+  PENDING = "PENDING",
+  DONE = "DONE",
+}
+
+export enum ACCESS {
+  CREATE_TICKET = "CREATE TICKET",
+  MEMBERS = "MEMBERS",
+  TEAMS = "TEAMS",
+  CHANNELS = "CHANNELS",
+  CATEGORY = "CATEGORY",
+  CUSTOMER = "CUSTOMERS",
+  REQUESTER = "REQUESTER"
+}
+
+export interface IRequest {
+  _id: string;
+  concern: string;
+  isSeen: boolean;
+  user: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    department: {
+      _id: string;
+      name: string;
+    }
+    unit?: {
+      _id: string;
+      name: string
+    }
+  }
+  ticket?: Pick<ITicket, "_id" | "ticketNumber" | "state">
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface IDepartment {
+  _id: string;
+  name: string;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface IUnit {
+  _id: string
+  department: Pick<IDepartment, "_id" | "name">;
+  isActive: boolean
+  name: string
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ITeam {
@@ -68,6 +144,7 @@ export interface ITeamChannel {
 
 export interface ITicket {
   _id: string;
+  requestId: string;
   ticketNumber: string;
   doneDate: Date;
   coworkers: [
@@ -89,8 +166,8 @@ export interface ITicket {
   targetDate: Date;
   startDate: Date;
   description: string;
-  state: "PENDING" | "DONE";
-  status: "OPEN" | "CLOSED" | "CANCELLED";
+  state: STATE;
+  status: STATUS;
   createdBy: {
     _id: string;
     email: string;
@@ -102,10 +179,6 @@ export interface ITicket {
     name: string;
   };
   channel: {
-    _id: string;
-    name: string;
-  };
-  customer: {
     _id: string;
     name: string;
   };
@@ -136,11 +209,27 @@ export interface PageArgs {
   page: number;
   limit: number;
   search: string;
-  status: boolean;
+  status?: boolean;
+  departmentId?: string;
+  userId?: string;
+}
+
+export interface TicketArgs extends PageArgs {
+  channelId: string;
+  state: STATE;
+  statusTicket: STATUS;
 }
 
 // for forms
+export interface IFormInputDepartment {
+  name: string;
+}
+
 export interface IFormInputMember {
+  firstName: string;
+  lastName: string;
+  departmentId: string;
+  unitId: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -153,18 +242,23 @@ export interface IFormInputsLogin {
 }
 
 export interface IFormInputTicket {
+  requestId: string;
   teamId: string;
   channelId: string;
-  customerId: string;
   categoryId: string;
   userId: string;
   description: string;
-  state: "PENDING" | "DONE";
-  status: "OPEN" | "CLOSED" | "CANCELLED";
+  state: STATE;
+  status: STATUS;
   coworkers: Array<string>;
   startDate: Date;
   targetDate: Date;
   createdBy: string;
+}
+
+export interface IFormInputRequest {
+  userId: string;
+  concern: string;
 }
 
 // used in adding member to a channel
@@ -176,4 +270,24 @@ export interface IFormInputChannelMember {
     email: string;
     isAdmin: string;
   };
+}
+
+export interface IFormInputManageUnit {
+  _id?: string;
+  mode: string;
+  data: {
+    _id?: string;
+    name: string;
+  }
+}
+
+//  use to hold the data from request to ticket form
+export interface IFormTicketData {
+  requestId: string;
+  concern: string;
+  user: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+  }
 }
