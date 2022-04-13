@@ -9,7 +9,6 @@ const Home: React.FC = () => {
   const decoded: IUser | null = DecodeToken();
 
   const [isMobile] = useMediaQuery("(max-width: 600px)");
-
   return (
     <React.Fragment>
       {decoded?._id !== "" && (

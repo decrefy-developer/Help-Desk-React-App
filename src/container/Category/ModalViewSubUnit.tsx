@@ -25,10 +25,11 @@ import React, { useState } from "react";
 import { FaTrashAlt, FaUndo } from "react-icons/fa";
 import { toast } from "react-toastify";
 import {
-  useAddUnitMutation,
-  useChangeUnitStatusMutation,
-  useListUnitQuery,
-} from "../../app/features/department-query";
+  useAddCategoryMutation,
+  useAddSubCategoryMutation,
+  useChangeSubUnitStatusMutation,
+  useListSubCategoryQuery,
+} from "../../app/features/category-query";
 import ModalComponent from "../../components/Modal";
 import useTableControl from "../../hooks/useTableControl";
 
@@ -38,37 +39,38 @@ interface Props {
   onClosed: () => void;
 }
 
-const ModalViewUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
-  const [unit, setUnit] = useState("");
+const ModalViewUnitSubUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
+  const [subUnit, setSubUnit] = useState("");
   const [error, setError] = useState("");
   const [isArchieve, setIsArchieve] = useState<boolean>(false);
   const { page, pageLimit, search, setSearch, onChangePage, onChangeLimit } =
     useTableControl();
 
-  const { data, isError, isLoading } = useListUnitQuery({
+  const { data, isError, isLoading } = useListSubCategoryQuery({
     page,
     limit: pageLimit,
     search,
     status: !isArchieve,
-    departmentId: rowId,
+    categoryId: rowId,
   });
-  const [addUnit] = useAddUnitMutation();
-  const [changeUnitStatus] = useChangeUnitStatusMutation();
+
+  const [addSubCategory] = useAddSubCategoryMutation();
+  const [changeSubUnitStatus] = useChangeSubUnitStatusMutation();
 
   const onSubmitHandler = async () => {
     try {
-      if (!unit) {
-        setError("Unit name is required");
+      if (!subUnit) {
+        setError("Name is required");
         return;
       }
       const input = {
-        departmentId: rowId,
-        name: unit,
+        categoryId: rowId,
+        name: subUnit,
       };
-      const result = await addUnit(input).unwrap();
+      const result = await addSubCategory(input).unwrap();
       if (result) {
-        toast.success(`${unit} has been succesfully saved`);
-        setUnit("");
+        toast.success(`${subUnit} has been succesfully saved`);
+        setSubUnit("");
       }
     } catch (err: any) {
       toast.error(err.data.message);
@@ -77,18 +79,15 @@ const ModalViewUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
 
   const changeStatusHandler = async (_id: string, isActive: boolean) => {
     try {
-      const result = await changeUnitStatus({
+      const result = await changeSubUnitStatus({
         _id,
         isActive: !isActive,
       }).unwrap();
-
       if (result) {
         let message = "successfully restored";
-
         if (!result.isActive) {
           message = "successfully moved to archieve";
         }
-
         toast.success(`${result.name} ${message}`);
       }
     } catch (err: any) {
@@ -98,7 +97,7 @@ const ModalViewUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
 
   return (
     <ModalComponent
-      title={"Unit list"}
+      title="Sub-unit List"
       isOpen={isOpen}
       onClose={onClosed}
       size="lg"
@@ -107,9 +106,9 @@ const ModalViewUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
       <Stack direction="row">
         <FormControl isInvalid={error ? true : false}>
           <Input
-            value={unit}
-            placeholder="Unit name"
-            onChange={(e) => setUnit(e.target.value.toUpperCase())}
+            placeholder="Name"
+            value={subUnit}
+            onChange={(e) => setSubUnit(e.target.value)}
           />
           <FormErrorMessage>{error}</FormErrorMessage>
         </FormControl>
@@ -166,7 +165,7 @@ const ModalViewUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
         <Table borderColor="white" size="sm">
           <Thead>
             <Tr>
-              <Th>Unit Name</Th>
+              <Th>Sub-unit Name</Th>
               <Th>Status</Th>
             </Tr>
           </Thead>
@@ -221,4 +220,4 @@ const ModalViewUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
   );
 };
 
-export default ModalViewUnit;
+export default ModalViewUnitSubUnit;

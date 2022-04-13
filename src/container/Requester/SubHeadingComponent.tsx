@@ -1,18 +1,23 @@
 import {
   Button,
+  Collapse,
   Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
   HStack,
   Icon,
+  Input,
+  InputGroup,
+  InputLeftElement,
   Stack,
   Textarea,
+  useDisclosure,
   useMediaQuery,
   VStack,
 } from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
-import { FaCross, FaPlus } from "react-icons/fa";
+import { FaCross, FaPlus, FaSearch } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useAddRequestMutation } from "../../app/features/request-query";
@@ -22,10 +27,14 @@ import { DecodeToken } from "../../utils/decode-token";
 
 interface Iprops {
   screenPadding: number;
+  setTextSearch: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const SubHeadingComponent: React.FC<Iprops> = ({ screenPadding }) => {
-  const [viewForm, setViewForm] = useState<boolean>(false);
+const SubHeadingComponent: React.FC<Iprops> = ({
+  screenPadding,
+  setTextSearch,
+}) => {
+  const { isOpen, onToggle } = useDisclosure();
   const [concern, setConcern] = useState<string>();
   const [error, setError] = useState<string>("");
   const { borderLine } = useContext(StyleContext);
@@ -46,7 +55,7 @@ const SubHeadingComponent: React.FC<Iprops> = ({ screenPadding }) => {
       if (result) {
         toast.success("Request submitted successfully");
         setConcern("");
-        setViewForm(false);
+        onToggle();
       }
     } catch (err: any) {
       toast.error(err.data.message);
@@ -60,19 +69,17 @@ const SubHeadingComponent: React.FC<Iprops> = ({ screenPadding }) => {
   return (
     <Flex p={screenPadding}>
       <VStack w="full" alignItems="flex-start">
-        {!viewForm && (
-          <Button
-            size="sm"
-            bgColor="primary"
-            leftIcon={<FaPlus />}
-            onClick={() => setViewForm(true)}
-          >
-            Add Request
-          </Button>
-        )}
+        <Button
+          size="sm"
+          bgColor="primary"
+          leftIcon={<FaPlus />}
+          onClick={onToggle}
+        >
+          Add Request
+        </Button>
 
-        {viewForm && (
-          <>
+        <Collapse in={isOpen} animateOpacity style={{ width: "100%" }}>
+          <VStack alignItems="flex-start">
             <FormControl isInvalid={error ? true : false}>
               <FormLabel htmlFor="concern" fontSize="sm" color="gray.400">
                 Concern Details
@@ -84,6 +91,7 @@ const SubHeadingComponent: React.FC<Iprops> = ({ screenPadding }) => {
                 size="sm"
                 height="120px"
                 onChange={onChangeHandler}
+                value={concern}
               />
               <FormErrorMessage>{error}</FormErrorMessage>
             </FormControl>
@@ -97,16 +105,25 @@ const SubHeadingComponent: React.FC<Iprops> = ({ screenPadding }) => {
               >
                 Sumit
               </Button>
-              <Button
-                type="submit"
-                size="sm"
-                onClick={() => setViewForm(false)}
-              >
+              <Button type="submit" size="sm" onClick={onToggle}>
                 Cancel
               </Button>
             </HStack>
-          </>
-        )}
+          </VStack>
+        </Collapse>
+
+        <InputGroup>
+          <InputLeftElement
+            pointerEvents="none"
+            children={<FaSearch color="gray.300" />}
+          />
+          <Input
+            type="text"
+            placeholder="Search : ticket# or concern"
+            variant="filled"
+            onChange={(e) => setTextSearch(e.target.value)}
+          />
+        </InputGroup>
       </VStack>
     </Flex>
   );

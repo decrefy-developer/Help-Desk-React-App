@@ -34,15 +34,22 @@ export const schemaDepartment = object().shape({
   name: string().required("Department name is required").min(3),
 });
 
+export const schemaCategory = object().shape({
+  name: string().required("Category name is required").min(3),
+});
+
 // export const schemaUnit = object().shape({
 //   name: string().required("Unit name is required"),
 // })
 
 export const schemaTicket = object().shape({
+  departmentId: string().required("Department is required"),
+  requesterName: string().required("Requester is required"),
   description: string().required("Description is required"),
   categoryId: string().required("Major Category is required"),
   teamId: string().required("Team is required"),
   channelId: string().required("Channel is required"),
+  SubCategoryId: array().of(string()),
   userId: string().required("user is required"),
   coworkers: array().of(string()),
   startDate: date()

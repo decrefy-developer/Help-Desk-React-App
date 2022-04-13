@@ -25,6 +25,7 @@ import {
   ITeam,
   IUser,
   ListResponse,
+  STATE,
 } from "../../models/interface";
 import { DecodeToken } from "../../utils/decode-token";
 import StringTruncate from "../../utils/StringTruncate";
@@ -34,7 +35,7 @@ interface Props {
   padding: number;
   rowId: string;
   openDrawer: (data: IRequest) => void;
-  openModal: (_id: string) => void
+  openModal: (_id: string) => void;
 }
 
 const TableComponent: React.FC<Props> = ({
@@ -42,14 +43,17 @@ const TableComponent: React.FC<Props> = ({
   padding,
   rowId,
   openDrawer,
-  openModal
+  openModal,
 }) => {
   const rowBgColor = useColorModeValue("gray.400", "gray.700");
   const decoded: IUser | null = DecodeToken();
+  const NUMBER_OF_COLUMNS = decoded?.priviledge.includes(ACCESS.CREATE_TICKET)
+    ? 7
+    : 6;
 
   const styleAsTd = {
     fontSize: "sm",
-    fontWeight: "normal",
+    fontWeight: "light",
     display: "flex",
     alignItems: "center",
   };
@@ -64,7 +68,7 @@ const TableComponent: React.FC<Props> = ({
         <SimpleGrid
           display={{ base: "none", md: "grid" }}
           spacingY={3}
-          columns={{ base: 1, md: 5 }}
+          columns={{ base: 1, md: NUMBER_OF_COLUMNS }}
           w="full"
           py={2}
           px={10}
@@ -77,14 +81,22 @@ const TableComponent: React.FC<Props> = ({
           <Text color="accent" fontWeight="normal">
             Date requested
           </Text>
+          {decoded?.priviledge.includes(ACCESS.CREATE_TICKET) && (
+            <Text color="accent" fontWeight="normal">
+              Department
+            </Text>
+          )}
           <Text color="accent" fontWeight="normal">
             Concern
+          </Text>
+          <Text color="accent" fontWeight="normal">
+            Status
           </Text>
           <Text color="accent" fontWeight="normal">
             Ticket #
           </Text>
           <Text color="accent" fontWeight="normal">
-            Status
+            Assigned support
           </Text>
           <Text></Text>
         </SimpleGrid>
@@ -93,7 +105,7 @@ const TableComponent: React.FC<Props> = ({
             <Flex direction={{ base: "row", md: "column" }} key={item._id}>
               <SimpleGrid
                 spacingY={3}
-                columns={{ base: 1, md: 5 }}
+                columns={{ base: 1, md: NUMBER_OF_COLUMNS }}
                 w="full"
                 py={2}
                 px={10}
@@ -112,11 +124,26 @@ const TableComponent: React.FC<Props> = ({
                     color="accent"
                     display={{ base: "inline", md: "none" }}
                     mr={2}
+                    fontSize="xs"
                   >
                     Date requested:
                   </Text>
-                  {moment(item.updatedAt).format("MMM DD, YYYY")}
+                  {moment(item.updatedAt).format("MMM DD, YYYY, h:mm:ss a")}
                 </Box>
+
+                {decoded?.priviledge.includes(ACCESS.CREATE_TICKET) && (
+                  <Box {...styleAsTd}>
+                    <Text
+                      color="accent"
+                      display={{ base: "inline", md: "none" }}
+                      mr={2}
+                    >
+                      Department
+                    </Text>
+
+                    {item.user.department.name.toLowerCase()}
+                  </Box>
+                )}
 
                 <Box {...styleAsTd}>
                   <Text
@@ -126,8 +153,22 @@ const TableComponent: React.FC<Props> = ({
                   >
                     Concern:
                   </Text>
+                  <Tooltip label={item.concern}>
+                    {StringTruncate(item.concern, 30)}
+                  </Tooltip>
+                </Box>
 
-                  {StringTruncate(item.concern, 30)}
+                <Box {...styleAsTd}>
+                  <Text
+                    color="accent"
+                    display={{ base: "inline", md: "none" }}
+                    mr={2}
+                  >
+                    Status
+                  </Text>
+                  <Badge colorScheme={item.status ? "green" : "yellow"}>
+                    {item.ticket ? (item.status ? "DONE" : "PENDING") : ""}
+                  </Badge>
                 </Box>
 
                 <Box {...styleAsTd}>
@@ -148,47 +189,46 @@ const TableComponent: React.FC<Props> = ({
                     display={{ base: "inline", md: "none" }}
                     mr={2}
                   >
-                    Status
+                    Assigned support
                   </Text>
-                  <Badge colorScheme={item.ticket?.state === "PENDING" ? "yellow" : "green"}>{item.ticket?.state}</Badge>
+                  {item.ticket?.assignedSupport?.firstName}{" "}
+                  {item.ticket?.assignedSupport?.lastName}
                 </Box>
 
-                <Box {...styleAsTd} justifyContent="space-between">
+                <Box {...styleAsTd}>
                   <Menu isLazy>
                     <MenuButton color="primary">
                       <Icon as={FaEllipsisH} />
                     </MenuButton>
                     <MenuList>
-                      <MenuItem onClick={() => openModal(item._id)}>View details</MenuItem>
-                      {decoded && !item.ticket?.ticketNumber &&
+                      <MenuItem onClick={() => openModal(item._id)}>
+                        View details
+                      </MenuItem>
+                      {decoded &&
+                        !item.ticket?.ticketNumber &&
                         decoded.priviledge.includes(ACCESS.CREATE_TICKET) && (
-                          <MenuItem onClick={() => openDrawer({
-                            _id: item._id,
-                            concern: item.concern,
-                            isSeen: item.isSeen,
-                            user: item.user
-                          })}>Create ticket</MenuItem>
+                          <MenuItem
+                            onClick={() =>
+                              openDrawer({
+                                _id: item._id,
+                                concern: item.concern,
+                                status: item.status,
+                                user: item.user,
+                              })
+                            }
+                          >
+                            Create ticket
+                          </MenuItem>
                         )}
                     </MenuList>
                   </Menu>
-
-                  {!item.isSeen && (
-                    <Tooltip label="not yet seen by the admin">
-                      <Icon viewBox='0 0 200 200' color='primary'>
-                        <path
-                          fill='currentColor'
-                          d='M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0'
-                        />
-                      </Icon>
-                    </Tooltip>
-                  )}
                 </Box>
               </SimpleGrid>
             </Flex>
           );
         })}
       </Stack>
-    </Flex >
+    </Flex>
   );
 };
 

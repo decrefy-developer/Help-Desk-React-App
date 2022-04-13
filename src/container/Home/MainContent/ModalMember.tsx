@@ -37,11 +37,14 @@ import ModalComponent from "../../../components/Modal";
 import { Select } from "chakra-react-select";
 import { FaSearch, FaTrashAlt } from "react-icons/fa";
 import { useParams } from "react-router-dom";
+import { DecodeToken } from "../../../utils/decode-token";
+import { ACCESS, IUser } from "../../../models/interface";
 
 const ModalMember: React.FC<{
   isOpen: boolean;
   onClose: () => void;
 }> = ({ isOpen, onClose }) => {
+  const decoded: IUser | null = DecodeToken();
   const { channelId } = useParams();
   const channelID = channelId ? channelId : "";
   const {
@@ -126,59 +129,63 @@ const ModalMember: React.FC<{
       size="md"
     >
       <Box mb={5}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack spacing={3}>
-            <FormControl isInvalid={errors?.member ? true : false}>
-              <Controller
-                control={control}
-                name="member"
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    isLoading={isMembersFetching}
-                    selectedOptionStyle="color"
-                    placeholder="Select a member"
-                    options={listMembers?.docs.map(function (member) {
-                      return { value: member._id, label: member.email };
-                    })}
-                    selectedOptionColor="purple"
-                    isClearable={true}
-                  />
-                )}
-              />
-              <FormErrorMessage>
-                {errors?.member && "Member is required"}
-              </FormErrorMessage>
-            </FormControl>
-
-            <HStack justifyContent="space-between">
-              <FormControl isInvalid={errors?.isAdmin ? true : false}>
+        {decoded?.priviledge.includes(ACCESS.CREATE_TICKET) && (
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Stack spacing={3}>
+              <FormControl isInvalid={errors?.member ? true : false}>
                 <Controller
                   control={control}
-                  name="isAdmin"
+                  name="member"
                   render={({ field }) => (
-                    <RadioGroup onChange={(e) => field.onChange(e)}>
-                      <Stack spacing={5} direction="row" pl={2}>
-                        <Radio colorScheme="yellow" value="0">
-                          Standard
-                        </Radio>
-                        <Radio colorScheme="green" value="1">
-                          Admin
-                        </Radio>
-                      </Stack>
-                    </RadioGroup>
+                    <Select
+                      {...field}
+                      isLoading={isMembersFetching}
+                      selectedOptionStyle="color"
+                      placeholder="Select a member"
+                      options={listMembers?.docs.map(function (member) {
+                        return { value: member._id, label: member.email };
+                      })}
+                      selectedOptionColor="purple"
+                      isClearable={true}
+                    />
                   )}
                 />
-                <FormErrorMessage>{errors?.isAdmin?.message}</FormErrorMessage>
+                <FormErrorMessage>
+                  {errors?.member && "Member is required"}
+                </FormErrorMessage>
               </FormControl>
 
-              <Button size="sm" type="submit" disabled={!isValid}>
-                Add
-              </Button>
-            </HStack>
-            <Divider />
-          </Stack>
-        </form>
+              <HStack justifyContent="space-between">
+                <FormControl isInvalid={errors?.isAdmin ? true : false}>
+                  <Controller
+                    control={control}
+                    name="isAdmin"
+                    render={({ field }) => (
+                      <RadioGroup onChange={(e) => field.onChange(e)}>
+                        <Stack spacing={5} direction="row" pl={2}>
+                          <Radio colorScheme="yellow" value="0">
+                            Standard
+                          </Radio>
+                          <Radio colorScheme="green" value="1">
+                            Admin
+                          </Radio>
+                        </Stack>
+                      </RadioGroup>
+                    )}
+                  />
+                  <FormErrorMessage>
+                    {errors?.isAdmin?.message}
+                  </FormErrorMessage>
+                </FormControl>
+
+                <Button size="sm" type="submit" disabled={!isValid}>
+                  Add
+                </Button>
+              </HStack>
+              <Divider />
+            </Stack>
+          </form>
+        )}
 
         <InputGroup my={5}>
           <InputLeftElement

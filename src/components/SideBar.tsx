@@ -19,6 +19,7 @@ import {
   FaBars,
   FaFileAlt,
   FaRegWindowRestore,
+  FaTicketAlt,
 } from "react-icons/fa";
 import { NavLink, useLocation } from "react-router-dom";
 import StyleContext from "../context/StyleContext";
@@ -26,7 +27,7 @@ import SideBarItem from "./SideBarItem";
 import NotificationDrawer from "./NotificationDrawer";
 import { URLS } from "../URLS";
 import { DecodeToken } from "../utils/decode-token";
-import { IUser } from "../models/interface";
+import { ACCESS, IUser } from "../models/interface";
 
 const SideBar: React.FC = () => {
   const { pathname } = useLocation();
@@ -58,15 +59,17 @@ const SideBar: React.FC = () => {
         }}
       >
         <VStack spacing={5}>
-          <NavLink to={URLS.HOME}>
+          {(decoded?.priviledge.includes(ACCESS.SUPPORT) || decoded?.priviledge.includes(ACCESS.CREATE_TICKET)) && (
+            <NavLink to={URLS.HOME}>
             <SideBarItem
               title="Home"
               icon={<FaHome size="20px" color="white" />}
               isActive={pathname === URLS.HOME ? true : false}
             />
           </NavLink>
+          )}
 
-          {decoded?.priviledge.includes("REQUESTER") && (
+          {decoded?.priviledge.includes(ACCESS.REQUESTER) && (
             <NavLink to={URLS.REQUESTER}>
               <SideBarItem
                 title="Request"
@@ -76,17 +79,17 @@ const SideBar: React.FC = () => {
             </NavLink>
           )}
 
-          {decoded?.priviledge.includes("DEPARTMENTS") && (
+          {decoded?.priviledge.includes(ACCESS.DEPARTMENT) && (
             <NavLink to={URLS.DEPARTMENT}>
               <SideBarItem
                 title="Department"
-                icon={<FaUserCog size="20px" color="white" />}
+              icon={<FaUserCog size="20px" color="white" />}
                 isActive={pathname === URLS.DEPARTMENT ? true : false}
               />
             </NavLink>
           )}
 
-          {decoded?.priviledge.includes("MEMBERS") && (
+          {decoded?.priviledge.includes(ACCESS.MEMBERS) && (
             <NavLink to={URLS.MEMBER}>
               <SideBarItem
                 title="Members"
@@ -96,7 +99,7 @@ const SideBar: React.FC = () => {
             </NavLink>
           )}
 
-          {decoded?.priviledge.includes("TEAMS") && (
+          {decoded?.priviledge.includes(ACCESS.TEAMS) && (
             <NavLink to={URLS.TEAM}>
               <SideBarItem
                 title="Teams"
@@ -106,7 +109,7 @@ const SideBar: React.FC = () => {
             </NavLink>
           )}
 
-          {decoded?.priviledge.includes("CHANNELS") && (
+          {decoded?.priviledge.includes(ACCESS.CHANNELS) && (
             <NavLink to={URLS.CHANNEL}>
               <SideBarItem
                 title="Channels"
@@ -116,17 +119,7 @@ const SideBar: React.FC = () => {
             </NavLink>
           )}
 
-          {decoded?.priviledge.includes("CUSTOMERS") && (
-            <NavLink to={URLS.CUSTOMER}>
-              <SideBarItem
-                title="Customers"
-                icon={<FaUserFriends size="20px" color="white" />}
-                isActive={pathname === URLS.CUSTOMER ? true : false}
-              />
-            </NavLink>
-          )}
-
-          {decoded?.priviledge.includes("CATEGORY") && (
+          {decoded?.priviledge.includes(ACCESS.CATEGORY) && (
             <NavLink to={URLS.CATEGORY}>
               <SideBarItem
                 title="Categories"
@@ -136,7 +129,17 @@ const SideBar: React.FC = () => {
             </NavLink>
           )}
 
-          {decoded?.priviledge.includes("CREATE TICKET") && (
+          {decoded?.priviledge.includes(ACCESS.CREATE_TICKET) && (
+            <NavLink to={URLS.TICKET}>
+              <SideBarItem
+                title="Tickets"
+                icon={<FaTicketAlt size="20px" color="white" />}
+                isActive={pathname === URLS.TICKET ? true : false}
+              />
+            </NavLink>
+          )}
+
+          {decoded?.priviledge.includes(ACCESS.CREATE_TICKET) && (
             <NavLink to={URLS.REPORTS}>
               <SideBarItem
                 title="Generate"

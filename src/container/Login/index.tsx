@@ -63,7 +63,7 @@ const LoginForm = () => {
       const res = await login(data).unwrap();
       Cookies.set("token", res.accessToken);
       Cookies.set("x-refresh", res.refreshToken);
-      navigate("/home");
+      navigate("/requester");
     } catch (err: any) {
       toast.error(err.data);
     }

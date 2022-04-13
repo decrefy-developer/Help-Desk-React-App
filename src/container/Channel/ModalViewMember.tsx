@@ -66,6 +66,7 @@ const ModalViewMember: React.FC<Props> = ({
     control,
     watch,
     formState: { errors, isValid },
+    resetField,
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schemaAddMemberToChannel),
@@ -142,8 +143,8 @@ const ModalViewMember: React.FC<Props> = ({
               name="member"
               render={({ field }) => (
                 <Select
-                  // onChange={(e) => field.onChange(e?.value)}
-                  {...field}
+                  onChange={field.onChange}
+                  value={field.value}
                   isLoading={isFetching}
                   selectedOptionStyle="color"
                   placeholder="Select a member"

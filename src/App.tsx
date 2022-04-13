@@ -26,7 +26,8 @@ import { IUser } from "./models/interface";
 
 function App() {
   const color = useColorModeValue("gray.300", "gray.700");
-  const routing = useRoutes(Router({ accessToken: Cookies.get("token") }));
+  const decoded: IUser | null = DecodeToken() 
+  const routing = useRoutes(Router({ decodedToken: decoded }));
   const navigate = useNavigate();
   const [isMobile] = useMediaQuery("(max-width: 767px)");
   const [showSideBar, setShowSideBar] = useState<boolean>(false); // used if the sidebar is show or not

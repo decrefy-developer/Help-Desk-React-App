@@ -85,7 +85,6 @@ const DrawerComponent: React.FC<{
 
   const onSubmit: SubmitHandler<IFormInputMember> = async (data) => {
     try {
-      // if (checkedAccess.length <= 0) return setCheckboxError(true);
       data.priviledge = checkedAccess;
 
       const result = await addMember(data).unwrap();
@@ -95,8 +94,6 @@ const DrawerComponent: React.FC<{
         reset();
         toast.success(`${result.email} has been successfully added`);
       }
-
-      //   await Socket.emit("send", result.email);
     } catch (err: any) {
       toast.error(err.data.message);
     }
@@ -315,6 +312,7 @@ const DrawerComponent: React.FC<{
                   >
                     Create Ticket
                   </Checkbox>
+
                   <Checkbox
                     onChange={(e) =>
                       setAccess(e.target.checked, ACCESS.REQUESTER)
@@ -322,6 +320,23 @@ const DrawerComponent: React.FC<{
                   >
                     Requester
                   </Checkbox>
+
+                  <Checkbox
+                    onChange={(e) =>
+                      setAccess(e.target.checked, ACCESS.SUPPORT)
+                    }
+                  >
+                    Support
+                  </Checkbox>
+
+                  <Checkbox
+                    onChange={(e) =>
+                      setAccess(e.target.checked, ACCESS.DEPARTMENT)
+                    }
+                  >
+                    Manage Department
+                  </Checkbox>
+
                   <Checkbox
                     onChange={(e) =>
                       setAccess(e.target.checked, ACCESS.MEMBERS)
@@ -329,6 +344,7 @@ const DrawerComponent: React.FC<{
                   >
                     Manage Members
                   </Checkbox>
+
                   <Checkbox
                     onChange={(e) => setAccess(e.target.checked, ACCESS.TEAMS)}
                   >
@@ -348,13 +364,7 @@ const DrawerComponent: React.FC<{
                   >
                     Manage Category Concern
                   </Checkbox>
-                  <Checkbox
-                    onChange={(e) =>
-                      setAccess(e.target.checked, ACCESS.CUSTOMER)
-                    }
-                  >
-                    Manage Customers
-                  </Checkbox>
+
                   <Text textAlign="left" fontSize="xs" p={1} color="danger">
                     {checboxError && "Please check atleast one"}
                   </Text>

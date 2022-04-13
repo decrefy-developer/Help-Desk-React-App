@@ -5,8 +5,9 @@ export const URLS = {
   TEAM: "/teams",
   CHANNEL: "/channels",
   CUSTOMER: "/customer",
-  CATEGORY: "/category",
+  CATEGORY: "/categories",
   MEMBER: "/members",
   DEPARTMENT: "/departments",
+  TICKET: "/tickets",
   REPORTS: "/reports",
 };

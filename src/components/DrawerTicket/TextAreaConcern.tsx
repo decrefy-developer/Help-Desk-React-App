@@ -3,14 +3,18 @@ import {
   FormErrorMessage,
   FormLabel,
   Textarea,
+  Text,
 } from "@chakra-ui/react";
 import React from "react";
 import { Control, Controller, FieldErrors, FieldValues } from "react-hook-form";
+import { IRequest } from "../../models/interface";
 
-const TextAreaConcern: React.FC<{
+interface Props {
   control: Control<FieldValues, object>;
   errors: FieldErrors<FieldValues>;
-}> = ({ control, errors }) => {
+}
+
+const TextAreaConcern: React.FC<Props> = ({ control, errors }) => {
   return (
     <FormControl isInvalid={errors?.description ? true : false}>
       <FormLabel htmlFor="description" fontSize="sm" color="gray.400">

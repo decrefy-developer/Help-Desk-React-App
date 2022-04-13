@@ -35,7 +35,20 @@ export const ticketApi = createApi({
           ]
           : ["Ticket"],
     }),
-    doneTicket: builder.mutation<any, { _id: string; mode: string }>({
+    getTicket: builder.query<ITicket, string>({
+      query: (_id) => `ticket/${_id}`,
+      providesTags: (result, error, _id) => [{ type: "Ticket", _id }],
+    }),
+    doneTicket: builder.mutation<
+      any,
+      {
+        _id: string;
+        mode: string;
+        solution: string;
+        categoryId: string;
+        SubCategoryId: string;
+      }
+    >({
       query: ({ _id, ...patch }) => ({
         url: `/ticket/done/${_id}`,
         method: "PUT",
@@ -59,7 +72,10 @@ export const ticketApi = createApi({
       }),
       invalidatesTags: (result, error, { _id }) => [{ type: "Ticket", _id }],
     }),
-    ticketsNotSeen: builder.query<Array<{ _id: string; count: number }>, string>({
+    ticketsNotSeen: builder.query<
+      Array<{ _id: string; count: number }>,
+      string
+    >({
       query: (_id) => `ticket/seen/${_id}`,
       providesTags: ["Ticket"],
     }),
@@ -69,7 +85,7 @@ export const ticketApi = createApi({
         method: "PUT",
       }),
       invalidatesTags: (result, error, _id) => [{ type: "Ticket", _id }],
-    })
+    }),
   }),
 });
 
@@ -80,5 +96,6 @@ export const {
   useCloseTicketMutation,
   useCancelTicketMutation,
   useTicketsNotSeenQuery,
-  useSeenTheTicketMutation
+  useSeenTheTicketMutation,
+  useGetTicketQuery,
 } = ticketApi;

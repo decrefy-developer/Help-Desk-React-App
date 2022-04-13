@@ -9,24 +9,32 @@ import {
   DrawerOverlay,
   Stack,
   Text,
-  HStack
+  HStack,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { useSeenRequestMutation } from "../../app/features/request-query";
+import { useUpdateStatusMutation } from "../../app/features/request-query";
 import { useAddTicketMutation } from "../../app/features/ticket-query";
-import { IChannel, IRequest, IUser, STATE, STATUS } from "../../models/interface";
+import {
+  IChannel,
+  IRequest,
+  IUser,
+  STATE,
+  STATUS,
+} from "../../models/interface";
 import { schemaTicket } from "../../models/schemas";
 import Socket from "../../services/Socket";
 import { DecodeToken } from "../../utils/decode-token";
+import InputRequester from "./InputRequester";
 import SelectCategory from "./SelectCategory";
 import SelectChannel from "./SelectChannel";
 import SelectCoworker from "./SelectCoworker";
 import SelectCustomer from "./SelectCustomer";
 import SelectDepartment from "./SelectDepartment";
 import SelectStartDate from "./SelectStartDate";
+import SelectSubUnit from "./SelectSubUnit";
 import SelectTargetDate from "./SelectTargetDate";
 import SelectTeam from "./SelectTeam";
 import SelectUser from "./SelectUser";
@@ -45,7 +53,7 @@ const DrawerTicket: React.FC<Iprops> = ({ isOpen, onClose, formData }) => {
 
   const decoded: IUser | null = DecodeToken();
   const [addTicket, { isLoading }] = useAddTicketMutation();
-  const [SeenRequest, { isLoading: seenLoading }] = useSeenRequestMutation()
+  const [updateStatus] = useUpdateStatusMutation();
 
   const {
     handleSubmit,
@@ -62,11 +70,11 @@ const DrawerTicket: React.FC<Iprops> = ({ isOpen, onClose, formData }) => {
 
   const onSubmit: SubmitHandler<any> = async (data) => {
     try {
-      data.requestId = formData?._id
+      data.requestId = formData?._id;
       data.state = STATE.PENDING;
       data.status = STATUS.OPEN;
       data.createdBy = decoded?._id;
-
+      console.log(data);
       const newTicket = await addTicket(data).unwrap();
 
       if (newTicket) {
@@ -77,26 +85,19 @@ const DrawerTicket: React.FC<Iprops> = ({ isOpen, onClose, formData }) => {
           `${newTicket.ticketNumber} has been successfully created`
         );
         await Socket.emit("send-ticket", newTicket);
-        seenTheRequest(newTicket.requestId)
+        await updateStatus({ _id: newTicket.requestId, status: false });
       }
     } catch (err: any) {
       toast.error(err.data.message);
     }
   };
 
-  const seenTheRequest = async (requestId: string) => {
-    try {
-      const result = await SeenRequest({ _id: requestId, isSeen: true }).unwrap()
-
-    } catch (err: any) {
-      toast.error(err.data.message);
-    }
-  }
-
   useEffect(() => {
-    console.log(formData);
     if (formData) {
+      const Requester = `${formData?.user.firstName.toUpperCase()} ${formData?.user.lastName.toUpperCase()}`;
       setValue("description", formData.concern);
+      setValue("requesterName", Requester);
+      setValue("departmentId", formData?.user?.department._id);
     }
   }, [formData, setValue]);
 
@@ -120,7 +121,7 @@ const DrawerTicket: React.FC<Iprops> = ({ isOpen, onClose, formData }) => {
               <Stack spacing="24px" w="full" p={4} borderWidth="1px">
                 <Text color="success">Requester Details</Text>
 
-                {formData && (
+                {formData ? (
                   <Stack spacing="16px">
                     <HStack>
                       <Text color="gray.400">Name: </Text>
@@ -128,17 +129,33 @@ const DrawerTicket: React.FC<Iprops> = ({ isOpen, onClose, formData }) => {
                     </HStack>
                     <HStack>
                       <Text color="gray.400">Department: </Text>
-                      <Text color="primary">{`${formData?.user.department.name.toUpperCase()}`} </Text>
+                      <Text color="primary">
+                        {`${formData?.user.department.name.toUpperCase()}`}{" "}
+                      </Text>
                     </HStack>
                     <HStack>
                       <Text color="gray.400">Unit: </Text>
-                      <Text color="primary">{`${formData?.user.unit ? formData.user.unit.name : ""}`} </Text>
+                      <Text color="primary">
+                        {`${
+                          formData?.user.unit ? formData.user.unit.name : ""
+                        }`}
+                      </Text>
                     </HStack>
+                  </Stack>
+                ) : (
+                  <Stack spacing="24px" w="full">
+                    <SelectDepartment control={control} errors={errors} />
+                    <InputRequester control={control} errors={errors} />
                   </Stack>
                 )}
 
                 <TextAreaConcern control={control} errors={errors} />
                 <SelectCategory control={control} errors={errors} />
+                <SelectSubUnit
+                  control={control}
+                  errors={errors}
+                  getValues={getValues}
+                />
               </Stack>
 
               <Stack spacing="24px" w="full" p={4} borderWidth="1px">
@@ -171,7 +188,6 @@ const DrawerTicket: React.FC<Iprops> = ({ isOpen, onClose, formData }) => {
 
           <DrawerFooter borderTopWidth="1px">
             <Button variant="outline" mr={3} onClick={onClose}>
-
               Cancel
             </Button>
             <Button

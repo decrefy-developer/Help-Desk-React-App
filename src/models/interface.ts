@@ -19,6 +19,17 @@ export interface IUser {
   updatedAt: string;
 }
 
+export interface IMember {
+  _id: string;
+  isActive: boolean;
+  priviledge: Array<string>;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface ICred {
   email: string;
   password: string;
@@ -41,14 +52,15 @@ export enum ACCESS {
   TEAMS = "TEAMS",
   CHANNELS = "CHANNELS",
   CATEGORY = "CATEGORY",
-  CUSTOMER = "CUSTOMERS",
-  REQUESTER = "REQUESTER"
+  DEPARTMENT = "DEPARTMENT",
+  REQUESTER = "REQUESTER",
+  SUPPORT = "SUPPORT"
 }
 
 export interface IRequest {
   _id: string;
   concern: string;
-  isSeen: boolean;
+  status: boolean;
   user: {
     _id: string;
     firstName: string;
@@ -62,7 +74,13 @@ export interface IRequest {
       name: string
     }
   }
-  ticket?: Pick<ITicket, "_id" | "ticketNumber" | "state">
+  ticket?: {
+    _id: string
+    ticketNumber: string;
+    state: string;
+    targetDate: Date;
+    assignedSupport: Pick<IUser, "_id" | "email" | "firstName" | "lastName">
+  }
   createdAt?: string;
   updatedAt?: string;
 }
@@ -111,14 +129,7 @@ export interface ICMember {
   email: string;
 }
 
-export interface IMember {
-  _id: string;
-  isActive: boolean;
-  priviledge: Array<string>;
-  email: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
+
 
 export interface ICustomer {
   _id: string;
@@ -136,6 +147,13 @@ export interface ICategoryConcern {
   updatedAt: string;
 }
 
+export interface ISubCategory extends ICategoryConcern {
+  category: {
+    _id: string;
+    name: string;
+  }
+}
+
 export interface ITeamChannel {
   _id: string;
   team: string;
@@ -145,14 +163,12 @@ export interface ITeamChannel {
 export interface ITicket {
   _id: string;
   requestId: string;
+  department: Pick<IDepartment, "_id" | "name">
+  requesterName: string;
   ticketNumber: string;
   doneDate: Date;
-  coworkers: [
-    {
-      _id: string;
-      email: string;
-    }
-  ];
+  solution: string;
+  coworkers: [Pick<IMember, "_id" | "email" | "firstName" | "lastName">];
   seen: boolean;
   closeDate: Date;
   comments: [
@@ -168,28 +184,24 @@ export interface ITicket {
   description: string;
   state: STATE;
   status: STATUS;
-  createdBy: {
-    _id: string;
-    email: string;
-  };
+  createdBy: Pick<IMember, "_id" | "email" | "firstName" | "lastName">
   createdAt: Date;
   updatedAt: Date;
-  team: {
-    _id: string;
-    name: string;
-  };
-  channel: {
-    _id: string;
-    name: string;
-  };
-  category: {
-    _id: string;
-    name: string;
-  };
-  user: {
-    _id: string;
-    email: string;
-  };
+  team: Pick<ITeam, "_id" | "name">
+  channel: Pick<IChannel, "_id" | "name">
+  category: Pick<ICategoryConcern, "_id" | "name">
+  subCategory: Array<Pick<ISubCategory, "_id" | "name">>
+  user: Pick<IMember, "_id" | "email" | "firstName" | "lastName">
+  requestDetails: {
+    _id: string
+    requester: {
+      _id: string
+      firstName: string;
+      lastName: string;
+      email: string;
+      department: Pick<IDepartment, "_id" | "name">
+    }
+  }
 }
 
 export interface ListResponse<T> {
@@ -212,6 +224,7 @@ export interface PageArgs {
   status?: boolean;
   departmentId?: string;
   userId?: string;
+  categoryId?: string;
 }
 
 export interface TicketArgs extends PageArgs {
@@ -243,9 +256,12 @@ export interface IFormInputsLogin {
 
 export interface IFormInputTicket {
   requestId: string;
+  departmentId: string;
+  requestName: string;
   teamId: string;
   channelId: string;
   categoryId: string;
+  SubCategoryId: Array<string>;
   userId: string;
   description: string;
   state: STATE;

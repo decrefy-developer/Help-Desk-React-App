@@ -1,35 +1,30 @@
-import {
-  Checkbox,
-  CircularProgress,
-  Flex,
-  HStack,
-  Stack,
-  Text,
-  useDisclosure,
-  useMediaQuery,
-} from "@chakra-ui/react";
+import { Checkbox } from "@chakra-ui/checkbox";
+import { useDisclosure } from "@chakra-ui/hooks";
+import { Flex, HStack, Stack, Text } from "@chakra-ui/layout";
+import { useMediaQuery } from "@chakra-ui/media-query";
+import { CircularProgress } from "@chakra-ui/progress";
 import Pagination from "@choc-ui/paginator";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import {
   useChangeStatusMutation,
-  useListDepartmentQuery,
-} from "../../app/features/department-query";
+  useListCategoryConcernQuery,
+  useListSubCategoryQuery,
+} from "../../app/features/category-query";
 import Dialog from "../../components/AlertDialog";
 import HeadingComponent from "../../components/Heading";
 import PageContentScroll from "../../components/PageContentScroll";
 import SkeletonPlaceHolder from "../../components/SkeletonPlaceHolder";
 import SubHeadingComponent from "../../components/SubHeading";
 import useTableControl from "../../hooks/useTableControl";
-import { IUnit } from "../../models/interface";
 import DrawerComponent from "./DrawerComponent";
-import ModalViewUnit from "./ModalViewUnit";
+import ModalViewUnitSubUnit from "./ModalViewSubUnit";
 import TableComponent from "./TableComponent";
 
-const Department = () => {
+const Category = () => {
   const [screenPadding, setScreenPadding] = useState<number>(4);
-  const [isArchieve, setIsArchieve] = useState<boolean>(false);
   const [isMobile] = useMediaQuery("(max-width: 600px)");
+  const [isArchieve, setIsArchieve] = useState<boolean>(false);
   const [isActive, setIsActive] = useState<boolean>(false); // holds the selected item status before submitting
 
   const {
@@ -38,14 +33,14 @@ const Department = () => {
     onClose: closeDrawer,
   } = useDisclosure(); // for the drawer
   const {
-    isOpen: isModalUnitOpen,
-    onOpen: openModalUnit,
-    onClose: closeModalUnit, // used for modal view unit
-  } = useDisclosure();
-  const {
     isOpen: isDialogChangeStatuOpen,
     onOpen: openDialogChangeStatus,
     onClose: closeDialogChangeStatus,
+  } = useDisclosure();
+  const {
+    isOpen: isModalOpen,
+    onOpen: openModal,
+    onClose: closeModal,
   } = useDisclosure();
 
   const {
@@ -59,21 +54,18 @@ const Department = () => {
     setSelectedRow,
   } = useTableControl();
 
-  const [changeStatus] = useChangeStatusMutation();
-  const { data, isLoading, isFetching } = useListDepartmentQuery({
+  const {
+    data: categories,
+    isLoading,
+    isFetching,
+  } = useListCategoryConcernQuery({
     page,
     limit: pageLimit,
     search,
     status: !isArchieve,
   });
 
-  const ViewUnitsHandler = useCallback(
-    (_id: string) => {
-      setSelectedRow(_id);
-      openModalUnit();
-    },
-    [openModalUnit, setSelectedRow]
-  );
+  const [changeStatus] = useChangeStatusMutation();
 
   const ChangeStatusHandler = useCallback(
     (_id: string, isActive: boolean) => {
@@ -84,13 +76,20 @@ const Department = () => {
     [openDialogChangeStatus, setSelectedRow]
   );
 
+  const ViewSubUnitHandler = useCallback(
+    (_id: string) => {
+      setSelectedRow(_id);
+      openModal();
+    },
+    [setSelectedRow]
+  );
+
   const changeStatusSubmit = useCallback(async () => {
     try {
       const result = await changeStatus({
         _id: selectedRow,
         isActive: isActive,
       }).unwrap();
-
       if (result) {
         closeDialogChangeStatus();
         toast.success(
@@ -102,21 +101,21 @@ const Department = () => {
     }
   }, [isActive, selectedRow]);
 
-  const FilterByStatusHandler = (status: boolean) => {
+  function FilterByStatusHandler(status: boolean) {
     setIsArchieve(status);
-  };
+  }
 
   return (
-    <React.Fragment>
+    <>
       <Flex w="full" flexDirection="column">
-        <HeadingComponent title="Manage Deparments" />
+        <HeadingComponent title="Manage Categories" />
 
         <SubHeadingComponent
-          title="Department List"
+          title="Category List"
           onOpen={openDrawer}
           padding={screenPadding}
           setSearch={setSearch}
-          placeHolder="Seach a department name:"
+          placeHolder="Search a category name:"
         />
 
         <PageContentScroll minH="550px">
@@ -134,7 +133,7 @@ const Department = () => {
               <HStack>
                 <Pagination
                   currentPage={page}
-                  total={data?.totalDocs}
+                  total={categories?.totalDocs}
                   paginationProps={{ display: "flex" }}
                   baseStyles={{ border: "1px" }}
                   activeStyles={{ bg: "primary" }}
@@ -147,7 +146,7 @@ const Department = () => {
                   }}
                 />
                 <Text fontSize="sm" color="gray.500">
-                  Items: {data?.totalDocs}
+                  Items: {categories?.totalDocs}
                 </Text>
               </HStack>
             )}
@@ -173,10 +172,10 @@ const Department = () => {
             </Stack>
           ) : (
             <TableComponent
-              data={data}
+              data={categories}
               rowId={selectedRow}
               padding={screenPadding}
-              viewUnitsHandler={ViewUnitsHandler}
+              viewSubUnit={ViewSubUnitHandler}
               ChangeStatusHandler={ChangeStatusHandler}
             />
           )}
@@ -187,11 +186,11 @@ const Department = () => {
         <DrawerComponent isOpen={isDrawerOpen} onClose={closeDrawer} />
       )}
 
-      {isModalUnitOpen && (
-        <ModalViewUnit
+      {isModalOpen && (
+        <ModalViewUnitSubUnit
           rowId={selectedRow}
-          isOpen={isModalUnitOpen}
-          onClosed={closeModalUnit}
+          isOpen={isModalOpen}
+          onClosed={closeModal}
         />
       )}
 
@@ -212,8 +211,8 @@ const Department = () => {
           }
         />
       )}
-    </React.Fragment>
+    </>
   );
 };
 
-export default Department;
+export default Category;

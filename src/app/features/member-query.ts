@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import {
+  ICMember,
   IFormInputMember,
   IMember,
   ITeamChannel,
@@ -79,6 +80,9 @@ export const memberApi = createApi({
       }),
       invalidatesTags: (result, error, { _id }) => [{ type: "Member", _id }],
     }),
+    getRoleInChannel: builder.query<ICMember, { userId: string, channelId: string }>({
+      query: ({ channelId, userId }) => `channel/user?channelId=${channelId}&userId=${userId}`,
+    }),
   }),
 });
 
@@ -90,4 +94,5 @@ export const {
   useUpdateMemberAcessMutation,
   useResetPasswordMutation,
   useChangeAccountStatusMutation,
+  useGetRoleInChannelQuery
 } = memberApi;

@@ -28,7 +28,6 @@ const SelectDepartment: React.FC<IProps> = ({ control, errors }) => {
     search: "",
     status: true,
   });
-  const option = { value: "62284a2df72e964758b46c6a", label: "MIS" }
 
   return (
     <FormControl isInvalid={errors?.departmentId ? true : false}>
@@ -43,7 +42,6 @@ const SelectDepartment: React.FC<IProps> = ({ control, errors }) => {
         name="departmentId"
         render={({ field }) => (
           <Select
-            defaultValue={option}
             id="departmentId"
             isLoading={isFetching}
             onChange={(e) => field.onChange(e?.value)}

@@ -11,8 +11,11 @@ import NotFound from "./container/NotFound";
 import Report from "./container/Report";
 import Department from "./container/Department";
 import Requester from "./container/Requester";
+import { ACCESS, IUser } from "./models/interface";
+import Ticket from "./container/Ticket";
+import Category from "./container/Category";
 
-const Router = ({ accessToken }: { accessToken: any }) => [
+const Router = ({ decodedToken }: { decodedToken: IUser | null }) => [
   {
     path: "",
     element: <LoginLayout />,
@@ -29,32 +32,72 @@ const Router = ({ accessToken }: { accessToken: any }) => [
     children: [
       {
         path: "home",
-        element: accessToken ? <Home /> : <Navigate to="/login" />,
+        element: decodedToken ? <Home /> : <Navigate to="/login" />,
         children: [{ path: ":channelId", element: <MainContent /> }],
       },
       {
         path: "requester",
-        element: accessToken ? <Requester /> : <Navigate to="/login" />,
+        element: decodedToken?.priviledge.includes(ACCESS.REQUESTER) ? (
+          <Requester />
+        ) : (
+          <Navigate to="/login" />
+        ),
       },
       {
         path: "members",
-        element: accessToken ? <Member /> : <Navigate to="/login" />,
+        element: decodedToken?.priviledge.includes(ACCESS.MEMBERS) ? (
+          <Member />
+        ) : (
+          <Navigate to="/login" />
+        ),
       },
       {
         path: "teams",
-        element: accessToken ? <Team /> : <Navigate to="/login" />,
+        element: decodedToken?.priviledge.includes(ACCESS.TEAMS) ? (
+          <Team />
+        ) : (
+          <Navigate to="/login" />
+        ),
       },
       {
         path: "channels",
-        element: accessToken ? <Channel /> : <Navigate to="/login" />,
+        element: decodedToken?.priviledge.includes(ACCESS.CHANNELS) ? (
+          <Channel />
+        ) : (
+          <Navigate to="/login" />
+        ),
       },
       {
         path: "reports",
-        element: accessToken ? <Report /> : <Navigate to="/login" />,
+        element: decodedToken?.priviledge.includes(ACCESS.CREATE_TICKET) ? (
+          <Report />
+        ) : (
+          <Navigate to="/login" />
+        ),
       },
       {
         path: "departments",
-        element: accessToken ? <Department /> : <Navigate to="/login" />,
+        element: decodedToken?.priviledge.includes(ACCESS.DEPARTMENT) ? (
+          <Department />
+        ) : (
+          <Navigate to="/login" />
+        ),
+      },
+      {
+        path: "categories",
+        element: decodedToken?.priviledge.includes(ACCESS.CATEGORY) ? (
+          <Category />
+        ) : (
+          <Navigate to="/login" />
+        ),
+      },
+      {
+        path: "tickets",
+        element: decodedToken?.priviledge.includes(ACCESS.CREATE_TICKET) ? (
+          <Ticket />
+        ) : (
+          <Navigate to="/login" />
+        ),
       },
     ],
   },

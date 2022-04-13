@@ -16,9 +16,10 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { useAddCategoryMutation } from "../../app/features/category-query";
 import { useAddDepartmentMutation } from "../../app/features/department-query";
 import { IFormInputDepartment } from "../../models/interface";
-import { schemaDepartment } from "../../models/schemas";
+import { schemaCategory } from "../../models/schemas";
 
 interface Props {
   isOpen: boolean;
@@ -26,21 +27,21 @@ interface Props {
 }
 
 const DrawerComponent: React.FC<Props> = ({ isOpen, onClose }) => {
-  const [addDepartment, { isLoading }] = useAddDepartmentMutation();
+  const [addCategory, { isLoading }] = useAddCategoryMutation();
 
   const {
     register,
     reset,
     handleSubmit,
     formState: { errors, isDirty, isValid },
-  } = useForm<IFormInputDepartment>({
+  } = useForm<{ name: string }>({
     mode: "onChange",
-    resolver: yupResolver(schemaDepartment),
+    resolver: yupResolver(schemaCategory),
   });
 
   const onSubmit = async (data: IFormInputDepartment) => {
     try {
-      const result = await addDepartment(data).unwrap();
+      const result = await addCategory(data).unwrap();
 
       if (result) {
         onClose();
@@ -64,17 +65,18 @@ const DrawerComponent: React.FC<Props> = ({ isOpen, onClose }) => {
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader borderBottomWidth="1px">
-            Create a new department
+            Create a new category
           </DrawerHeader>
           <DrawerBody>
             <Stack spacing="24px">
               <Box mt={4}>
-                <FormLabel htmlFor="name">Department Name</FormLabel>
+                <FormLabel htmlFor="name">Name</FormLabel>
                 <Input
                   autoComplete="off"
                   id="name"
                   placeholder="Please enter name"
                   {...register("name")}
+                  autoFocus={true}
                 />
                 <Text textAlign="left" fontSize="xs" p={1} color="danger">
                   {errors.name?.message}

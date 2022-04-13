@@ -33,6 +33,7 @@ const Dialog = ({
         onClose={onClose}
         isOpen={isOpen}
         isCentered
+        closeOnOverlayClick={false}
       >
         <AlertDialogOverlay />
 

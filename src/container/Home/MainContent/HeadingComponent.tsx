@@ -1,18 +1,26 @@
 import { HStack, Icon, Text, useMediaQuery } from "@chakra-ui/react";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FaEllipsisH, FaHashtag } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import StyleContext from "../../../context/StyleContext";
 import { useGetChannelQuery } from "../../../app/features/channel-query";
+import { useGetRoleInChannelQuery } from "../../../app/features/member-query";
+import { DecodeToken } from "../../../utils/decode-token";
+import { ACCESS, IUser } from "../../../models/interface";
 
 const HeadingComponent: React.FC<{
   openModal: () => void;
 }> = ({ openModal }) => {
   const { channelId } = useParams();
+  const decoded: IUser | null = DecodeToken();
   const { borderLine } = useContext(StyleContext);
   const [isMobile] = useMediaQuery("(max-width: 600px)");
 
   const { data, isLoading } = useGetChannelQuery(channelId ? channelId : "");
+  const { data: role, isLoading: roleLoading } = useGetRoleInChannelQuery({
+    channelId: channelId ? channelId : "",
+    userId: decoded ? decoded._id : "",
+  });
 
   return (
     <HStack
@@ -28,9 +36,12 @@ const HeadingComponent: React.FC<{
         </Text>
       </HStack>
 
-      <HStack>
-        <Icon as={FaEllipsisH} cursor="pointer" onClick={openModal} />
-      </HStack>
+      {(decoded?.priviledge.includes(ACCESS.CREATE_TICKET) ||
+        role?.isAdmin === true) && (
+        <HStack>
+          <Icon as={FaEllipsisH} cursor="pointer" onClick={openModal} />
+        </HStack>
+      )}
     </HStack>
   );
 };

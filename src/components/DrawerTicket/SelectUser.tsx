@@ -21,7 +21,7 @@ const SelectUser: React.FC<{
   errors: FieldErrors<FieldValues>;
 }> = ({ control, watch, errors }) => {
   const channelId = watch("channelId");
-  const { data } = useGetChannelQuery(channelId);
+  const { data, isLoading } = useGetChannelQuery(channelId);
 
   return (
     <FormControl isInvalid={errors?.userId ? true : false}>
@@ -47,6 +47,7 @@ const SelectUser: React.FC<{
             })}
             selectedOptionColor="purple"
             isClearable={true}
+            isLoading={isLoading}
           />
         )}
       />

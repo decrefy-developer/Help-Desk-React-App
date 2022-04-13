@@ -2,6 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { IFormInputRequest, IRequest, ListResponse, PageArgs } from "../../models/interface";
 import { baseQuery } from "../../services/auth-header";
 
+
 export const requestApi = createApi({
     reducerPath: "requestApi",
     baseQuery: baseQuery,
@@ -16,8 +17,8 @@ export const requestApi = createApi({
             invalidatesTags: ['Request']
         }),
         listRequest: builder.query<ListResponse<IRequest>, PageArgs>({
-            query: ({ page = 1, limit = 10, search, userId }) =>
-                `requests?page=${page}&limit=${limit}&search=${search}&userId=${userId}`,
+            query: ({ page = 1, limit = 10, search, userId, status }) =>
+                `requests?page=${page}&limit=${limit}&search=${search}&userId=${userId}&status=${status}`,
             providesTags: (result, error, arg) =>
                 result
                     ? [
@@ -29,9 +30,9 @@ export const requestApi = createApi({
                     ]
                     : ["Request"],
         }),
-        seenRequest: builder.mutation<IRequest, Pick<IRequest, "_id" | "isSeen">>({
+        updateStatus: builder.mutation<IRequest, Pick<IRequest, "_id" | "status">>({
             query: ({ _id, ...patch }) => ({
-                url: `/request/seen/${_id}`,
+                url: `/request/status/${_id}`,
                 method: "PUT",
                 body: patch
             }),
@@ -40,4 +41,4 @@ export const requestApi = createApi({
     })
 })
 
-export const { useAddRequestMutation, useListRequestQuery, useSeenRequestMutation } = requestApi
+export const { useAddRequestMutation, useListRequestQuery, useUpdateStatusMutation } = requestApi

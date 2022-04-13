@@ -35,6 +35,7 @@ const ModalChangeAccess: React.FC<{
     }
   };
 
+
   const onSubmit = async () => {
     try {
       const result = await updateMemberAcess({
@@ -92,36 +93,53 @@ const ModalChangeAccess: React.FC<{
             >
               Requester
             </Checkbox>
+
+            <Checkbox
+              isChecked={
+                checkedAccess.includes(ACCESS.SUPPORT) ? true : false
+              }
+              onChange={(e) => setAccess(e.target.checked, ACCESS.SUPPORT)}
+            >
+              Support
+            </Checkbox>
+
+            <Checkbox
+              isChecked={
+                checkedAccess.includes(ACCESS.DEPARTMENT) ? true : false
+              }
+              onChange={(e) => setAccess(e.target.checked, ACCESS.DEPARTMENT)}
+            >
+              Manage Department
+            </Checkbox>
+
             <Checkbox
               isChecked={checkedAccess.includes(ACCESS.MEMBERS) ? true : false}
               onChange={(e) => setAccess(e.target.checked, ACCESS.MEMBERS)}
             >
               Manage Members
             </Checkbox>
+       
             <Checkbox
               isChecked={checkedAccess.includes(ACCESS.TEAMS) ? true : false}
               onChange={(e) => setAccess(e.target.checked, ACCESS.TEAMS)}
             >
               Manage Teams
             </Checkbox>
+       
             <Checkbox
               isChecked={checkedAccess.includes(ACCESS.CHANNELS) ? true : false}
               onChange={(e) => setAccess(e.target.checked, ACCESS.CHANNELS)}
             >
               Manage Channels
             </Checkbox>
+        
             <Checkbox
               isChecked={checkedAccess.includes(ACCESS.CATEGORY) ? true : false}
               onChange={(e) => setAccess(e.target.checked, ACCESS.CATEGORY)}
             >
               Manage Category Concern
             </Checkbox>
-            <Checkbox
-              isChecked={checkedAccess.includes(ACCESS.CUSTOMER) ? true : false}
-              onChange={(e) => setAccess(e.target.checked, ACCESS.CUSTOMER)}
-            >
-              Manage Customers
-            </Checkbox>
+          
           </Stack>
           <Text textAlign="left" fontSize="xs" mt={3} color="danger">
             {isError && "Please select atleast one"}
