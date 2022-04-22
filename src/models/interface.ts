@@ -185,6 +185,7 @@ export interface ITicket {
   state: STATE;
   status: STATUS;
   createdBy: Pick<IMember, "_id" | "email" | "firstName" | "lastName">
+  closedBy: Pick<IMember, "_id" | "email" | "firstName" | "lastName">
   createdAt: Date;
   updatedAt: Date;
   team: Pick<ITeam, "_id" | "name">

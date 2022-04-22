@@ -97,7 +97,7 @@ const ModalViewUnitSubUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
 
   return (
     <ModalComponent
-      title="Sub-unit List"
+      title="Sub-category List"
       isOpen={isOpen}
       onClose={onClosed}
       size="lg"
@@ -165,7 +165,7 @@ const ModalViewUnitSubUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
         <Table borderColor="white" size="sm">
           <Thead>
             <Tr>
-              <Th>Sub-unit Name</Th>
+              <Th>Sub-category Name</Th>
               <Th>Status</Th>
             </Tr>
           </Thead>

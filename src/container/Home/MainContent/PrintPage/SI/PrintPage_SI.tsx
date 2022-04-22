@@ -1,6 +1,7 @@
-import React, { RefObject } from "react";
-import { Button } from "@chakra-ui/button";
 import {
+  Button,
+  Flex,
+  Image,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -8,14 +9,20 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-} from "@chakra-ui/modal";
-import { useReactToPrint } from "react-to-print";
-import { Box, Flex, HStack, VStack } from "@chakra-ui/layout";
-import { Image } from "@chakra-ui/image";
-import CSS from "csstype";
+} from "@chakra-ui/react";
 import moment from "moment";
-
-import { IMember, ITicket } from "../../../../models/interface";
+import React, { RefObject } from "react";
+import { useReactToPrint } from "react-to-print";
+import { IMember, ITicket } from "../../../../../models/interface";
+import {
+  desktopSupport,
+  enterpriceApp,
+  laptopSupport,
+  NetworkConnection,
+  POSSupport,
+  preventiveMaintenanceService,
+  userAccountManagement,
+} from "./categories";
 
 interface Props {
   onClose: () => void;
@@ -27,11 +34,11 @@ interface Props {
 interface TickProps {
   title: string;
   justify: "center" | "flex-start";
-  tick: boolean;
+  tick: boolean | undefined;
   [x: string]: any;
 }
 
-const PrintPage: React.FC<Props> = ({
+const PrintPageSI: React.FC<Props> = ({
   onClose,
   isOpen,
   componentRef,
@@ -40,8 +47,7 @@ const PrintPage: React.FC<Props> = ({
   const printHandler = useReactToPrint({
     content: () => componentRef.current,
   });
-  console.log("printing data", data);
-
+  console.log("selected", data);
   return (
     <Modal onClose={onClose} size="full" isOpen={isOpen}>
       <ModalOverlay />
@@ -51,7 +57,6 @@ const PrintPage: React.FC<Props> = ({
         <ModalBody padding={10}>
           <div ref={componentRef} style={{ padding: "20px" }}>
             <Flex direction="column" p={5} color="black">
-              {/* <Header /> */}
               <Heading ticketNumber={data?.ticketNumber} />
               <TitleComponent title="JOB ORDER" />
               <JobOrder
@@ -60,9 +65,15 @@ const PrintPage: React.FC<Props> = ({
                 dateStart={data?.startDate}
               />
               <TitleComponent title="CATEGORY" />
-              <Category />
+              <Category
+                subCategories={data?.subCategory}
+                category={data?.category}
+              />
               <TitleComponent title="ACTIVITY" />
-              <Activity concern={data?.description} solution={data?.solution} />
+              <Activity
+                concern={data?.description}
+                resolution={data?.solution}
+              />
               <TitleComponent title="MATERIAL USED" />
               <Material
                 requester={data?.requesterName}
@@ -71,7 +82,12 @@ const PrintPage: React.FC<Props> = ({
               />
               <Footer
                 ticketNumber={data?.ticketNumber}
-                createdBy={`${data?.createdBy.firstName} ${data?.createdBy.lastName}`}
+                closedBy={
+                  data?.closedBy
+                    ? `${data?.closedBy?.firstName} ${data?.closedBy?.lastName}`
+                    : " ."
+                }
+                createdBy={`${data?.createdBy?.firstName} ${data?.createdBy?.lastName}`}
               />
             </Flex>
           </div>
@@ -84,31 +100,12 @@ const PrintPage: React.FC<Props> = ({
   );
 };
 
-export default PrintPage;
-
-const Header = () => {
-  return (
-    <div
-      style={{
-        display: "flex",
-        width: "100%",
-        justifyContent: "space-between",
-        fontWeight: "bold",
-        fontSize: "11px",
-      }}
-    >
-      <div>
-        Request Id: <u>234243</u>
-      </div>
-      <div>Ticket #: 12312</div>
-    </div>
-  );
-};
+export default PrintPageSI;
 
 const Heading = ({ ticketNumber }: { ticketNumber: string | undefined }) => {
   return (
-    <div style={HeadingContainer}>
-      <div style={{ display: "flex", width: "100%", opacity: "0" }}>
+    <div style={{ border: "solid gray 1px" }}>
+      <div style={{ display: "flex", width: "100%" }}>
         <div
           style={{
             width: "15%",
@@ -192,24 +189,6 @@ const TitleComponent = ({ title }: { title: string }) => {
         borderBottom: "solid gray 1px",
         backgroundColor: "lightgray",
         fontSize: "11px",
-        opacity: "0",
-      }}
-    >
-      {title}
-    </div>
-  );
-};
-
-const SubTitle = ({ title }: { title: string }) => {
-  return (
-    <div
-      style={{
-        backgroundColor: "lightgray",
-        display: "flex",
-        justifyContent: "center",
-        fontSize: "11px",
-        borderBottom: "solid gray 1px",
-        opacity: "0",
       }}
     >
       {title}
@@ -232,7 +211,6 @@ const JobOrder = ({
         display: "flex",
         flexDirection: "row",
         borderBottom: "solid gray 1px",
-        opacity: "0",
       }}
     >
       <div style={{ width: "50%", borderRight: "solid gray 1px" }}>
@@ -316,7 +294,14 @@ const JobOrder = ({
   );
 };
 
-const Category = () => {
+const Category = ({
+  subCategories,
+  category,
+}: {
+  subCategories: Array<{ _id: string; name: string }> | undefined;
+  category: { _id: string; name: string } | undefined;
+}) => {
+  console.log(subCategories);
   return (
     <div
       style={{
@@ -325,73 +310,69 @@ const Category = () => {
         borderRight: "solid gray 1px",
         borderLeft: "solid gray 1px",
         borderBottom: "solid gray 1px",
-        opacity: "0",
       }}
     >
       <div style={{ width: "40%", borderRight: "solid gray 1px" }}>
         <div style={{ borderBottom: "solid gray 1px" }}>
-          <SubTitle title="Electronic Support" />
+          <SubTitle title="Enterprise Apps Dev't & Support" />
           <div style={{ fontSize: "10px", padding: "5px" }}>
-            <TickComponent
-              tick={false}
-              justify="flex-start"
-              title="SM100 Weighing Scale"
-            />
-            <TickComponent tick={false} justify="flex-start" title="Platform" />
-            <TickComponent
-              tick={false}
-              justify="flex-start"
-              title="Table Top"
-            />
-            <TickComponent
-              tick={false}
-              justify="flex-start"
-              title="Floor Scale"
-            />
-            <TickComponent
-              tick={false}
-              justify="flex-start"
-              title="Truck Scale"
-            />
-            <TickComponent
-              tick={false}
-              justify="flex-start"
-              title="Rail Scale"
-            />
+            {enterpriceApp.map((item, x) => (
+              <TickComponent
+                key={x}
+                tick={
+                  category?.name === "Enterprise Apps Dev't & Support"
+                    ? subCategories?.some((sub) => {
+                        if (item === sub.name) return true;
+                        return false;
+                      })
+                    : false
+                }
+                justify="flex-start"
+                title={item}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div style={{ borderBottom: "solid gray 1px" }}>
+          <SubTitle title="User Account Management" />
+          <div style={{ fontSize: "10px", padding: "5px" }}>
+            {userAccountManagement.map((item, x) => (
+              <TickComponent
+                key={x}
+                tick={
+                  category?.name === "User Account Management"
+                    ? subCategories?.some((sub) => {
+                        if (item === sub.name) return true;
+                        return false;
+                      })
+                    : false
+                }
+                justify="flex-start"
+                title={item}
+              />
+            ))}
           </div>
         </div>
 
         <div>
-          <SubTitle title="POS Support" />
+          <SubTitle title="Preventive Maintenance Services" />
           <div style={{ fontSize: "10px", padding: "5px" }}>
-            <TickComponent
-              tick={false}
-              justify="flex-start"
-              title="System Unit (CPU)"
-            />
-            <TickComponent tick={false} justify="flex-start" title="Monitor" />
-            <TickComponent
-              tick={false}
-              justify="flex-start"
-              title="POS Printer"
-            />
-            <TickComponent
-              tick={false}
-              justify="flex-start"
-              title="Barcode Scanner"
-            />
-            <TickComponent tick={false} justify="flex-start" title="Mouse" />
-            <TickComponent tick={false} justify="flex-start" title="Keyboard" />
-            <TickComponent
-              tick={false}
-              justify="flex-start"
-              title="UPS Backup"
-            />
-            <TickComponent
-              tick={false}
-              justify="flex-start"
-              title="Automatic Voltage Regulator (AVR)"
-            />
+            {preventiveMaintenanceService.map((item, x) => (
+              <TickComponent
+                key={x}
+                tick={
+                  category?.name === "Preventive Maintenance Services"
+                    ? subCategories?.some((sub) => {
+                        if (item === sub.name) return true;
+                        return false;
+                      })
+                    : false
+                }
+                justify="flex-start"
+                title={item}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -401,7 +382,7 @@ const Category = () => {
           width: "80%",
         }}
       >
-        <SubTitle title=" MIS Hardware/Technical Support and Services" />
+        <SubTitle title="MIS Support and Services" />
         <div
           style={{
             display: "flex",
@@ -422,32 +403,21 @@ const Category = () => {
               />
             </div>
             <div style={{ fontSize: "10px", paddingLeft: "5px" }}>
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="System Unit (CPU)"
-              />
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="Monitor"
-              />
-              <TickComponent tick={false} justify="flex-start" title="Mouse" />
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="Keyboard"
-              />
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="UPS Backup"
-              />
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="Automatic Voltage Regulator (AVR)"
-              />
+              {desktopSupport.map((item, x) => (
+                <TickComponent
+                  key={x}
+                  tick={
+                    category?.name === "Desktop Support (SI)"
+                      ? subCategories?.some((sub) => {
+                          if (item === sub.name) return true;
+                          return false;
+                        })
+                      : false
+                  }
+                  justify="flex-start"
+                  title={item}
+                />
+              ))}
             </div>
 
             <div
@@ -464,27 +434,21 @@ const Category = () => {
               />
             </div>
             <div style={{ fontSize: "10px", paddingLeft: "5px" }}>
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="System Unit (CPU)"
-              />
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="Charger"
-              />
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="Battery"
-              />
-              <TickComponent tick={false} justify="flex-start" title="Memory" />
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="Keyboard"
-              />
+              {laptopSupport.map((item, x) => (
+                <TickComponent
+                  key={x}
+                  tick={
+                    category?.name === "Laptop Support (SI)"
+                      ? subCategories?.some((sub) => {
+                          if (item === sub.name) return true;
+                          return false;
+                        })
+                      : false
+                  }
+                  justify="flex-start"
+                  title={item}
+                />
+              ))}
             </div>
           </div>
 
@@ -497,21 +461,21 @@ const Category = () => {
               />
             </div>
             <div style={{ fontSize: "11px", paddingLeft: "5px" }}>
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="Wired Connection"
-              />
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="Wireless Connection"
-              />
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="Network File Sharing"
-              />
+              {NetworkConnection.map((item, x) => (
+                <TickComponent
+                  key={x}
+                  tick={
+                    category?.name === "Network Connection Support"
+                      ? subCategories?.some((sub) => {
+                          if (item === sub.name) return true;
+                          return false;
+                        })
+                      : false
+                  }
+                  justify="flex-start"
+                  title={item}
+                />
+              ))}
             </div>
 
             <div
@@ -524,52 +488,25 @@ const Category = () => {
               <TickComponent
                 tick={false}
                 justify="flex-start"
-                title="Printer Support"
+                title="POS Support"
               />
             </div>
             <div style={{ fontSize: "11px", paddingLeft: "5px" }}>
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="Laser Printer"
-              />
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="All-in-one Printer"
-              />
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="Ink-jet Printer"
-              />
-            </div>
-
-            <div
-              style={{
-                marginTop: "5px",
-                fontSize: "12px",
-                fontWeight: "bold",
-              }}
-            >
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="Electronics Support"
-              />
-            </div>
-            <div style={{ fontSize: "11px", paddingLeft: "5px" }}>
-              <TickComponent tick={false} justify="flex-start" title="Tablet" />
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="Biometrics"
-              />
-              <TickComponent
-                tick={false}
-                justify="flex-start"
-                title="Mobile Phone"
-              />
+              {POSSupport.map((item, x) => (
+                <TickComponent
+                  key={x}
+                  tick={
+                    category?.name === "POS Support (SI)"
+                      ? subCategories?.some((sub) => {
+                          if (item === sub.name) return true;
+                          return false;
+                        })
+                      : false
+                  }
+                  justify="flex-start"
+                  title={item}
+                />
+              ))}
             </div>
 
             <div
@@ -587,12 +524,28 @@ const Category = () => {
   );
 };
 
+const SubTitle = ({ title }: { title: string }) => {
+  return (
+    <div
+      style={{
+        backgroundColor: "lightgray",
+        display: "flex",
+        justifyContent: "center",
+        fontSize: "11px",
+        borderBottom: "solid gray 1px",
+      }}
+    >
+      {title}
+    </div>
+  );
+};
+
 const Activity = ({
   concern,
-  solution,
+  resolution,
 }: {
   concern: string | undefined;
-  solution: string | undefined;
+  resolution: string | undefined;
 }) => {
   return (
     <div>
@@ -600,11 +553,9 @@ const Activity = ({
         style={{
           display: "flex",
           justifyContent: "space-around",
-          // padding: "5px",
           borderRight: "solid gray 1px",
           borderLeft: "solid gray 1px",
           borderBottom: "solid gray 1px",
-          opacity: "0",
         }}
       >
         <div style={{ fontSize: "11px" }}>
@@ -621,23 +572,15 @@ const Activity = ({
           <TickComponent
             tick={false}
             justify="flex-start"
-            title="Replacement"
+            title="Backup and Recovery"
           />
         </div>
         <div style={{ fontSize: "11px" }}>
           <TickComponent
             tick={false}
             justify="flex-start"
-            title="Transfer Files"
+            title="Replacement / Recommendation"
           />
-          <TickComponent tick={false} justify="flex-start" title="Update" />
-          <TickComponent
-            tick={false}
-            justify="flex-start"
-            title="Cleaning, Scan and Diagnose"
-          />
-        </div>
-        <div style={{ fontSize: "11px" }}>
           <TickComponent
             tick={false}
             justify="flex-start"
@@ -646,12 +589,27 @@ const Activity = ({
           <TickComponent
             tick={false}
             justify="flex-start"
-            title="Security Management"
+            title="Secutiry Management"
           />
+        </div>
+        <div style={{ fontSize: "11px" }}>
           <TickComponent
             tick={false}
             justify="flex-start"
-            title="Evaluation/Recommendation"
+            title="Transfer File"
+          />
+          <TickComponent tick={false} justify="flex-start" title="Diagnose" />
+          <TickComponent
+            tick={false}
+            justify="flex-start"
+            title="User Account Credentials"
+          />
+        </div>
+        <div style={{ fontSize: "11px" }}>
+          <TickComponent
+            tick={false}
+            justify="flex-start"
+            title="Cleaning, Scan and Diagnose"
           />
         </div>
       </div>
@@ -665,7 +623,6 @@ const Activity = ({
           fontSize: "11px",
           padding: "2px",
           justifyContent: "flex-start",
-          opacity: "0",
         }}
       >
         <div style={{ fontWeight: "bold" }}>Mode:</div>
@@ -695,28 +652,6 @@ const Activity = ({
           fontSize: "11px",
           padding: "2px",
           justifyContent: "flex-start",
-          opacity: "0",
-        }}
-      >
-        <div style={{ fontWeight: "bold" }}>Priority:</div>
-        <div style={{ marginLeft: "20px" }}>
-          <TickComponent tick={false} justify="flex-start" title="Normal" />
-        </div>
-        <div style={{ marginLeft: "10px" }}>
-          <TickComponent tick={false} justify="flex-start" title="High" />
-        </div>
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          borderBottom: "solid gray 1px",
-          borderRight: "solid gray 1px",
-          borderLeft: "solid gray 1px",
-          fontSize: "11px",
-          padding: "2px",
-          justifyContent: "flex-start",
-          opacity: "0",
         }}
       >
         <div style={{ fontWeight: "bold" }}>Status:</div>
@@ -738,13 +673,12 @@ const Activity = ({
           borderRight: "solid gray 1px",
           borderLeft: "solid gray 1px",
           fontSize: "11px",
-          opacity: "0",
         }}
       >
         <div style={{ width: "40%", borderRight: "solid gray 1px" }}>
-          <SubTitle title="MACHINE/EQUIPMENT" />
+          <SubTitle title="SUBJECT" />
           <div style={{ height: "30px", borderBottom: "solid gray 1px" }}></div>
-          <SubTitle title="STATUS" />
+          <SubTitle title="MACHINE/EQUIPMENT" />
           <div
             style={{
               display: "flex",
@@ -794,8 +728,8 @@ const Activity = ({
           <div
             style={{
               display: "flex",
-              justifyContent: "center",
-              fontSize: "13px",
+              justifyContent: "flex-start",
+              fontSize: "12px",
               padding: "3px",
             }}
           >
@@ -807,36 +741,14 @@ const Activity = ({
       <div
         style={{
           display: "flex",
-          // borderBottom: "solid gray 1px",
-          // borderRight: "solid gray 1px",
-          // borderLeft: "solid gray 1px",
+          borderBottom: "solid gray 1px",
+          borderRight: "solid gray 1px",
+          borderLeft: "solid gray 1px",
           fontSize: "11px",
         }}
       >
-        <div
-          style={{ width: "40%", borderRight: "solid gray 1px", opacity: "0" }}
-        >
-          <SubTitle title="RENDERED SERVICE " />
-          <div
-            style={{
-              display: "flex",
-              fontSize: "11px",
-              padding: "2px",
-              justifyContent: "space-around",
-              borderBottom: "solid gray 1px",
-            }}
-          >
-            <TickComponent
-              tick={false}
-              justify="flex-start"
-              title="Whole unit"
-            />
-            <TickComponent
-              tick={false}
-              justify="flex-start"
-              title="Cannibalized parts"
-            />
-          </div>
+        <div style={{ width: "40%", borderRight: "solid gray 1px" }}>
+          <SubTitle title="SERVICE UNIT" />
           <div style={{ height: "30px", borderBottom: "solid gray 1px" }}></div>
           <div
             style={{
@@ -845,7 +757,7 @@ const Activity = ({
               borderBottom: "solid gray 1px",
             }}
           >
-            Item/Parts
+            Model
           </div>
           <div
             style={{
@@ -854,7 +766,7 @@ const Activity = ({
               borderBottom: "solid gray 1px",
             }}
           >
-            Equipment:
+            Serial #:
           </div>
           <div
             style={{
@@ -871,18 +783,20 @@ const Activity = ({
               padding: "2px",
             }}
           >
-            Asset Transfer Form:
+            Service Provider
           </div>
         </div>
         <div style={{ width: "80%" }}>
           <SubTitle title="RESOLUTION/REMARKS" />
           <div
             style={{
+              display: "flex",
+              justifyContent: "flex-start",
               fontSize: "12px",
               padding: "3px",
             }}
           >
-            {solution}
+            {resolution}
           </div>
         </div>
       </div>
@@ -902,7 +816,7 @@ const Material = ({
     | undefined;
 }) => {
   return (
-    <div style={{ opacity: "0" }}>
+    <div>
       <div
         style={{
           display: "flex",
@@ -1005,7 +919,7 @@ const Material = ({
                   alignItems: "center",
                 }}
               >
-                <div>{requester}</div>
+                <div>{requester?.toUpperCase()}</div>
                 <div>________________________________________</div>
                 <div>Signature Over Printerd Name/Date</div>
               </div>
@@ -1048,12 +962,14 @@ const Material = ({
 const Footer = ({
   ticketNumber,
   createdBy,
+  closedBy,
 }: {
   ticketNumber: string | undefined;
   createdBy: string | undefined;
+  closedBy: string | undefined;
 }) => {
   return (
-    <div style={{ opacity: "0" }}>
+    <div>
       <div
         style={{
           display: "flex",
@@ -1062,7 +978,6 @@ const Footer = ({
           borderBottom: "solid gray 1px",
           borderRight: "solid gray 1px",
           borderLeft: "solid gray 1px",
-          opacity: "0",
         }}
       >
         FOR DATA AND ADMIN USE ONLY
@@ -1083,7 +998,6 @@ const Footer = ({
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              // marginTop: "15px",
             }}
           >
             <div>{createdBy?.toUpperCase()}</div>
@@ -1098,9 +1012,9 @@ const Footer = ({
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              // marginTop: "15px",
             }}
           >
+            <div>{closedBy?.toUpperCase()}</div>
             <div>____________________________________________</div>
             <div>Signature Over Printer Name/Date</div>
           </div>
@@ -1141,15 +1055,10 @@ const TickComponent: React.FC<TickProps> = (props) => {
           width: "11px",
           border: "solid gray 1px",
           marginRight: "5px",
-          backgroundColor: tick ? "lightgrey" : "none",
+          backgroundColor: tick ? "grey" : "none",
         }}
       ></div>
       <div>{title}</div>
     </div>
   );
-};
-
-const HeadingContainer: CSS.Properties = {
-  border: "solid gray 1px",
-  opacity: "0",
 };
