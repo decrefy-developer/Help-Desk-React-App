@@ -8,6 +8,8 @@ import {
   useDisclosure,
   useColorModeValue,
   useMediaQuery,
+  Button,
+  Stack,
 } from '@chakra-ui/react';
 import {
   FaHome,
@@ -22,25 +24,36 @@ import {
   FaTicketAlt,
   FaUserCog,
 } from 'react-icons/fa';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import StyleContext from '../context/StyleContext';
 import SideBarItem from './SideBarItem';
 import NotificationDrawer from './NotificationDrawer';
 import { URLS } from '../URLS';
 import { DecodeToken } from '../utils/decode-token';
 import { ACCESS, IUser } from '../models/interface';
+import ModalComponent from './Modal';
+import Cookies from 'js-cookie';
 
 const SideBar: React.FC = () => {
   const { pathname } = useLocation();
   const { borderLine, isSideBarShow } = useContext(StyleContext);
   const { toggleColorMode, colorMode } = useColorMode();
+  const logoutModal = useDisclosure();
   const { isOpen, onClose } = useDisclosure();
   const decoded: IUser | null = DecodeToken();
   const color = useColorModeValue('white', 'gray.800');
   const [isMobile] = useMediaQuery('(max-width: 767px)');
+  const navigate = useNavigate();
 
   let themeIcon =
     colorMode === 'light' ? <FaMoon color="#a0aec0" /> : <FaSun />;
+
+  async function logoutHandler() {
+    await Cookies.remove('token');
+    await Cookies.remove('x-refresh');
+
+    navigate('/');
+  }
   return (
     <>
       <Flex
@@ -178,11 +191,33 @@ const SideBar: React.FC = () => {
             aria-label="change theme"
             icon={themeIcon}
           />
-          <Avatar size="sm" name={decoded?.email} />
+          <Avatar
+            size="sm"
+            name={decoded?.email}
+            cursor="pointer"
+            onClick={logoutModal.onOpen}
+          />
         </VStack>
       </Flex>
 
       {isOpen && <NotificationDrawer isOpen={isOpen} onClose={onClose} />}
+
+      {logoutModal.isOpen && (
+        <ModalComponent
+          isOpen={logoutModal.isOpen}
+          onClose={logoutModal.onClose}
+          title="Logout"
+          isCentered={true}
+          size="sm"
+        >
+          <Stack direction="row" mb={3}>
+            <Button size="sm" bgColor="primary" onClick={logoutHandler}>
+              Yes
+            </Button>
+            <Button size="sm">No</Button>
+          </Stack>
+        </ModalComponent>
+      )}
     </>
   );
 };
