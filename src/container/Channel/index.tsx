@@ -24,9 +24,10 @@ import DrawerComponent from "./DrawerComponent";
 import TableComponent from "./TableComponent";
 import SkeletonPlaceHolder from "../../components/SkeletonPlaceHolder";
 import ModalViewMember from "./ModalViewMember";
+import useScreenPadding from "../../hooks/useScreenPadding";
 
 const Channel = () => {
-  const [screenPadding, setScreenPadding] = useState<number>(4);
+  const { screenPadding } = useScreenPadding({ minPadding: 4, maxPadding: 10 });
   const [isArchieve, setIsArchieve] = useState<boolean>(false);
   const [isActive, setIsActive] = useState<boolean>(false); // holds the user account status before submitting
   const [isMobile] = useMediaQuery("(max-width: 600px)");
@@ -107,14 +108,6 @@ const Channel = () => {
       return alert("An error has occured!, please reafresh the page ");
   }, [isError]);
 
-  useEffect(() => {
-    if (isMobile === false) {
-      setScreenPadding(20);
-    } else {
-      setScreenPadding(4);
-    }
-  }, [isMobile]);
-
   return (
     <React.Fragment>
       <Flex w="full" flexDirection="column">
@@ -128,7 +121,7 @@ const Channel = () => {
           placeHolder="Seach name"
         />
 
-        <PageContentScroll minH="550px">
+        <PageContentScroll>
           <Flex
             py={8}
             px={screenPadding}

@@ -15,24 +15,19 @@ import {
   Thead,
   Tooltip,
   Tr,
-} from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import ModalComponent from "../../components/Modal";
-import { IChannel, IFormInputChannelMember } from "../../models/interface";
-import { Select } from "chakra-react-select";
-import { useListMemberQuery } from "../../app/features/member-query";
-import { Icon } from "@chakra-ui/icons";
-import { FaCross, FaPen, FaTrashAlt } from "react-icons/fa";
-import { useManageMembertoChannelMutation } from "../../app/features/channel-query";
-import {
-  Controller,
-  SubmitErrorHandler,
-  SubmitHandler,
-  useForm,
-} from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { schemaAddMemberToChannel } from "../../models/schemas";
-import { toast } from "react-toastify";
+} from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import ModalComponent from '../../components/Modal';
+import { IChannel } from '../../models/interface';
+import { Select } from 'chakra-react-select';
+import { useListMemberQuery } from '../../app/features/member-query';
+import { Icon } from '@chakra-ui/icons';
+import { FaTrashAlt } from 'react-icons/fa';
+import { useManageMembertoChannelMutation } from '../../app/features/channel-query';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { schemaAddMemberToChannel } from '../../models/schemas';
+import { toast } from 'react-toastify';
 
 interface Props {
   data: Array<IChannel>;
@@ -55,7 +50,7 @@ const ModalViewMember: React.FC<Props> = ({
   } = useListMemberQuery({
     page: 1,
     limit: 100,
-    search: "",
+    search: '',
     status: true,
   });
 
@@ -64,11 +59,9 @@ const ModalViewMember: React.FC<Props> = ({
   const {
     handleSubmit,
     control,
-    watch,
     formState: { errors, isValid },
-    resetField,
   } = useForm({
-    mode: "onChange",
+    mode: 'onChange',
     resolver: yupResolver(schemaAddMemberToChannel),
   });
 
@@ -77,17 +70,17 @@ const ModalViewMember: React.FC<Props> = ({
       //  TODO: transform the data into API requirement
       const newMember = {
         _id: selectedRow,
-        mode: "ADD",
+        mode: 'ADD',
         data: {
-          userId: data.member["value"],
-          email: data.member["label"],
+          userId: data.member['value'],
+          email: data.member['label'],
           isAdmin: data.isAdmin,
         },
       };
 
       const result = await ManageMembertoChannel(newMember).unwrap();
       if (result) {
-        toast.success(`${data.member["label"]} successfully added as member`);
+        toast.success(`${data.member['label']} successfully added as member`);
       }
     } catch (err: any) {
       toast.error(err.data.message);
@@ -98,7 +91,7 @@ const ModalViewMember: React.FC<Props> = ({
     try {
       const member = {
         _id: selectedRow,
-        mode: "REMOVE",
+        mode: 'REMOVE',
         data: {
           userId: data.userId,
           email: data.email,
@@ -123,7 +116,7 @@ const ModalViewMember: React.FC<Props> = ({
 
   useEffect(() => {
     if (isError)
-      return alert("An error has occurred!, please refresh the page");
+      return alert('An error has occurred!, please refresh the page');
   }, [isError]);
 
   return (
@@ -157,7 +150,7 @@ const ModalViewMember: React.FC<Props> = ({
               )}
             />
             <FormErrorMessage>
-              {errors?.member && "Member is required"}
+              {errors?.member && 'Member is required'}
             </FormErrorMessage>
           </FormControl>
 

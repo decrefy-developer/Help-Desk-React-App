@@ -1,13 +1,3 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import React, { useEffect } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import {
-  useGetChannelQuery,
-  useManageMembertoChannelMutation,
-} from "../../../app/features/channel-query";
-import { useListMemberQuery } from "../../../app/features/member-query";
-import { schemaAddMemberToChannel } from "../../../models/schemas";
 import {
   Box,
   Text,
@@ -32,13 +22,24 @@ import {
   Th,
   Tbody,
   Td,
-} from "@chakra-ui/react";
-import ModalComponent from "../../../components/Modal";
-import { Select } from "chakra-react-select";
-import { FaSearch, FaTrashAlt } from "react-icons/fa";
-import { useParams } from "react-router-dom";
-import { DecodeToken } from "../../../utils/decode-token";
-import { ACCESS, IUser } from "../../../models/interface";
+} from '@chakra-ui/react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import React, { useEffect } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import {
+  useGetChannelQuery,
+  useManageMembertoChannelMutation,
+} from '../../../app/features/channel-query';
+import { useListMemberQuery } from '../../../app/features/member-query';
+import { schemaAddMemberToChannel } from '../../../models/schemas';
+
+import ModalComponent from '../../../components/Modal';
+import { Select } from 'chakra-react-select';
+import { FaSearch, FaTrashAlt } from 'react-icons/fa';
+import { useParams } from 'react-router-dom';
+import { DecodeToken } from '../../../utils/decode-token';
+import { ACCESS, IUser } from '../../../models/interface';
 
 const ModalMember: React.FC<{
   isOpen: boolean;
@@ -46,7 +47,7 @@ const ModalMember: React.FC<{
 }> = ({ isOpen, onClose }) => {
   const decoded: IUser | null = DecodeToken();
   const { channelId } = useParams();
-  const channelID = channelId ? channelId : "";
+  const channelID = channelId ? channelId : '';
   const {
     data: channel,
     isLoading,
@@ -57,7 +58,7 @@ const ModalMember: React.FC<{
     useListMemberQuery({
       page: 1,
       limit: 100,
-      search: "",
+      search: '',
       status: true,
     });
 
@@ -66,10 +67,9 @@ const ModalMember: React.FC<{
   const {
     handleSubmit,
     control,
-    watch,
     formState: { errors, isValid },
   } = useForm({
-    mode: "onChange",
+    mode: 'onChange',
     resolver: yupResolver(schemaAddMemberToChannel),
   });
 
@@ -78,16 +78,16 @@ const ModalMember: React.FC<{
       //  TODO: transform the data into API requirement
       const newMember = {
         _id: channelID,
-        mode: "ADD",
+        mode: 'ADD',
         data: {
-          userId: data.member["value"],
-          email: data.member["label"],
+          userId: data.member['value'],
+          email: data.member['label'],
           isAdmin: data.isAdmin,
         },
       };
       const result = await ManageMembertoChannel(newMember).unwrap();
       if (result) {
-        toast.success(`${data.member["label"]} successfully added as member`);
+        toast.success(`${data.member['label']} successfully added as member`);
         refetch();
       }
     } catch (err: any) {
@@ -99,7 +99,7 @@ const ModalMember: React.FC<{
     try {
       const member = {
         _id: channelID,
-        mode: "REMOVE",
+        mode: 'REMOVE',
         data: {
           userId: data.userId,
           email: data.email,
@@ -118,7 +118,7 @@ const ModalMember: React.FC<{
 
   useEffect(() => {
     if (isError)
-      return alert("An error has occured!, please reafresh the page ");
+      return alert('An error has occured!, please reafresh the page ');
   }, [isError]);
 
   return (
@@ -151,7 +151,7 @@ const ModalMember: React.FC<{
                   )}
                 />
                 <FormErrorMessage>
-                  {errors?.member && "Member is required"}
+                  {errors?.member && 'Member is required'}
                 </FormErrorMessage>
               </FormControl>
 
@@ -193,12 +193,7 @@ const ModalMember: React.FC<{
             pointerEvents="none"
             children={<FaSearch color="gray.300" />}
           />
-          <Input
-            type="text"
-            placeholder="Find member"
-            variant="filled"
-            onChange={(e) => console.log(e.target.value)}
-          />
+          <Input type="text" placeholder="Find member" variant="filled" />
         </InputGroup>
 
         {isLoading ? (

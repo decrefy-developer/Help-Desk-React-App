@@ -8,9 +8,9 @@ import {
   Th,
   Thead,
   Tr,
-} from "@chakra-ui/react";
-import ModalComponent from "../../components/Modal";
-import { useChannelsOfTheUserQuery } from "../../app/features/member-query";
+} from '@chakra-ui/react';
+import ModalComponent from '../../components/Modal';
+import { useChannelsOfTheUserQuery } from '../../app/features/member-query';
 
 interface Props {
   isOpen: boolean;
@@ -55,7 +55,7 @@ const ModalViewChannel: React.FC<Props> = ({ isOpen, onClose, userId }) => {
               <Tr key={item._id}>
                 <Td>{item.team}</Td>
                 <Td>
-                  [ {item.channels.flatMap((channel) => `${channel.name} , `)} ]
+                  [ {item.channels.map((channel) => `${channel.name} , `)} ]
                 </Td>
               </Tr>
             ))}

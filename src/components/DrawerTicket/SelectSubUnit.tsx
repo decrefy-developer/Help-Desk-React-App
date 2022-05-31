@@ -1,23 +1,23 @@
-import { FormControl, FormErrorMessage, FormLabel } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import { Select } from "chakra-react-select";
+import { FormControl, FormErrorMessage, FormLabel } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { Select } from 'chakra-react-select';
 import {
   Control,
   Controller,
   FieldErrors,
   FieldValues,
   UseFormGetValues,
-} from "react-hook-form";
-import { useListSubCategoryQuery } from "../../app/features/category-query";
+} from 'react-hook-form';
+import { useListSubCategoryQuery } from '../../app/features/category-query';
 
 const SelectSubUnit: React.FC<{
   control: Control<FieldValues, object>;
   errors: FieldErrors<FieldValues>;
   getValues: UseFormGetValues<FieldValues>;
 }> = ({ control, errors, getValues }) => {
-  const [page, setPage] = useState<number>(1);
-  const [searchText, setSearchText] = useState<string>("");
-  const [categoryId, setCategoryId] = useState("");
+  const [page] = useState<number>(1);
+  const [searchText] = useState<string>('');
+  const [categoryId, setCategoryId] = useState('');
 
   const { data } = useListSubCategoryQuery({
     page: page,
@@ -28,11 +28,11 @@ const SelectSubUnit: React.FC<{
   });
 
   useEffect(() => {
-    if (getValues("categoryId")) {
-      let id = getValues("categoryId");
+    if (getValues('categoryId')) {
+      let id = getValues('categoryId');
       setCategoryId(id);
     }
-  }, [getValues("categoryId")]);
+  }, [getValues('categoryId')]);
 
   return (
     <FormControl isInvalid={errors?.SubCategoryId ? true : false}>

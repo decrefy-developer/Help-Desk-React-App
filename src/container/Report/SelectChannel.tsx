@@ -1,60 +1,50 @@
-import React, { useEffect, useState } from "react";
-import {
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  HStack,
-} from "@chakra-ui/react";
-import { Select } from "chakra-react-select";
-import { useListChannelQuery } from "../../app/features/channel-query";
+import React, { useEffect, useState } from 'react';
+import { FormControl, FormErrorMessage } from '@chakra-ui/react';
+import { Select } from 'chakra-react-select';
+import { Control, Controller, FieldErrors, FieldValues } from 'react-hook-form';
+import { IChannel, IFormReports } from '../../models/interface';
 
 interface Props {
-  errors: Array<string>;
-  setChannel: React.Dispatch<React.SetStateAction<string>>;
-  team: string;
+  errors: FieldErrors<FieldValues>;
+  control: Control<IFormReports, object>;
+  channels: Array<Pick<IChannel, '_id' | 'name'>>;
 }
 
-const SelectChannel: React.FC<Props> = ({ errors, setChannel, team }) => {
+const SelectChannel: React.FC<Props> = ({ errors, control, channels }) => {
   const [options, setOptions] = useState<
     Array<{ value: string; label: string }>
   >([]);
-  const { data, isFetching } = useListChannelQuery({
-    page: 1,
-    limit: 1000,
-    search: "",
-    status: true,
-  });
-
-  const onChangeHandler = (e: any) => {
-    if (e) setChannel(e.value);
-  };
 
   useEffect(() => {
-    if (!isFetching) {
-      const selectedTeam = data?.docs
-        .filter((item) => item.team["_id"] === team)
-        .map((res) => {
-          return { value: res._id, label: res.name };
-        });
-      if (selectedTeam) setOptions(selectedTeam);
-    }
-  }, [team]);
+    const valueHolder = channels.map((channel) => {
+      return {
+        value: channel._id,
+        label: channel.name,
+      };
+    });
+    setOptions(valueHolder);
+  }, [channels]);
 
   return (
-    <FormControl isInvalid={errors.includes("team")}>
-      <Select
-        id="team"
-        isLoading={isFetching}
-        onChange={(e) => onChangeHandler(e)}
-        selectedOptionStyle="color"
-        placeholder="Select Team"
-        options={options}
-        selectedOptionColor="purple"
-        isClearable={true}
+    <FormControl isInvalid={false}>
+      <Controller
+        name="channel"
+        control={control}
+        render={({ field }) => (
+          <Select
+            onChange={(e) => field.onChange(e?.value)}
+            selectedOptionStyle="color"
+            placeholder="Select Channel"
+            options={options}
+            selectedOptionColor="purple"
+            isClearable={true}
+            size="sm"
+          />
+        )}
       />
 
       <FormErrorMessage justifyContent="flex-end">
-        {`sample error`}
+        {errors?.channel?.message}
       </FormErrorMessage>
     </FormControl>
   );

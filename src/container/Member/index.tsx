@@ -3,31 +3,31 @@ import {
   Stack,
   HStack,
   Text,
-  Skeleton,
   useDisclosure,
   Checkbox,
   CircularProgress,
   useMediaQuery,
-} from "@chakra-ui/react";
-import Pagination from "@choc-ui/paginator";
-import React, { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+} from '@chakra-ui/react';
+import Pagination from '@choc-ui/paginator';
+import React, { useCallback, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import {
   useChangeAccountStatusMutation,
   useListMemberQuery,
   useResetPasswordMutation,
-} from "../../app/features/member-query";
-import Dialog from "../../components/AlertDialog";
-import HeadingComponent from "../../components/Heading";
-import SubHeadingComponent from "../../components/SubHeading";
-import PageContentScroll from "../../components/PageContentScroll";
+} from '../../app/features/member-query';
+import Dialog from '../../components/AlertDialog';
+import HeadingComponent from '../../components/Heading';
+import SubHeadingComponent from '../../components/SubHeading';
+import PageContentScroll from '../../components/PageContentScroll';
 
-import useTableControl from "../../hooks/useTableControl";
-import SkeletonPlaceHolder from "../../components/SkeletonPlaceHolder";
-import TableComponent from "./TableComponent";
-import DrawerComponent from "./DrawerComponent";
-import ModalChangeAccess from "./ModalChangeAccess";
-import ModalViewChannel from "./ModalViewChannel";
+import useTableControl from '../../hooks/useTableControl';
+import SkeletonPlaceHolder from '../../components/SkeletonPlaceHolder';
+import TableComponent from './TableComponent';
+import DrawerComponent from './DrawerComponent';
+import ModalChangeAccess from './ModalChangeAccess';
+import ModalViewChannel from './ModalViewChannel';
+import useScreenPadding from '../../hooks/useScreenPadding';
 
 const Member = () => {
   const [isActive, setIsActive] = useState<boolean>(false); // holds the user account status
@@ -44,8 +44,8 @@ const Member = () => {
     onChangeLimit,
   } = useTableControl();
 
-  const [screenPadding, setScreenPadding] = useState<number>(4);
-  const [isMobile] = useMediaQuery("(max-width: 600px)");
+  const { screenPadding } = useScreenPadding({ minPadding: 4, maxPadding: 10 });
+  const [isMobile] = useMediaQuery('(max-width: 600px)');
 
   const {
     isOpen: isDrawerOpen,
@@ -137,7 +137,7 @@ const Member = () => {
       if (result) {
         closeDialogChangeStatus();
         toast.success(
-          `${result.email} is ${isActive ? "activated" : `deactivated`}`
+          `${result.email} is ${isActive ? 'activated' : `deactivated`}`
         );
       }
     } catch (err: any) {
@@ -148,19 +148,11 @@ const Member = () => {
   useEffect(() => {
     const checkError = () => {
       if (isError)
-        return alert("An error has occurred!, please refresh the page");
+        return alert('An error has occurred!, please refresh the page');
     };
 
     checkError();
   }, [isError]);
-
-  useEffect(() => {
-    if (isMobile === false) {
-      setScreenPadding(20);
-    } else {
-      setScreenPadding(4);
-    }
-  }, [isMobile]);
 
   return (
     <React.Fragment>
@@ -174,14 +166,14 @@ const Member = () => {
           placeHolder="Search an email: admin@gmail.com"
         />
 
-        <PageContentScroll minH="550px">
+        <PageContentScroll>
           <Flex
             py={8}
             px={screenPadding}
             w="full"
             alignItems="center"
             justifyContent="space-between"
-            direction={isMobile ? "column" : "row"}
+            direction={isMobile ? 'column' : 'row'}
           >
             {isLoading ? (
               <Text color="gray.500">Pagination loading..</Text>
@@ -190,9 +182,9 @@ const Member = () => {
                 <Pagination
                   currentPage={page}
                   total={data?.totalDocs}
-                  paginationProps={{ display: "flex" }}
-                  baseStyles={{ border: "1px" }}
-                  activeStyles={{ bg: "primary" }}
+                  paginationProps={{ display: 'flex' }}
+                  baseStyles={{ border: '1px' }}
+                  activeStyles={{ bg: 'primary' }}
                   onChange={(page) => onChangePage(page)}
                   pageSize={pageLimit}
                   showSizeChanger
@@ -265,7 +257,7 @@ const Member = () => {
           onClose={closeDialogResetPassword}
           children={
             <Text>
-              The password will be <i style={{ color: "#d65db1" }}>123456</i>
+              The password will be <i style={{ color: '#d65db1' }}>123456</i>
             </Text>
           }
           onSubmit={ResetPassword}
@@ -281,8 +273,8 @@ const Member = () => {
           children={
             <Text>
               Do you want to
-              <i style={{ color: "#d65db1" }}>
-                {isActive ? " activate " : " deactive "}
+              <i style={{ color: '#d65db1' }}>
+                {isActive ? ' activate ' : ' deactive '}
               </i>
               this account?
             </Text>

@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { IDepartment, IFormInputDepartment, IFormInputManageUnit, IUnit, ListResponse, PageArgs } from "../../models/interface";
+import { IDepartment, IFormInputDepartment, IUnit, ListResponse, PageArgs } from "../../models/interface";
 import { baseQuery } from "../../services/auth-header";
 
 

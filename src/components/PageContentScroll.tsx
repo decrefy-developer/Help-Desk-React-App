@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface IProps {
   children: React.ReactNode;
@@ -7,10 +7,25 @@ interface IProps {
 }
 
 const PageContentScroll: React.FC<IProps> = (props) => {
-  const { children } = props;
+  const [screenSize, getDimension] = useState({
+    dynamicHeight: window.innerHeight * 0.7,
+  });
+
+  const setDimension = () => {
+    getDimension({ dynamicHeight: window.innerHeight * 0.7 });
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", setDimension);
+
+    return () => {
+      window.removeEventListener("resize", setDimension);
+    };
+  }, [screenSize]);
+
   return (
     <Box
-      {...props}
+      maxH={`${Math.round(screenSize.dynamicHeight)}px`}
       flexDirection="column"
       overflowY="auto"
       sx={{
@@ -24,7 +39,7 @@ const PageContentScroll: React.FC<IProps> = (props) => {
         },
       }}
     >
-      {children}
+      {props.children}
     </Box>
   );
 };

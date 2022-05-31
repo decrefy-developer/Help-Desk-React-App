@@ -1,6 +1,7 @@
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { Box, Text } from "@chakra-ui/layout";
-import React, { ReactElement } from "react";
+import { useMediaQuery } from "@chakra-ui/react";
+import React, { ReactElement, useEffect, useState } from "react";
 
 interface IconAppProps {
   title: string;
@@ -15,6 +16,16 @@ const SideBarItem: React.FC<IconAppProps> = ({
   borderRadius,
 }) => {
   const iconBg = useColorModeValue("gray.400", "gray.700");
+  const [isMobile] = useMediaQuery("(max-width: 767px)");
+  const [size, setSize] = useState("45px");
+
+  useEffect(() => {
+    if (isMobile) {
+      setSize("35px");
+    } else {
+      setSize("45px");
+    }
+  }, [isMobile]);
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
@@ -23,8 +34,8 @@ const SideBarItem: React.FC<IconAppProps> = ({
         alignItems="center"
         justifyContent="center"
         as="button"
-        h="45px"
-        w="45px"
+        h={size}
+        w={size}
         transition="all 0.2s cubic-bezier(0.8,.52,.52,1)"
         borderRadius={borderRadius ? borderRadius : "1px"}
         bg={iconBg}
@@ -43,9 +54,11 @@ const SideBarItem: React.FC<IconAppProps> = ({
       >
         {icon}
       </Box>
-      <Text fontSize="xs" mt={1}>
-        {title}
-      </Text>
+      {!isMobile && (
+        <Text fontSize="xs" mt={1}>
+          {title}
+        </Text>
+      )}
     </Box>
   );
 };

@@ -1,8 +1,8 @@
-import { Box, Flex, HStack, Stack, Text, VStack } from "@chakra-ui/layout";
-import { Progress } from "@chakra-ui/progress";
-import moment from "moment";
-import { useGetTicketQuery } from "../../app/features/ticket-query";
-import ModalComponent from "../../components/Modal";
+import { Box, Flex, HStack, Stack, Text, VStack } from '@chakra-ui/layout';
+import { Progress } from '@chakra-ui/progress';
+import moment from 'moment';
+import { useGetTicketQuery } from '../../app/features/ticket-query';
+import ModalComponent from '../../components/Modal';
 
 interface IProps {
   rowId: string;
@@ -39,6 +39,15 @@ const ModalView: React.FC<IProps> = ({ rowId, isOpen, onClose }) => {
 
             <HStack>
               <Text size="sm" fontWeight="light" color="gray.500">
+                Date Requested:
+              </Text>
+              <Text>
+                {moment(ticket.createdAt).format('ddd, MMM D YYYY, h:mm:ss a')}
+              </Text>
+            </HStack>
+
+            <HStack>
+              <Text size="sm" fontWeight="light" color="gray.500">
                 Subject:
               </Text>
               <Text>{ticket.category.name}</Text>
@@ -49,7 +58,7 @@ const ModalView: React.FC<IProps> = ({ rowId, isOpen, onClose }) => {
                 Sub-category:
               </Text>
               <Text>
-                {ticket.subCategory.map((item) => item.name).join(",")}
+                {ticket.subCategory.map((item) => item.name).join(',')}
               </Text>
             </HStack>
 
@@ -59,7 +68,7 @@ const ModalView: React.FC<IProps> = ({ rowId, isOpen, onClose }) => {
               </Text>
               <Text>
                 {moment(ticket?.targetDate).format(
-                  "ddd, MMM D YYYY, h:mm:ss a"
+                  'ddd, MMM D YYYY, h:mm:ss a'
                 )}
               </Text>
             </HStack>
@@ -71,14 +80,14 @@ const ModalView: React.FC<IProps> = ({ rowId, isOpen, onClose }) => {
                 </Text>
                 <Text>
                   {moment(ticket?.doneDate).format(
-                    "ddd, MMM D YYYY, h:mm:ss a"
+                    'ddd, MMM D YYYY, h:mm:ss a'
                   )}
                 </Text>
               </HStack>
             )}
 
             <VStack alignItems="flex-start">
-              <Text size="sm" fontWeight="light" color="gray.500">
+              <Text size="sm" fontWeight="light" color="gr ay.500">
                 Concern:
               </Text>
               <Text>{ticket?.description}</Text>
@@ -87,7 +96,7 @@ const ModalView: React.FC<IProps> = ({ rowId, isOpen, onClose }) => {
         ) : (
           <Text color="accent">
             This ticket has not yet been started, please wait a few
-            minutes/hours.{" "}
+            minutes/hours.
           </Text>
         )}
       </Flex>

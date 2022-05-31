@@ -14,6 +14,7 @@ import Requester from "./container/Requester";
 import { ACCESS, IUser } from "./models/interface";
 import Ticket from "./container/Ticket";
 import Category from "./container/Category";
+import TransferTicket from "./container/Home/MainContent/TransferTicket";
 
 const Router = ({ decodedToken }: { decodedToken: IUser | null }) => [
   {
@@ -33,7 +34,10 @@ const Router = ({ decodedToken }: { decodedToken: IUser | null }) => [
       {
         path: "home",
         element: decodedToken ? <Home /> : <Navigate to="/login" />,
-        children: [{ path: ":channelId", element: <MainContent /> }],
+        children: [
+          { path: ":channelId", element: <MainContent /> },
+          { path: "transfer/:teamId", element: <TransferTicket /> },
+        ],
       },
       {
         path: "requester",

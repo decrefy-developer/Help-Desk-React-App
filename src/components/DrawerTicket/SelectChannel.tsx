@@ -1,23 +1,12 @@
-import {
-  Box,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-} from "@chakra-ui/react";
-import React, { useEffect } from "react";
-import { IChannel } from "../../models/interface";
-import { Select } from "chakra-react-select";
-import {
-  Control,
-  Controller,
-  FieldErrors,
-  FieldValues,
-  UseFormWatch,
-} from "react-hook-form";
+import { FormControl, FormErrorMessage, FormLabel } from '@chakra-ui/react';
+import React from 'react';
+import { IChannel } from '../../models/interface';
+import { Select } from 'chakra-react-select';
+import { Control, Controller, FieldErrors, FieldValues } from 'react-hook-form';
 
 const SelectChannel: React.FC<{
   control: Control<FieldValues, object>;
-  channels: Array<Pick<IChannel, "name" | "_id" | "isActive">>;
+  channels: Array<Pick<IChannel, 'name' | '_id' | 'isActive'>>;
   errors: FieldErrors<FieldValues>;
 }> = ({ channels, control, errors }) => {
   return (
@@ -36,7 +25,7 @@ const SelectChannel: React.FC<{
             escapeClearsValue={true}
             selectedOptionStyle="color"
             placeholder={
-              channels.length > 0 ? "select channel" : "no item found"
+              channels.length > 0 ? 'select channel' : 'no item found'
             }
             options={channels.map(function (channel) {
               return { value: channel._id, label: channel.name };

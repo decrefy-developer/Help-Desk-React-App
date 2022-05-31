@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 
 const useKeyPress = ({
   keys,
@@ -18,7 +18,6 @@ const useKeyPress = ({
   // handle what happens on key press
   const handleKeyPress = useCallback(
     (event) => {
-      console.log(event.key);
       // check if one of the key is part of the ones we want
       if (keys.some((key) => event.key === key)) {
         callbackRef.current(event);

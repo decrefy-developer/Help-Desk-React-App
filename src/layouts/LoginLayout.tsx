@@ -1,6 +1,6 @@
-import { Flex } from "@chakra-ui/layout";
-import React from "react";
-import { Outlet } from "react-router-dom";
+import { Flex } from '@chakra-ui/layout';
+import React from 'react';
+import { Outlet } from 'react-router-dom';
 
 const LoginLayout: React.FC = () => {
   return (

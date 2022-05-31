@@ -38,6 +38,14 @@ export const schemaCategory = object().shape({
   name: string().required("Category name is required").min(3),
 });
 
+export const schemaReports = object().shape({
+  openDate: date().required("Open date is required"),
+  closedDate: date().required("Closed date is required"),
+  team: string().required("Team is required"),
+  channel: string().required("Channel is required"),
+  status: array().of(string())
+})
+
 // export const schemaUnit = object().shape({
 //   name: string().required("Unit name is required"),
 // })

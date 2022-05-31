@@ -22,7 +22,7 @@ export interface IUser {
 export interface IMember {
   _id: string;
   isActive: boolean;
-  priviledge: Array<string>;
+  priviledge: string[];
   email: string;
   firstName?: string;
   lastName?: string;
@@ -107,7 +107,7 @@ export interface ITeam {
   isActive: boolean;
   name: string;
   numberOfChannels: number;
-  channels: Array<Pick<IChannel, "_id" | "name" | "isActive">>;
+  channels: Pick<IChannel, "_id" | "name" | "isActive">[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -116,7 +116,7 @@ export interface IChannel {
   _id: string;
   isActive: boolean;
   name: string;
-  members: Array<ICMember>;
+  members: ICMember[];
   team: Pick<ITeam, "_id" | "name">;
   createdAt: string;
   updatedAt: string;
@@ -157,7 +157,7 @@ export interface ISubCategory extends ICategoryConcern {
 export interface ITeamChannel {
   _id: string;
   team: string;
-  channels: Array<Pick<IChannel, "_id" | "name">>;
+  channels: Pick<IChannel, "_id" | "name">[];
 }
 
 export interface ITicket {
@@ -191,7 +191,7 @@ export interface ITicket {
   team: Pick<ITeam, "_id" | "name">
   channel: Pick<IChannel, "_id" | "name">
   category: Pick<ICategoryConcern, "_id" | "name">
-  subCategory: Array<Pick<ISubCategory, "_id" | "name">>
+  subCategory: Pick<ISubCategory, "_id" | "name">[]
   user: Pick<IMember, "_id" | "email" | "firstName" | "lastName">
   requestDetails: {
     _id: string
@@ -203,6 +203,8 @@ export interface ITicket {
       department: Pick<IDepartment, "_id" | "name">
     }
   }
+  isFiled: Boolean
+  DateFiled: Date
 }
 
 export interface ListResponse<T> {
@@ -219,9 +221,9 @@ export interface ListResponse<T> {
 }
 
 export interface PageArgs {
-  page: number;
-  limit: number;
-  search: string;
+  page?: number;
+  limit?: number;
+  search?: string;
   status?: boolean;
   departmentId?: string;
   userId?: string;
@@ -230,13 +232,58 @@ export interface PageArgs {
 
 export interface TicketArgs extends PageArgs {
   channelId: string;
-  state: STATE;
+  departmentId?: string;
+  state?: STATE;
   statusTicket: STATUS;
+  isFiled?: boolean;
+
+  openDate?: Date;
+  closedDate?: Date;
+  team?: string;
+}
+
+export interface ITransferTicket {
+  _id: string;
+  ticketId: string;
+  ticketNumber: string;
+  description: string;
+  createdAt: Date;
+  from: {
+    team: {
+      _id: string;
+      name: string;
+    },
+    channel: {
+      _id: string;
+      name: string
+    }
+  }
+  to: {
+    team: {
+      _id: string;
+      name: string;
+    },
+    channel: {
+      _id: string;
+      name: string
+    }
+  }
+  isApproved: boolean;
+  dateApproved: Date;
+  remarks: string
 }
 
 // for forms
 export interface IFormInputDepartment {
   name: string;
+}
+
+export interface IFormReports {
+  openDate: Date
+  closedDate: Date
+  team: string
+  channel: string
+  status: STATUS
 }
 
 export interface IFormInputMember {
@@ -247,7 +294,7 @@ export interface IFormInputMember {
   email: string;
   password: string;
   confirmPassword: string;
-  priviledge: Array<string>;
+  priviledge: string[];
 }
 
 export interface IFormInputsLogin {
@@ -262,12 +309,12 @@ export interface IFormInputTicket {
   teamId: string;
   channelId: string;
   categoryId: string;
-  SubCategoryId: Array<string>;
+  SubCategoryId: string[];
   userId: string;
   description: string;
   state: STATE;
   status: STATUS;
-  coworkers: Array<string>;
+  coworkers: string[];
   startDate: Date;
   targetDate: Date;
   createdBy: string;
@@ -296,6 +343,21 @@ export interface IFormInputManageUnit {
     _id?: string;
     name: string;
   }
+}
+
+
+export interface IFormInputTransfer {
+  ticketId: string;
+  ticketNumber: string;
+  description: string;
+  from: {
+    teamId: string;
+    channelId: string;
+  }
+  to: {
+    teamId: string;
+  }
+  remarks: string;
 }
 
 //  use to hold the data from request to ticket form

@@ -4,24 +4,23 @@ import {
   FormErrorMessage,
   FormLabel,
   HStack,
-  Input,
   Stack,
   Textarea,
-} from "@chakra-ui/react";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { Select } from "chakra-react-select";
-import React, { useEffect, useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import { object, string, array } from "yup";
+} from '@chakra-ui/react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Select } from 'chakra-react-select';
+import React, { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import { object, string, array } from 'yup';
 import {
   useListCategoryConcernQuery,
   useListSubCategoryQuery,
-} from "../../../app/features/category-query";
-import { useUpdateStatusMutation } from "../../../app/features/request-query";
-import { useDoneTicketMutation } from "../../../app/features/ticket-query";
-import ModalComponent from "../../../components/Modal";
-import { ITicket } from "../../../models/interface";
+} from '../../../app/features/category-query';
+import { useUpdateStatusMutation } from '../../../app/features/request-query';
+import { useDoneTicketMutation } from '../../../app/features/ticket-query';
+import ModalComponent from '../../../components/Modal';
+import { ITicket } from '../../../models/interface';
 
 interface IProps {
   isOpen: boolean;
@@ -30,8 +29,8 @@ interface IProps {
 }
 
 const schema = object({
-  solution: string().required("solution is required!"),
-  categoryId: string().required("Category is required"),
+  solution: string().required('solution is required!'),
+  categoryId: string().required('Category is required'),
   SubCategoryId: array().of(string()),
 });
 
@@ -41,8 +40,7 @@ const ModalDoneTicket: React.FC<IProps> = ({
   selectedTicket,
 }) => {
   const initialRef: any = React.useRef();
-  const [solution, setSolution] = useState<string>("");
-  const [categoryId, setCategoryId] = useState("");
+  const [categoryId, setCategoryId] = useState('');
   const [defaultValue, setDefaultValue] = useState<{
     value: string | undefined;
     label: string | undefined;
@@ -54,7 +52,7 @@ const ModalDoneTicket: React.FC<IProps> = ({
     useListCategoryConcernQuery({
       page: 1,
       limit: 1000,
-      search: "",
+      search: '',
       status: true,
     });
 
@@ -62,7 +60,7 @@ const ModalDoneTicket: React.FC<IProps> = ({
     useListSubCategoryQuery({
       page: 1,
       limit: 1000,
-      search: "",
+      search: '',
       status: true,
       categoryId,
     });
@@ -74,13 +72,13 @@ const ModalDoneTicket: React.FC<IProps> = ({
     setValue,
     getValues,
     formState: { errors },
-  } = useForm({ mode: "onChange", resolver: yupResolver(schema) });
+  } = useForm({ mode: 'onChange', resolver: yupResolver(schema) });
 
   async function onSubmit(data: any) {
     try {
       if (selectedTicket?._id) {
         data._id = selectedTicket?._id;
-        data.mode = "DONE TICKET";
+        data.mode = 'DONE TICKET';
 
         const result = await doneTicket(data).unwrap();
         if (result) {
@@ -96,11 +94,11 @@ const ModalDoneTicket: React.FC<IProps> = ({
   }
 
   useEffect(() => {
-    if (getValues("categoryId")) {
-      let id = getValues("categoryId");
+    if (getValues('categoryId')) {
+      let id = getValues('categoryId');
       setCategoryId(id);
     }
-  }, [getValues("categoryId")]);
+  }, [getValues('categoryId')]);
 
   useEffect(() => {
     setDefaultValue({
@@ -115,16 +113,16 @@ const ModalDoneTicket: React.FC<IProps> = ({
   }, [selectedTicket]);
 
   useEffect(() => {
-    setValue("categoryId", selectedTicket?.category._id);
+    setValue('categoryId', selectedTicket?.category._id);
     setValue(
-      "SubCategoryId",
+      'SubCategoryId',
       selectedTicket?.subCategory.map(function (item) {
         return item._id;
       })
     );
   }, [selectedTicket?.category._id, selectedTicket?.subCategory, setValue]);
 
-  console.log("watch", watch("SubCategoryId"));
+  console.log('watch', watch('SubCategoryId'));
 
   return (
     <ModalComponent

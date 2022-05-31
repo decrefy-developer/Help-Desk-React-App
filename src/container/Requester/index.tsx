@@ -1,43 +1,38 @@
 import {
   Checkbox,
   CircularProgress,
-  Collapse,
   Flex,
   HStack,
   Stack,
   Text,
   useDisclosure,
-  useMediaQuery,
-} from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import HeadingComponent from "../../components/Heading";
-import PageContentScroll from "../../components/PageContentScroll";
-import SubHeadingComponent from "./SubHeadingComponent";
-import { useListRequestQuery } from "../../app/features/request-query";
-import useTableControl from "../../hooks/useTableControl";
-import SkeletonPlaceHolder from "../../components/SkeletonPlaceHolder";
-import Pagination from "@choc-ui/paginator";
-import TableComponent from "./TableComponent";
-import { DecodeToken } from "../../utils/decode-token";
-import { ACCESS, IRequest, IUser, STATE } from "../../models/interface";
-import DrawerTicket from "../../components/DrawerTicket/DrawerTicket";
-import ModalView from "./ModalView";
+} from '@chakra-ui/react';
+import React, { useState } from 'react';
+import HeadingComponent from '../../components/Heading';
+import PageContentScroll from '../../components/PageContentScroll';
+import SubHeadingComponent from './SubHeadingComponent';
+import { useListRequestQuery } from '../../app/features/request-query';
+import useTableControl from '../../hooks/useTableControl';
+import SkeletonPlaceHolder from '../../components/SkeletonPlaceHolder';
+import Pagination from '@choc-ui/paginator';
+import TableComponent from './TableComponent';
+import { DecodeToken } from '../../utils/decode-token';
+import { ACCESS, IRequest, IUser } from '../../models/interface';
+import DrawerTicket from '../../components/DrawerTicket/DrawerTicket';
+import ModalView from './ModalView';
+import useScreenPadding from '../../hooks/useScreenPadding';
 
 const Requester = () => {
   const [status, setStatus] = useState<boolean>(false);
-  const [screenPadding, setScreenPadding] = useState<number>(4);
-  const [isMobile] = useMediaQuery("(max-width: 600px)");
   const decoded: IUser | null = DecodeToken();
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const { screenPadding } = useScreenPadding({ minPadding: 4, maxPadding: 10 });
   const {
     isOpen: isModalOpen,
     onClose: closeModal,
     onOpen: openModal,
   } = useDisclosure();
   const [formStateHolder, setFormStateHolder] = useState<IRequest>();
-  const [screenSize, getDimension] = useState({
-    dynamicHeight: window.innerHeight * 0.6,
-  });
 
   const {
     page,
@@ -61,11 +56,10 @@ const Requester = () => {
     status: status,
     userId:
       decoded && decoded.priviledge.includes(ACCESS.CREATE_TICKET)
-        ? ""
+        ? ''
         : decoded?._id,
   });
 
-  console.log("request", requests);
   const creatTicketHandler = (data: IRequest) => {
     onOpen();
     setFormStateHolder(data);
@@ -76,29 +70,9 @@ const Requester = () => {
     setSelectedRow(_id);
   };
 
-  const setDimension = () => {
-    getDimension({ dynamicHeight: window.innerHeight * 0.6 });
-  };
-
   const FilterByStatusHandler = (isChecked: boolean) => {
     setStatus(isChecked);
   };
-
-  useEffect(() => {
-    if (isMobile === false) {
-      setScreenPadding(10);
-    } else {
-      setScreenPadding(4);
-    }
-  }, [isMobile]);
-
-  useEffect(() => {
-    window.addEventListener("resize", setDimension);
-
-    return () => {
-      window.removeEventListener("resize", setDimension);
-    };
-  }, [screenSize]);
 
   return (
     <React.Fragment>
@@ -110,7 +84,7 @@ const Requester = () => {
           setTextSearch={setSearch}
         />
 
-        <PageContentScroll minH={`${Math.round(screenSize.dynamicHeight)}px`}>
+        <PageContentScroll>
           <Flex
             py={4}
             px={screenPadding}
@@ -125,9 +99,9 @@ const Requester = () => {
                 <Pagination
                   currentPage={page}
                   total={requests?.totalDocs}
-                  paginationProps={{ display: "flex" }}
-                  baseStyles={{ border: "1px" }}
-                  activeStyles={{ bg: "primary" }}
+                  paginationProps={{ display: 'flex' }}
+                  baseStyles={{ border: '1px' }}
+                  activeStyles={{ bg: 'primary' }}
                   onChange={(page) => onChangePage(page)}
                   pageSize={pageLimit}
                   showSizeChanger

@@ -3,30 +3,30 @@ import {
   FormErrorMessage,
   FormLabel,
   HStack,
-} from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+} from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
 import {
   Control,
   Controller,
   FieldErrors,
   FieldValues,
   UseFormGetValues,
-} from "react-hook-form";
-import { useListTeamQuery } from "../../app/features/team-query";
-import { Select } from "chakra-react-select";
-import { IChannel } from "../../models/interface";
+} from 'react-hook-form';
+import { useListTeamQuery } from '../../app/features/team-query';
+import { Select } from 'chakra-react-select';
+import { IChannel } from '../../models/interface';
 
 const SelectTeam: React.FC<{
   control: Control<FieldValues, object>;
   errors: FieldErrors<FieldValues>;
   getValues: UseFormGetValues<FieldValues>;
   setChannel: React.Dispatch<
-    React.SetStateAction<Pick<IChannel, "name" | "_id" | "isActive">[]>
+    React.SetStateAction<Pick<IChannel, 'name' | '_id' | 'isActive'>[]>
   >;
 }> = ({ control, errors, getValues, setChannel }) => {
   const [page, setPage] = useState<number>(1);
-  const [searchText, setSearchText] = useState<string>("");
-  const { data, isError, isFetching } = useListTeamQuery({
+  const [searchText] = useState<string>('');
+  const { data, isFetching } = useListTeamQuery({
     page: page,
     limit: 1000,
     search: searchText,
@@ -44,13 +44,13 @@ const SelectTeam: React.FC<{
   };
 
   useEffect(() => {
-    if (getValues("teamId")) {
-      let teamId = getValues("teamId");
+    if (getValues('teamId')) {
+      let teamId = getValues('teamId');
 
       const selectedTeam = data?.docs.filter((team) => team._id === teamId);
       if (selectedTeam) setChannel(selectedTeam[0].channels);
     }
-  }, [getValues("teamId")]);
+  }, [getValues('teamId')]);
 
   return (
     <FormControl isInvalid={errors?.teamId ? true : false}>

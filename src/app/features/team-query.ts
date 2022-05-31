@@ -44,5 +44,5 @@ export const teamApi = createApi({
   }),
 });
 
-export const { useAddTeamMutation, useListTeamQuery, useChangeStatusMutation } =
+export const { useAddTeamMutation, useListTeamQuery, useChangeStatusMutation, useGetTeamQuery } =
   teamApi;

@@ -24,10 +24,11 @@ import SkeletonPlaceHolder from "../../components/SkeletonPlaceHolder";
 import DrawerComponent from "./DrawerComponent";
 import ModalViewChannel from "./ModalViewChannel";
 import TableComponent from "./TableComponent";
+import useScreenPadding from "../../hooks/useScreenPadding";
 
 const Team = () => {
   const [isArchieve, setIsArchieve] = useState<boolean>(false);
-  const [screenPadding, setScreenPadding] = useState<number>(4);
+  const { screenPadding } = useScreenPadding({ minPadding: 4, maxPadding: 10 });
   const [isActive, setIsActive] = useState<boolean>(false); // holds the user account status before submitting
 
   const {
@@ -107,14 +108,6 @@ const Team = () => {
       return alert("An error has occurred!, please refresh the page");
   }, [isError, refetch]);
 
-  useEffect(() => {
-    if (isMobile === false) {
-      setScreenPadding(20);
-    } else {
-      setScreenPadding(4);
-    }
-  }, [isMobile]);
-
   return (
     <React.Fragment>
       <Flex w="full" flexDirection="column">
@@ -128,7 +121,7 @@ const Team = () => {
           placeHolder="Search a name: Juan"
         />
 
-        <PageContentScroll minH="550px">
+        <PageContentScroll>
           <Flex
             py={8}
             px={screenPadding}

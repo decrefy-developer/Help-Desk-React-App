@@ -1,27 +1,22 @@
-import {
-  Box,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-} from "@chakra-ui/react";
-import React from "react";
-import { Select } from "chakra-react-select";
-import { useGetChannelQuery } from "../../app/features/channel-query";
+import { FormControl, FormErrorMessage, FormLabel } from '@chakra-ui/react';
+import React from 'react';
+import { Select } from 'chakra-react-select';
+import { useGetChannelQuery } from '../../app/features/channel-query';
 import {
   Control,
   Controller,
   FieldErrors,
   FieldValues,
   UseFormWatch,
-} from "react-hook-form";
+} from 'react-hook-form';
 
 const SelectCoworker: React.FC<{
   control: Control<FieldValues, object>;
   watch: UseFormWatch<FieldValues>;
   errors: FieldErrors<FieldValues>;
 }> = ({ control, watch, errors }) => {
-  const channelId = watch("channelId");
-  const user = watch("userId");
+  const channelId = watch('channelId');
+  const user = watch('userId');
   const { data } = useGetChannelQuery(channelId);
 
   return (
@@ -48,8 +43,8 @@ const SelectCoworker: React.FC<{
             selectedOptionStyle="check"
             placeholder={
               data?.members !== undefined && data?.members.length > 0
-                ? "Select Concern"
-                : "no items found"
+                ? 'Select Concern'
+                : 'no items found'
             }
             options={data?.members
               .filter((member) => member.userId !== user)

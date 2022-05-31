@@ -1,21 +1,17 @@
 import {
-  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
-  DrawerFooter,
   DrawerHeader,
-  DrawerOverlay,
   HStack,
   Icon,
   Stack,
   Text,
-  VStack,
-} from "@chakra-ui/react";
-import React from "react";
-import { FaHashtag } from "react-icons/fa";
-import StringTruncate from "../utils/StringTruncate";
+} from '@chakra-ui/react';
+import React from 'react';
+import { FaHashtag } from 'react-icons/fa';
+import StringTruncate from '../utils/StringTruncate';
 
 interface Props {
   isOpen: boolean;
@@ -30,7 +26,7 @@ const NotificationDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
         <HStack>
           <Icon as={FaHashtag} />
           <Text>124</Text>
-          <Text>{StringTruncate("HARDWARE MAINTENANCE", 18)}</Text>
+          <Text>{StringTruncate('HARDWARE MAINTENANCE', 18)}</Text>
         </HStack>
         <Text color="gray.500" fontSize="sm">
           15 hours ago

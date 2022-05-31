@@ -1,6 +1,5 @@
 import Cookies from "js-cookie";
 import jwtDecode from "jwt-decode";
-import { omit } from "lodash";
 import { IUser } from "../models/interface";
 
 export const DecodeToken = () => {
@@ -8,7 +7,6 @@ export const DecodeToken = () => {
   if (token) {
     const decoded: IUser = jwtDecode(token);
     if (decoded.exp * 1000 < Date.now()) {
-      console.log("removed");
       Cookies.remove("token");
       return null;
     }

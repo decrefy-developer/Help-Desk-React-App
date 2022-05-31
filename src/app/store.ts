@@ -8,6 +8,8 @@ import { categoryConcernApi } from "./features/category-query";
 import { ticketApi } from "./features/ticket-query";
 import { departmentApi } from "./features/department-query";
 import { requestApi } from "./features/request-query";
+import { fillingApi } from "./features/filling-query";
+import { transferApi } from "./features/transfer-query";
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +22,8 @@ export const store = configureStore({
     [ticketApi.reducerPath]: ticketApi.reducer,
     [departmentApi.reducerPath]: departmentApi.reducer,
     [requestApi.reducerPath]: requestApi.reducer,
+    [fillingApi.reducerPath]: fillingApi.reducer,
+    [transferApi.reducerPath]: transferApi.reducer,
     // userSlice,
   },
   middleware: (getDefaultMiddleware) =>
@@ -32,7 +36,9 @@ export const store = configureStore({
       categoryConcernApi.middleware,
       ticketApi.middleware,
       departmentApi.middleware,
-      requestApi.middleware
+      requestApi.middleware,
+      fillingApi.middleware,
+      transferApi.middleware
     ),
 });
 

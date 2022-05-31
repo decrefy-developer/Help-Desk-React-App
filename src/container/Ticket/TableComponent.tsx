@@ -1,176 +1,216 @@
 import {
-    Badge,
-    Box,
-    Flex,
-    Icon,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuList,
-    SimpleGrid,
-    Stack,
-    Text,
-    useColorModeValue,
-  } from "@chakra-ui/react";
-  import moment from "moment";
-  import { FaEllipsisH } from "react-icons/fa";
-  import { ITeam, ListResponse } from "../../models/interface";
-  
-  interface Props {
-    data: ListResponse<ITeam> | undefined;
-    padding: number;
-    rowId: string;
-    ViewChannelsHandler: (_id: string) => void;
-    ChangeStatusHandler: (_id: string, isActive: boolean) => void;
+  Box,
+  Button,
+  Checkbox,
+  Flex,
+  Icon,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  SimpleGrid,
+  Stack,
+  Text,
+  useColorModeValue,
+} from '@chakra-ui/react';
+import moment from 'moment';
+import { useState } from 'react';
+import { FaEllipsisH } from 'react-icons/fa';
+import { useFileTicketMutation } from '../../app/features/filling-query';
+import { ITicket, ListResponse } from '../../models/interface';
+import { toast } from 'react-toastify';
+
+interface Props {
+  data: ListResponse<ITicket> | undefined;
+  padding: number;
+  rowId: string;
+  viewDetailsHandler: (data: ITicket) => void;
+}
+
+const TableComponent: React.FC<Props> = ({
+  data,
+  padding,
+  rowId,
+  viewDetailsHandler,
+}) => {
+  const rowBgColor = useColorModeValue('gray.400', 'gray.700');
+  const [checkedItems, setCheckItems] = useState<Array<string>>([]);
+  const [fileTicket] = useFileTicketMutation();
+
+  const styleAsTd = {
+    fontSize: 'sm',
+    fontWeight: 'normal',
+    display: 'flex',
+    alignItems: 'baseline',
+  };
+  console.log(data);
+
+  function onCheck(isChecked: boolean, _id: string) {
+    if (isChecked) {
+      setCheckItems([...checkedItems, _id]);
+    } else {
+      setCheckItems(checkedItems.filter((item) => item !== _id));
+    }
   }
-  
-  const TableComponent: React.FC<Props> = ({
-    data,
-    padding,
-    rowId,
-    ViewChannelsHandler,
-    ChangeStatusHandler,
-  }) => {
-    const rowBgColor = useColorModeValue("gray.400", "gray.700");
-  
-    const styleAsTd = {
-      fontSize: "sm",
-      fontWeight: "normal",
-      display: "flex",
-      alignItems: "baseline",
-    };
-  
-    return (
-      <Flex mx={padding}>
-        <Stack
-          direction={{ base: "column" }}
+
+  async function submitHandler() {
+    try {
+      const result = await fileTicket({ ticketId: checkedItems }).unwrap();
+      if (result) {
+        toast.success('ticket successfully filed');
+        setCheckItems([]);
+      }
+    } catch (err: any) {
+      toast.error(err.data.message);
+    }
+  }
+
+  return (
+    <Flex mx={padding}>
+      <Stack
+        direction={{ base: 'column' }}
+        w="full"
+        spacing={{ base: '3', md: '0' }}
+      >
+        <SimpleGrid
+          columns={{ base: 1, md: 7 }}
+          display={{ base: 'none', md: 'grid' }}
+          spacingY={3}
           w="full"
-          spacing={{ base: "3", md: "0" }}
+          py={2}
+          px={10}
+          fontWeight="hairline"
+          border="1px"
+          borderColor={rowBgColor}
+          alignItems="center"
+          justifyContent="center"
         >
-          <SimpleGrid
-            display={{ base: "none", md: "grid" }}
-            spacingY={3}
-            columns={{ base: 1, md: 5 }}
-            w="full"
-            py={2}
-            px={10}
-            fontWeight="hairline"
-            border="1px"
-            borderColor={rowBgColor}
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Text color="accent" fontWeight="normal">
-              Ticket #
-            </Text>
-            <Text color="accent" fontWeight="normal">
-              Support
-            </Text>
-            <Text color="accent" fontWeight="normal">
-              Date accomplished
-            </Text>
-            <Text color="accent" fontWeight="normal">
-              Last Modified
-            </Text>
-            <Text></Text>
-          </SimpleGrid>
-          {data?.docs.map((team) => {
-            return (
-              <Flex direction={{ base: "row", md: "column" }} key={team._id}>
-                <SimpleGrid
-                  spacingY={3}
-                  columns={{ base: 1, md: 5 }}
-                  w="full"
-                  py={2}
-                  px={10}
-                  fontWeight="hairline"
-                  borderBottom="1px"
-                  borderRight="1px"
-                  borderLeft="1px"
-                  borderTop={{ base: "1px", md: "0px" }}
-                  borderColor={rowBgColor}
-                  alignItems="center"
-                  justifyContent="center"
-                  bgColor={rowId === team._id ? "gray.700" : "none"}
-                >
-                  <Box {...styleAsTd}>
-                    <Text
-                      color="accent"
-                      display={{ base: "inline", md: "none" }}
-                      mr={2}
-                    >
-                      Name:
-                    </Text>
-                    {team.name}
-                  </Box>
-  
-                  <Box {...styleAsTd}>
-                    <Text
-                      color="accent"
-                      display={{ base: "inline", md: "none" }}
-                      mr={2}
-                    >
-                      Status:
-                    </Text>
-  
-                    {team.isActive ? (
-                      <Badge colorScheme="green">Active</Badge>
-                    ) : (
-                      <Badge colorScheme="red">Deactivated</Badge>
-                    )}
-                  </Box>
-  
-                  <Box {...styleAsTd}>
-                    <Text
-                      color="accent"
-                      display={{ base: "inline", md: "none" }}
-                      mr={2}
-                    >
-                      No of channels:
-                    </Text>
-                    {team.numberOfChannels}
-                  </Box>
-  
-                  <Box {...styleAsTd}>
-                    <Text
-                      color="accent"
-                      display={{ base: "inline", md: "none" }}
-                      mr={2}
-                    >
-                      Last Modified:
-                    </Text>
-                    {moment(team.updatedAt).format("MMM DD, YYYY")}
-                  </Box>
-  
+          <Box>
+            {checkedItems.length > 0 && (
+              <Button size="xs" onClick={submitHandler}>
+                Submit
+              </Button>
+            )}
+          </Box>
+          <Text color="accent" fontWeight="normal">
+            Ticket #
+          </Text>
+          <Text color="accent" fontWeight="normal">
+            Requester
+          </Text>
+          <Text color="accent" fontWeight="normal">
+            Department
+          </Text>
+          <Text color="accent" fontWeight="normal">
+            Date Created
+          </Text>
+          <Text color="accent" fontWeight="normal">
+            Assigned Channel
+          </Text>
+          <Text></Text>
+        </SimpleGrid>
+
+        {data?.docs.map((item) => {
+          return (
+            <Flex direction={{ base: 'row', md: 'column' }} key={item._id}>
+              <SimpleGrid
+                spacingY={3}
+                columns={{ base: 1, md: 7 }}
+                w="full"
+                py={2}
+                px={10}
+                fontWeight="hairline"
+                borderBottom="1px"
+                borderRight="1px"
+                borderLeft="1px"
+                borderTop={{ base: '1px', md: '0px' }}
+                borderColor={rowBgColor}
+                alignItems="center"
+                justifyContent="center"
+                bgColor={rowId === item._id ? 'gray.700' : 'none'}
+              >
+                <Box alignItems="center" display="flex">
+                  {!item?.isFiled && (
+                    <Checkbox
+                      size="md"
+                      onChange={(e) => onCheck(e.target.checked, item._id)}
+                    />
+                  )}
+                </Box>
+                <Box {...styleAsTd}>
+                  <Text
+                    color="accent"
+                    display={{ base: 'inline', md: 'none' }}
+                    mr={2}
+                  >
+                    Ticket #:
+                  </Text>
+                  {item?.ticketNumber}
+                </Box>
+
+                <Box {...styleAsTd}>
+                  <Text
+                    color="accent"
+                    display={{ base: 'inline', md: 'none' }}
+                    mr={2}
+                  >
+                    Requester:
+                  </Text>
+                  {item?.requesterName}
+                </Box>
+
+                <Box {...styleAsTd}>
+                  <Text
+                    color="accent"
+                    display={{ base: 'inline', md: 'none' }}
+                    mr={2}
+                  >
+                    Department:
+                  </Text>
+                  {item?.department.name}
+                </Box>
+
+                <Box {...styleAsTd}>
+                  <Text
+                    color="accent"
+                    display={{ base: 'inline', md: 'none' }}
+                    mr={2}
+                  >
+                    Date Created:
+                  </Text>
+                  {moment(item?.createdAt).format('MM-DD-YYYY, h:mm:ss a')}
+                </Box>
+
+                <Box {...styleAsTd}>
+                  <Text
+                    color="accent"
+                    display={{ base: 'inline', md: 'none' }}
+                    mr={2}
+                  >
+                    Assigned Channel:
+                  </Text>
+                  {item.channel.name}
+                </Box>
+
+                <Box {...styleAsTd}>
                   <Menu isLazy>
-                    <MenuButton color="primary">
+                    <MenuButton>
                       <Icon as={FaEllipsisH} />
                     </MenuButton>
                     <MenuList>
-                      <MenuItem onClick={() => ViewChannelsHandler(team._id)}>
-                        View channels
-                      </MenuItem>
-  
-                      <MenuItem
-                        color={team.isActive === true ? "danger" : "success"}
-                        onClick={() =>
-                          ChangeStatusHandler(team._id, team.isActive)
-                        }
-                      >
-                        {team.isActive === true
-                          ? "Deactivate team"
-                          : "Restore team"}
+                      <MenuItem onClick={() => viewDetailsHandler(item)}>
+                        View details
                       </MenuItem>
                     </MenuList>
                   </Menu>
-                </SimpleGrid>
-              </Flex>
-            );
-          })}
-        </Stack>
-      </Flex>
-    );
-  };
-  
-  export default TableComponent;
-  
+                </Box>
+              </SimpleGrid>
+            </Flex>
+          );
+        })}
+      </Stack>
+    </Flex>
+  );
+};
+
+export default TableComponent;

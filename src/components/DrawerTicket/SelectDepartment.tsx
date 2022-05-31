@@ -3,17 +3,11 @@ import {
   FormErrorMessage,
   FormLabel,
   HStack,
-} from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import {
-  Control,
-  Controller,
-  FieldErrors,
-  FieldValues,
-  UseFormGetValues,
-} from "react-hook-form";
-import { Select } from "chakra-react-select";
-import { useListDepartmentQuery } from "../../app/features/department-query";
+} from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Control, Controller, FieldErrors, FieldValues } from 'react-hook-form';
+import { Select } from 'chakra-react-select';
+import { useListDepartmentQuery } from '../../app/features/department-query';
 
 interface IProps {
   control: Control<FieldValues, object>;
@@ -21,11 +15,11 @@ interface IProps {
 }
 
 const SelectDepartment: React.FC<IProps> = ({ control, errors }) => {
-  const [page, setPage] = useState<number>(1);
-  const { data, isError, isFetching } = useListDepartmentQuery({
+  const [page] = useState<number>(1);
+  const { data, isFetching } = useListDepartmentQuery({
     page: page,
     limit: 10000,
-    search: "",
+    search: '',
     status: true,
   });
 

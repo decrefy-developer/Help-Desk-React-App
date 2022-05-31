@@ -23,11 +23,11 @@ const useNotification = () => {
         return notification
     }
 
-    const showError = () => {
-        const error: any = document.querySelector('.error');
-        error.style.display = 'block';
-        error.textContent = 'You blocked the notifications';
-    }
+    // const showError = () => {
+    //     const error: any = document.querySelector('.error');
+    //     error.style.display = 'block';
+    //     error.textContent = 'You blocked the notifications';
+    // }
 
     async function requestPermission() {
         if (Notification.permission === 'granted') {

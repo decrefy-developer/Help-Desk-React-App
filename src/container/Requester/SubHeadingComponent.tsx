@@ -6,24 +6,19 @@ import {
   FormErrorMessage,
   FormLabel,
   HStack,
-  Icon,
   Input,
   InputGroup,
   InputLeftElement,
-  Stack,
   Textarea,
   useDisclosure,
-  useMediaQuery,
   VStack,
-} from "@chakra-ui/react";
-import React, { useContext, useEffect, useState } from "react";
-import { FaCross, FaPlus, FaSearch } from "react-icons/fa";
-import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import { useAddRequestMutation } from "../../app/features/request-query";
-import StyleContext from "../../context/StyleContext";
-import { IUser } from "../../models/interface";
-import { DecodeToken } from "../../utils/decode-token";
+} from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { FaPlus, FaSearch } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import { useAddRequestMutation } from '../../app/features/request-query';
+import { IUser } from '../../models/interface';
+import { DecodeToken } from '../../utils/decode-token';
 
 interface Iprops {
   screenPadding: number;
@@ -36,25 +31,24 @@ const SubHeadingComponent: React.FC<Iprops> = ({
 }) => {
   const { isOpen, onToggle } = useDisclosure();
   const [concern, setConcern] = useState<string>();
-  const [error, setError] = useState<string>("");
-  const { borderLine } = useContext(StyleContext);
+  const [error, setError] = useState<string>('');
   const decoded: IUser | null = DecodeToken();
 
   const [addRequest] = useAddRequestMutation();
 
   const submitHandler = async () => {
     try {
-      if (!concern) return setError("Concern is required");
+      if (!concern) return setError('Concern is required');
 
       const input = {
-        userId: decoded ? decoded._id : "",
+        userId: decoded ? decoded._id : '',
         concern,
       };
 
       const result = await addRequest(input).unwrap();
       if (result) {
-        toast.success("Request submitted successfully");
-        setConcern("");
+        toast.success('Request submitted successfully');
+        setConcern('');
         onToggle();
       }
     } catch (err: any) {
@@ -78,7 +72,7 @@ const SubHeadingComponent: React.FC<Iprops> = ({
           Add Request
         </Button>
 
-        <Collapse in={isOpen} animateOpacity style={{ width: "100%" }}>
+        <Collapse in={isOpen} animateOpacity style={{ width: '100%' }}>
           <VStack alignItems="flex-start">
             <FormControl isInvalid={error ? true : false}>
               <FormLabel htmlFor="concern" fontSize="sm" color="gray.400">

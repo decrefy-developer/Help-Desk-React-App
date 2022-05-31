@@ -12,14 +12,13 @@ import {
   Input,
   Stack,
   Text,
-} from "@chakra-ui/react";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import { useAddCategoryMutation } from "../../app/features/category-query";
-import { useAddDepartmentMutation } from "../../app/features/department-query";
-import { IFormInputDepartment } from "../../models/interface";
-import { schemaCategory } from "../../models/schemas";
+} from '@chakra-ui/react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import { useAddCategoryMutation } from '../../app/features/category-query';
+import { IFormInputDepartment } from '../../models/interface';
+import { schemaCategory } from '../../models/schemas';
 
 interface Props {
   isOpen: boolean;
@@ -35,7 +34,7 @@ const DrawerComponent: React.FC<Props> = ({ isOpen, onClose }) => {
     handleSubmit,
     formState: { errors, isDirty, isValid },
   } = useForm<{ name: string }>({
-    mode: "onChange",
+    mode: 'onChange',
     resolver: yupResolver(schemaCategory),
   });
 
@@ -75,7 +74,7 @@ const DrawerComponent: React.FC<Props> = ({ isOpen, onClose }) => {
                   autoComplete="off"
                   id="name"
                   placeholder="Please enter name"
-                  {...register("name")}
+                  {...register('name')}
                   autoFocus={true}
                 />
                 <Text textAlign="left" fontSize="xs" p={1} color="danger">

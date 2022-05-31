@@ -12,26 +12,25 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Icon,
   Input,
   InputGroup,
   InputRightElement,
   Stack,
   Text,
-} from "@chakra-ui/react";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { Select } from "chakra-react-select";
-import { useEffect, useRef, useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { toast } from "react-toastify";
+} from '@chakra-ui/react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Select } from 'chakra-react-select';
+import { useRef, useState } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 import {
   useListDepartmentQuery,
   useListUnitQuery,
-} from "../../app/features/department-query";
-import { useAddMemberMutation } from "../../app/features/member-query";
-import { ACCESS, IFormInputMember, IUnit } from "../../models/interface";
-import { schemaAccount } from "../../models/schemas";
+} from '../../app/features/department-query';
+import { useAddMemberMutation } from '../../app/features/member-query';
+import { ACCESS, IFormInputMember } from '../../models/interface';
+import { schemaAccount } from '../../models/schemas';
 // import Socket from "../../services/Socket";
 
 const DrawerComponent: React.FC<{
@@ -41,19 +40,17 @@ const DrawerComponent: React.FC<{
   const firstField = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
   const [checkedAccess, setCheckedAccess] = useState<Array<string>>([]);
-  const [checboxError, setCheckboxError] = useState(false);
+  const [checboxError] = useState(false);
   const [addMember, { isLoading }] = useAddMemberMutation();
-  const [unitsOptions, setUnitOptions] = useState<Array<IUnit>>([]);
 
   const {
     handleSubmit,
     reset,
     control,
     watch,
-    getValues,
     formState: { errors, isValid, isDirty },
   } = useForm<IFormInputMember>({
-    mode: "onChange",
+    mode: 'onChange',
     resolver: yupResolver(schemaAccount),
     // defaultValues: {
     //   firstName: "",
@@ -71,16 +68,16 @@ const DrawerComponent: React.FC<{
     useListDepartmentQuery({
       page: 1,
       limit: 10000,
-      search: "",
+      search: '',
       status: true,
     });
 
   const { data: units, isFetching: unitsLoading } = useListUnitQuery({
     page: 1,
     limit: 10000,
-    search: "",
+    search: '',
     status: true,
-    departmentId: watch("departmentId"),
+    departmentId: watch('departmentId'),
   });
 
   const onSubmit: SubmitHandler<IFormInputMember> = async (data) => {
@@ -89,7 +86,6 @@ const DrawerComponent: React.FC<{
 
       const result = await addMember(data).unwrap();
       if (result) {
-        console.log(result);
         onClose();
         reset();
         toast.success(`${result.email} has been successfully added`);
@@ -255,7 +251,7 @@ const DrawerComponent: React.FC<{
                   render={({ field }) => (
                     <InputGroup>
                       <Input
-                        type={showPassword ? "text" : "password"}
+                        type={showPassword ? 'text' : 'password'}
                         autoComplete="flase"
                         id="password"
                         placeholder="Please enter password"
@@ -366,7 +362,7 @@ const DrawerComponent: React.FC<{
                   </Checkbox>
 
                   <Text textAlign="left" fontSize="xs" p={1} color="danger">
-                    {checboxError && "Please check atleast one"}
+                    {checboxError && 'Please check atleast one'}
                   </Text>
                 </Stack>
               </Box>

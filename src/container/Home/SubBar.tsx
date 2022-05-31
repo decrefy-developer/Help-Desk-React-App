@@ -7,20 +7,23 @@ import {
   MenuList,
   MenuGroup,
   MenuItem,
-  MenuDivider,
   HStack,
   Icon,
   Flex,
   Badge,
   Spinner,
+  Tooltip,
 } from "@chakra-ui/react";
 import StyleContext from "../../context/StyleContext";
 import { ITeamChannel } from "../../models/interface";
 import { useChannelsOfTheUserQuery } from "../../app/features/member-query";
 import StringTruncate from "../../utils/StringTruncate";
-import { FaHashtag, FaPlus } from "react-icons/fa";
+import { FaHashtag } from "react-icons/fa";
 import { useTicketsNotSeenQuery } from "../../app/features/ticket-query";
 import { Link, useParams } from "react-router-dom";
+import { useListTransferTicketQuery } from "../../app/features/transfer-query";
+import { NavLink } from "react-router-dom";
+import { URLS } from "../../URLS";
 
 const SubBar: React.FC<{
   userId: string;
@@ -32,6 +35,12 @@ const SubBar: React.FC<{
   const { data, isLoading } = useChannelsOfTheUserQuery(userId);
   const { data: ticketsNotSeen, isLoading: loadingNotSeen } =
     useTicketsNotSeenQuery(userId);
+
+  const { data: transfer, isFetching: transferLoading } =
+    useListTransferTicketQuery({
+      team: state ? state._id : "placeholder",
+      isApproved: false,
+    });
 
   const onChangeTeam = (team: ITeamChannel) => {
     setState(team);
@@ -72,10 +81,10 @@ const SubBar: React.FC<{
                   </MenuItem>
                 ))}
               </MenuGroup>
-              <MenuDivider />
+              {/* <MenuDivider />
               <MenuGroup>
                 <MenuItem>Manage Teams</MenuItem>
-              </MenuGroup>
+              </MenuGroup> */}
             </MenuList>
           </Menu>
         )}
@@ -86,11 +95,35 @@ const SubBar: React.FC<{
           <HStack justifyContent="space-between" w="full" p={3}>
             <Text>Channels</Text>
 
-            <Icon as={FaPlus} _hover={{ cursor: "pointer" }} />
+            {transferLoading ? (
+              <Spinner size="xs" />
+            ) : (
+              transfer &&
+              transfer.length > 0 && (
+                <NavLink to={`${URLS.HOME}/transfer/${state._id}`}>
+                  <Tooltip label="Request for transfer" hasArrow={true}>
+                    <Box
+                      backgroundColor="danger"
+                      w="1.5rem"
+                      h="1.5rem"
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                      borderRadius="50%"
+                      cursor="pointer"
+                    >
+                      <Text fontWeight="bold" fontSize={isMobile ? "xs" : "md"}>
+                        {transfer.length}
+                      </Text>
+                    </Box>
+                  </Tooltip>
+                </NavLink>
+              )
+            )}
           </HStack>
 
           {state.channels.map((channel) => (
-            <Link to={channel._id} key={channel._id} className="sample">
+            <Link to={channel._id} key={channel._id} className="sub_bar__item">
               <HStack
                 justifyContent="space-between"
                 w="full"
@@ -102,7 +135,7 @@ const SubBar: React.FC<{
                 }}
                 bgColor={channel._id === channelId ? "primary" : "none"}
               >
-                <HStack>
+                <HStack fontSize={isMobile ? "xs" : "md"}>
                   <Icon as={FaHashtag} />
                   <Text>{channel.name}</Text>
                 </HStack>

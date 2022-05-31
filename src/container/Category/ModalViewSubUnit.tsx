@@ -19,19 +19,18 @@ import {
   Thead,
   Tooltip,
   Tr,
-} from "@chakra-ui/react";
-import Pagination from "@choc-ui/paginator";
-import React, { useState } from "react";
-import { FaTrashAlt, FaUndo } from "react-icons/fa";
-import { toast } from "react-toastify";
+} from '@chakra-ui/react';
+import Pagination from '@choc-ui/paginator';
+import React, { useState } from 'react';
+import { FaTrashAlt, FaUndo } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 import {
-  useAddCategoryMutation,
   useAddSubCategoryMutation,
   useChangeSubUnitStatusMutation,
   useListSubCategoryQuery,
-} from "../../app/features/category-query";
-import ModalComponent from "../../components/Modal";
-import useTableControl from "../../hooks/useTableControl";
+} from '../../app/features/category-query';
+import ModalComponent from '../../components/Modal';
+import useTableControl from '../../hooks/useTableControl';
 
 interface Props {
   rowId: string;
@@ -40,13 +39,13 @@ interface Props {
 }
 
 const ModalViewUnitSubUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
-  const [subUnit, setSubUnit] = useState("");
-  const [error, setError] = useState("");
+  const [subUnit, setSubUnit] = useState('');
+  const [error, setError] = useState('');
   const [isArchieve, setIsArchieve] = useState<boolean>(false);
-  const { page, pageLimit, search, setSearch, onChangePage, onChangeLimit } =
+  const { page, pageLimit, search, onChangePage, onChangeLimit } =
     useTableControl();
 
-  const { data, isError, isLoading } = useListSubCategoryQuery({
+  const { data, isLoading } = useListSubCategoryQuery({
     page,
     limit: pageLimit,
     search,
@@ -60,7 +59,7 @@ const ModalViewUnitSubUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
   const onSubmitHandler = async () => {
     try {
       if (!subUnit) {
-        setError("Name is required");
+        setError('Name is required');
         return;
       }
       const input = {
@@ -70,7 +69,7 @@ const ModalViewUnitSubUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
       const result = await addSubCategory(input).unwrap();
       if (result) {
         toast.success(`${subUnit} has been succesfully saved`);
-        setSubUnit("");
+        setSubUnit('');
       }
     } catch (err: any) {
       toast.error(err.data.message);
@@ -84,9 +83,9 @@ const ModalViewUnitSubUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
         isActive: !isActive,
       }).unwrap();
       if (result) {
-        let message = "successfully restored";
+        let message = 'successfully restored';
         if (!result.isActive) {
-          message = "successfully moved to archieve";
+          message = 'successfully moved to archieve';
         }
         toast.success(`${result.name} ${message}`);
       }
@@ -128,9 +127,9 @@ const ModalViewUnitSubUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
             <Pagination
               currentPage={page}
               total={data?.totalDocs}
-              paginationProps={{ display: "flex" }}
-              baseStyles={{ border: "1px" }}
-              activeStyles={{ bg: "primary" }}
+              paginationProps={{ display: 'flex' }}
+              baseStyles={{ border: '1px' }}
+              activeStyles={{ bg: 'primary' }}
               onChange={(page) => onChangePage(page)}
               pageSize={pageLimit}
               showSizeChanger
@@ -185,7 +184,7 @@ const ModalViewUnitSubUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
                 <Td>
                   {unit.isActive ? (
                     <HStack>
-                      <Tooltip label="move to archive">
+                      <Tooltip label="move to archive" closeOnClick={false}>
                         <Button
                           size="xs"
                           onClick={() =>

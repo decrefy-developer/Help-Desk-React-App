@@ -3,11 +3,9 @@ import {
   FormErrorMessage,
   FormLabel,
   Textarea,
-  Text,
-} from "@chakra-ui/react";
-import React from "react";
-import { Control, Controller, FieldErrors, FieldValues } from "react-hook-form";
-import { IRequest } from "../../models/interface";
+} from '@chakra-ui/react';
+import React from 'react';
+import { Control, Controller, FieldErrors, FieldValues } from 'react-hook-form';
 
 interface Props {
   control: Control<FieldValues, object>;

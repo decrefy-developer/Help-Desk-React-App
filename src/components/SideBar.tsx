@@ -1,12 +1,14 @@
-import React, { useContext } from "react";
-import { Flex, Spacer, VStack } from "@chakra-ui/layout";
+import React, { useContext } from 'react';
+import { Flex, Spacer, VStack } from '@chakra-ui/layout';
 import {
   useColorMode,
   IconButton,
   Icon,
   Avatar,
   useDisclosure,
-} from "@chakra-ui/react";
+  useColorModeValue,
+  useMediaQuery,
+} from '@chakra-ui/react';
 import {
   FaHome,
   FaSun,
@@ -14,59 +16,68 @@ import {
   FaBell,
   FaSlack,
   FaSlackHash,
-  FaUserFriends,
-  FaUserCog,
   FaBars,
   FaFileAlt,
   FaRegWindowRestore,
   FaTicketAlt,
-} from "react-icons/fa";
-import { NavLink, useLocation } from "react-router-dom";
-import StyleContext from "../context/StyleContext";
-import SideBarItem from "./SideBarItem";
-import NotificationDrawer from "./NotificationDrawer";
-import { URLS } from "../URLS";
-import { DecodeToken } from "../utils/decode-token";
-import { ACCESS, IUser } from "../models/interface";
+  FaUserCog,
+} from 'react-icons/fa';
+import { NavLink, useLocation } from 'react-router-dom';
+import StyleContext from '../context/StyleContext';
+import SideBarItem from './SideBarItem';
+import NotificationDrawer from './NotificationDrawer';
+import { URLS } from '../URLS';
+import { DecodeToken } from '../utils/decode-token';
+import { ACCESS, IUser } from '../models/interface';
 
 const SideBar: React.FC = () => {
   const { pathname } = useLocation();
   const { borderLine, isSideBarShow } = useContext(StyleContext);
   const { toggleColorMode, colorMode } = useColorMode();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onClose } = useDisclosure();
   const decoded: IUser | null = DecodeToken();
+  const color = useColorModeValue('white', 'gray.800');
+  const [isMobile] = useMediaQuery('(max-width: 767px)');
 
   let themeIcon =
-    colorMode === "light" ? <FaMoon color="#a0aec0" /> : <FaSun />;
+    colorMode === 'light' ? <FaMoon color="#a0aec0" /> : <FaSun />;
   return (
     <>
       <Flex
+        position={isMobile ? 'fixed' : 'relative'}
+        left="0"
+        top="0"
+        bottom="0"
+        zIndex="100"
+        height="100vh"
+        backgroundColor={color}
         direction="column"
         justifyContent="space-between"
-        display={isSideBarShow ? "flex" : "none"}
+        display={isSideBarShow ? 'flex' : 'none'}
         borderRight="1px"
         borderRightColor={borderLine}
         p={4}
-        overflowY="auto"
+        overflowY="scroll"
         sx={{
-          "&::-webkit-scrollbar": {
-            width: "2px",
-            borderRadius: "1px",
+          '&::-webkit-scrollbar': {
+            width: '2px',
+            borderRadius: '1px',
           },
-          "&::-webkit-scrollbar-thumb": {
+          '&::-webkit-scrollbar-thumb': {
             // backgroundColor: "gray.700",
           },
         }}
       >
         <VStack spacing={5}>
-          {(decoded?.priviledge.includes(ACCESS.SUPPORT) || decoded?.priviledge.includes(ACCESS.CREATE_TICKET)) && (
+          {(decoded?.priviledge.includes(ACCESS.SUPPORT) ||
+            decoded?.priviledge.includes(ACCESS.CREATE_TICKET)) && (
             <NavLink to={URLS.HOME}>
-            <SideBarItem
-              title="Home"
-              icon={<FaHome size="20px" color="white" />}
-              isActive={pathname === URLS.HOME ? true : false}
-            />
-          </NavLink>
+              <SideBarItem
+                title="Home"
+                icon={<FaHome size="20px" color="white" />}
+                isActive={pathname === URLS.HOME ? true : false}
+              />
+            </NavLink>
           )}
 
           {decoded?.priviledge.includes(ACCESS.REQUESTER) && (
@@ -83,7 +94,7 @@ const SideBar: React.FC = () => {
             <NavLink to={URLS.DEPARTMENT}>
               <SideBarItem
                 title="Department"
-              icon={<FaUserCog size="20px" color="white" />}
+                icon={<FaUserCog size="20px" color="white" />}
                 isActive={pathname === URLS.DEPARTMENT ? true : false}
               />
             </NavLink>
@@ -132,7 +143,7 @@ const SideBar: React.FC = () => {
           {decoded?.priviledge.includes(ACCESS.CREATE_TICKET) && (
             <NavLink to={URLS.TICKET}>
               <SideBarItem
-                title="Tickets"
+                title="Filling"
                 icon={<FaTicketAlt size="20px" color="white" />}
                 isActive={pathname === URLS.TICKET ? true : false}
               />
@@ -154,11 +165,11 @@ const SideBar: React.FC = () => {
 
         <VStack pt={10}>
           <Icon
-            onClick={onOpen}
+            onClick={() => alert('will be available in next update')}
             cursor="pointer"
             as={FaBell}
             boxSize="5"
-            color={colorMode === "light" ? "gray.400" : "white"}
+            color={colorMode === 'light' ? 'gray.400' : 'white'}
           />
           <IconButton
             onClick={toggleColorMode}

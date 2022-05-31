@@ -7,29 +7,30 @@ import {
   Text,
   useDisclosure,
   useMediaQuery,
-} from "@chakra-ui/react";
-import Pagination from "@choc-ui/paginator";
-import React, { useCallback, useState } from "react";
-import { toast } from "react-toastify";
+} from '@chakra-ui/react';
+import Pagination from '@choc-ui/paginator';
+import React, { useCallback, useState } from 'react';
+import { toast } from 'react-toastify';
 import {
   useChangeStatusMutation,
   useListDepartmentQuery,
-} from "../../app/features/department-query";
-import Dialog from "../../components/AlertDialog";
-import HeadingComponent from "../../components/Heading";
-import PageContentScroll from "../../components/PageContentScroll";
-import SkeletonPlaceHolder from "../../components/SkeletonPlaceHolder";
-import SubHeadingComponent from "../../components/SubHeading";
-import useTableControl from "../../hooks/useTableControl";
-import { IUnit } from "../../models/interface";
-import DrawerComponent from "./DrawerComponent";
-import ModalViewUnit from "./ModalViewUnit";
-import TableComponent from "./TableComponent";
+} from '../../app/features/department-query';
+import Dialog from '../../components/AlertDialog';
+import HeadingComponent from '../../components/Heading';
+import PageContentScroll from '../../components/PageContentScroll';
+import SkeletonPlaceHolder from '../../components/SkeletonPlaceHolder';
+import SubHeadingComponent from '../../components/SubHeading';
+import useScreenPadding from '../../hooks/useScreenPadding';
+import useTableControl from '../../hooks/useTableControl';
+
+import DrawerComponent from './DrawerComponent';
+import ModalViewUnit from './ModalViewUnit';
+import TableComponent from './TableComponent';
 
 const Department = () => {
-  const [screenPadding, setScreenPadding] = useState<number>(4);
   const [isArchieve, setIsArchieve] = useState<boolean>(false);
-  const [isMobile] = useMediaQuery("(max-width: 600px)");
+  const { screenPadding } = useScreenPadding({ minPadding: 4, maxPadding: 10 });
+  const [isMobile] = useMediaQuery('(max-width: 600px)');
   const [isActive, setIsActive] = useState<boolean>(false); // holds the selected item status before submitting
 
   const {
@@ -94,7 +95,7 @@ const Department = () => {
       if (result) {
         closeDialogChangeStatus();
         toast.success(
-          `${result.name} was ${isActive ? "actived" : "deactivated"}`
+          `${result.name} was ${isActive ? 'actived' : 'deactivated'}`
         );
       }
     } catch (err: any) {
@@ -119,14 +120,14 @@ const Department = () => {
           placeHolder="Seach a department name:"
         />
 
-        <PageContentScroll minH="550px">
+        <PageContentScroll>
           <Flex
             py={8}
             px={screenPadding}
             w="full"
             alignItems="center"
             justifyContent="space-between"
-            direction={isMobile ? "column" : "row"}
+            direction={isMobile ? 'column' : 'row'}
           >
             {isLoading ? (
               <Text color="gray.500">Pagination is loading..</Text>
@@ -135,9 +136,9 @@ const Department = () => {
                 <Pagination
                   currentPage={page}
                   total={data?.totalDocs}
-                  paginationProps={{ display: "flex" }}
-                  baseStyles={{ border: "1px" }}
-                  activeStyles={{ bg: "primary" }}
+                  paginationProps={{ display: 'flex' }}
+                  baseStyles={{ border: '1px' }}
+                  activeStyles={{ bg: 'primary' }}
                   onChange={(page) => onChangePage(page)}
                   pageSize={pageLimit}
                   showSizeChanger
@@ -204,8 +205,8 @@ const Department = () => {
           children={
             <Text>
               Do you want to
-              <i style={{ color: "#d65db1" }}>
-                {isActive ? " activate " : " deactive "}
+              <i style={{ color: '#d65db1' }}>
+                {isActive ? ' activate ' : ' deactive '}
               </i>
               this team?
             </Text>

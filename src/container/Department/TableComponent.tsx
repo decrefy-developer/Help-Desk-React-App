@@ -11,15 +11,10 @@ import {
   Stack,
   Text,
   useColorModeValue,
-} from "@chakra-ui/react";
-import moment from "moment";
-import { FaEllipsisH } from "react-icons/fa";
-import {
-  IDepartment,
-  ITeam,
-  IUnit,
-  ListResponse,
-} from "../../models/interface";
+} from '@chakra-ui/react';
+import moment from 'moment';
+import { FaEllipsisH } from 'react-icons/fa';
+import { IDepartment, ListResponse } from '../../models/interface';
 
 interface Props {
   data: ListResponse<IDepartment> | undefined;
@@ -36,24 +31,24 @@ const TableComponent: React.FC<Props> = ({
   viewUnitsHandler,
   ChangeStatusHandler,
 }) => {
-  const rowBgColor = useColorModeValue("gray.400", "gray.700");
+  const rowBgColor = useColorModeValue('gray.400', 'gray.700');
 
   const styleAsTd = {
-    fontSize: "sm",
-    fontWeight: "normal",
-    display: "flex",
-    alignItems: "baseline",
+    fontSize: 'sm',
+    fontWeight: 'normal',
+    display: 'flex',
+    alignItems: 'baseline',
   };
 
   return (
     <Flex mx={padding}>
       <Stack
-        direction={{ base: "column" }}
+        direction={{ base: 'column' }}
         w="full"
-        spacing={{ base: "3", md: "0" }}
+        spacing={{ base: '3', md: '0' }}
       >
         <SimpleGrid
-          display={{ base: "none", md: "grid" }}
+          display={{ base: 'none', md: 'grid' }}
           spacingY={3}
           columns={{ base: 1, md: 4 }}
           w="full"
@@ -81,7 +76,7 @@ const TableComponent: React.FC<Props> = ({
         {data?.docs.map((department) => {
           return (
             <Flex
-              direction={{ base: "row", md: "column" }}
+              direction={{ base: 'row', md: 'column' }}
               key={department._id}
             >
               <SimpleGrid
@@ -94,16 +89,16 @@ const TableComponent: React.FC<Props> = ({
                 borderBottom="1px"
                 borderRight="1px"
                 borderLeft="1px"
-                borderTop={{ base: "1px", md: "0px" }}
+                borderTop={{ base: '1px', md: '0px' }}
                 borderColor={rowBgColor}
                 alignItems="center"
                 justifyContent="center"
-                bgColor={rowId === department._id ? "gray.700" : "none"}
+                bgColor={rowId === department._id ? 'gray.700' : 'none'}
               >
                 <Box {...styleAsTd}>
                   <Text
                     color="accent"
-                    display={{ base: "inline", md: "none" }}
+                    display={{ base: 'inline', md: 'none' }}
                     mr={2}
                   >
                     Name:
@@ -114,7 +109,7 @@ const TableComponent: React.FC<Props> = ({
                 <Box {...styleAsTd}>
                   <Text
                     color="accent"
-                    display={{ base: "inline", md: "none" }}
+                    display={{ base: 'inline', md: 'none' }}
                     mr={2}
                   >
                     Status:
@@ -130,12 +125,12 @@ const TableComponent: React.FC<Props> = ({
                 <Box {...styleAsTd}>
                   <Text
                     color="accent"
-                    display={{ base: "inline", md: "none" }}
+                    display={{ base: 'inline', md: 'none' }}
                     mr={2}
                   >
                     Last Modified:
                   </Text>
-                  {moment(department.updatedAt).format("MMM DD, YYYY")}
+                  {moment(department.updatedAt).format('MMM DD, YYYY')}
                 </Box>
 
                 <Menu isLazy>
@@ -149,15 +144,15 @@ const TableComponent: React.FC<Props> = ({
 
                     <MenuItem
                       color={
-                        department.isActive === true ? "danger" : "success"
+                        department.isActive === true ? 'danger' : 'success'
                       }
                       onClick={() =>
                         ChangeStatusHandler(department._id, department.isActive)
                       }
                     >
                       {department.isActive === true
-                        ? "Deactivate department"
-                        : "Restore department"}
+                        ? 'Deactivate department'
+                        : 'Restore department'}
                     </MenuItem>
                   </MenuList>
                 </Menu>

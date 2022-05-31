@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   Flex,
   Heading,
@@ -8,16 +7,15 @@ import {
   useColorMode,
   useColorModeValue,
   Icon,
-  Box,
-} from "@chakra-ui/react";
-import { FaSun, FaMoon, FaBell } from "react-icons/fa";
+} from '@chakra-ui/react';
+import { FaSun, FaMoon, FaBell } from 'react-icons/fa';
 
 const Header = () => {
   const { toggleColorMode, colorMode } = useColorMode();
-  const borderLine = useColorModeValue("gray.300", "gray.700");
+  const borderLine = useColorModeValue('gray.300', 'gray.700');
 
   let themeIcon =
-    colorMode === "light" ? <FaMoon color="#a0aec0" /> : <FaSun />;
+    colorMode === 'light' ? <FaMoon color="#a0aec0" /> : <FaSun />;
 
   return (
     <Flex borderBottom="1px" borderColor={borderLine}>
@@ -28,7 +26,7 @@ const Header = () => {
           <Icon
             as={FaBell}
             boxSize="5"
-            color={colorMode === "light" ? "gray.400" : "white"}
+            color={colorMode === 'light' ? 'gray.400' : 'white'}
           />
           <IconButton
             onClick={toggleColorMode}

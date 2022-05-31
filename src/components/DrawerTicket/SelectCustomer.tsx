@@ -1,15 +1,15 @@
-import { FormControl, FormErrorMessage, FormLabel } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { Select } from "chakra-react-select";
-import { useListCustomerQuery } from "../../app/features/customer-query";
-import { Control, Controller, FieldErrors, FieldValues } from "react-hook-form";
+import { FormControl, FormErrorMessage, FormLabel } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Select } from 'chakra-react-select';
+import { useListCustomerQuery } from '../../app/features/customer-query';
+import { Control, Controller, FieldErrors, FieldValues } from 'react-hook-form';
 
 const SelectCustomer: React.FC<{
   control: Control<FieldValues, object>;
   errors: FieldErrors<FieldValues>;
 }> = ({ control, errors }) => {
-  const [page, setPage] = useState<number>(1);
-  const [searchText, setSearchText] = useState<string>("");
+  const [page] = useState<number>(1);
+  const [searchText] = useState<string>('');
   const { data } = useListCustomerQuery({
     page: page,
     limit: 100,

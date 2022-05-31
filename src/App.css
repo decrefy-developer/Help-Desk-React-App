@@ -1,6 +1,36 @@
 /* @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap"); */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Montserrat:wght@400;500;600&display=swap");
 
-.sample {
+.react-select {
   width: 100%;
+}
+
+.sub_bar__item {
+  width: 100%;
+}
+
+.ticket__card::before {
+  content: "";
+  width: 0.8rem;
+  height: 1.5rem;
+  background-color: #1a202c;
+  position: absolute;
+  border-radius: 0 10rem 10rem 0;
+  bottom: 30px;
+  left: -1px;
+  border: solid #2d3748 1px;
+  border-left: 0;
+}
+
+.ticket__card::after {
+  content: "";
+  width: 0.8rem;
+  height: 1.5rem;
+  background-color: #1a202c;
+  position: absolute;
+  border-radius: 10rem 0 0 10rem;
+  bottom: 30px;
+  right: -1px;
+  border: solid #2d3748 1px;
+  border-right: 0;
 }

@@ -1,16 +1,15 @@
 import {
-  Box,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Input,
-} from "@chakra-ui/react";
-import React from "react";
-import { Control, Controller, FieldErrors, FieldValues } from "react-hook-form";
-import "react-calendar/dist/Calendar.css";
-import moment from "moment";
+} from '@chakra-ui/react';
+import React from 'react';
+import { Control, Controller, FieldErrors, FieldValues } from 'react-hook-form';
+import 'react-calendar/dist/Calendar.css';
+import moment from 'moment';
 
-const dateNow = moment().format("YYYY-MM-DD"); // this is just to disables previews date
+const dateNow = moment().format('YYYY-MM-DD'); // this is just to disables previews date
 
 const SelectStartDate: React.FC<{
   control: Control<FieldValues, object>;

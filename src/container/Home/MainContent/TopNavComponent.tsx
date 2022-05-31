@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   HStack,
@@ -12,11 +12,9 @@ import {
   useMediaQuery,
   Icon,
   Button,
-  useDisclosure,
-  Fade,
-} from "@chakra-ui/react";
-import { FaEye, FaEyeSlash, FaList, FaSearch } from "react-icons/fa";
-import { STATE, STATUS } from "../../../models/interface";
+} from '@chakra-ui/react';
+import { FaEye, FaEyeSlash, FaSearch } from 'react-icons/fa';
+import { STATE, STATUS } from '../../../models/interface';
 
 interface Props {
   setTextSearch: React.Dispatch<React.SetStateAction<string>>;
@@ -34,12 +32,12 @@ const TopNavComponent: React.FC<Props> = ({
   status,
 }) => {
   const [screenPadding, setScreenPadding] = useState<number>(4);
-  const [isMobile] = useMediaQuery("(max-width: 600px)");
+  const [isMobile] = useMediaQuery('(max-width: 600px)');
   const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => {
     if (isMobile === false) {
-      setScreenPadding(10);
+      setScreenPadding(7);
     } else {
       setScreenPadding(4);
     }
@@ -47,7 +45,7 @@ const TopNavComponent: React.FC<Props> = ({
 
   return (
     <Flex w="full" flexDirection="column" padding={screenPadding}>
-      <Stack direction={["column", "row"]}>
+      <Stack direction={['column', 'row']}>
         <HStack w="full">
           <InputGroup>
             <InputLeftElement
@@ -90,7 +88,7 @@ const TopNavComponent: React.FC<Props> = ({
               value={status}
             >
               <Stack direction="row" spacing={5}>
-                <Radio value={STATUS.OPEN}>Open</Radio>
+                {/* <Radio value={STATUS.OPEN}>Open</Radio> */}
                 <Radio value={STATUS.CLOSED}>Closed</Radio>
                 <Radio value={STATUS.CANCELLED}>Cancelled</Radio>
               </Stack>
@@ -102,6 +100,7 @@ const TopNavComponent: React.FC<Props> = ({
           size="md"
           variant="outline"
           onClick={() => setShowHistory((prev) => !prev)}
+          bgColor={showHistory ? 'primary' : 'none'}
         >
           <Icon as={showHistory ? FaEye : FaEyeSlash} w={5} h={5} />
         </Button>

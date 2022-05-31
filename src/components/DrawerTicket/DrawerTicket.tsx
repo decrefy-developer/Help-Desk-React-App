@@ -10,35 +10,34 @@ import {
   Stack,
   Text,
   HStack,
-} from "@chakra-ui/react";
-import { yupResolver } from "@hookform/resolvers/yup";
-import React, { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import { useUpdateStatusMutation } from "../../app/features/request-query";
-import { useAddTicketMutation } from "../../app/features/ticket-query";
+} from '@chakra-ui/react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import React, { useEffect, useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import { useUpdateStatusMutation } from '../../app/features/request-query';
+import { useAddTicketMutation } from '../../app/features/ticket-query';
 import {
   IChannel,
   IRequest,
   IUser,
   STATE,
   STATUS,
-} from "../../models/interface";
-import { schemaTicket } from "../../models/schemas";
-import Socket from "../../services/Socket";
-import { DecodeToken } from "../../utils/decode-token";
-import InputRequester from "./InputRequester";
-import SelectCategory from "./SelectCategory";
-import SelectChannel from "./SelectChannel";
-import SelectCoworker from "./SelectCoworker";
-import SelectCustomer from "./SelectCustomer";
-import SelectDepartment from "./SelectDepartment";
-import SelectStartDate from "./SelectStartDate";
-import SelectSubUnit from "./SelectSubUnit";
-import SelectTargetDate from "./SelectTargetDate";
-import SelectTeam from "./SelectTeam";
-import SelectUser from "./SelectUser";
-import TextAreaConcern from "./TextAreaConcern";
+} from '../../models/interface';
+import { schemaTicket } from '../../models/schemas';
+import Socket from '../../services/Socket';
+import { DecodeToken } from '../../utils/decode-token';
+import InputRequester from './InputRequester';
+import SelectCategory from './SelectCategory';
+import SelectChannel from './SelectChannel';
+import SelectCoworker from './SelectCoworker';
+import SelectDepartment from './SelectDepartment';
+import SelectStartDate from './SelectStartDate';
+import SelectSubUnit from './SelectSubUnit';
+import SelectTargetDate from './SelectTargetDate';
+import SelectTeam from './SelectTeam';
+import SelectUser from './SelectUser';
+import TextAreaConcern from './TextAreaConcern';
 
 interface Iprops {
   isOpen: boolean;
@@ -48,7 +47,7 @@ interface Iprops {
 
 const DrawerTicket: React.FC<Iprops> = ({ isOpen, onClose, formData }) => {
   const [channels, setChannel] = useState<
-    Array<Pick<IChannel, "name" | "_id" | "isActive">>
+    Array<Pick<IChannel, 'name' | '_id' | 'isActive'>>
   >([]);
 
   const decoded: IUser | null = DecodeToken();
@@ -64,7 +63,7 @@ const DrawerTicket: React.FC<Iprops> = ({ isOpen, onClose, formData }) => {
     setValue,
     formState: { errors, isValid },
   } = useForm({
-    mode: "onChange",
+    mode: 'onChange',
     resolver: yupResolver(schemaTicket),
   });
 
@@ -74,17 +73,15 @@ const DrawerTicket: React.FC<Iprops> = ({ isOpen, onClose, formData }) => {
       data.state = STATE.PENDING;
       data.status = STATUS.OPEN;
       data.createdBy = decoded?._id;
-      console.log(data);
       const newTicket = await addTicket(data).unwrap();
 
       if (newTicket) {
-        console.log("newTicket", newTicket);
         onClose();
         reset();
         toast.success(
           `${newTicket.ticketNumber} has been successfully created`
         );
-        await Socket.emit("send-ticket", newTicket);
+        await Socket.emit('send-ticket', newTicket);
         await updateStatus({ _id: newTicket.requestId, status: false });
       }
     } catch (err: any) {
@@ -95,9 +92,9 @@ const DrawerTicket: React.FC<Iprops> = ({ isOpen, onClose, formData }) => {
   useEffect(() => {
     if (formData) {
       const Requester = `${formData?.user.firstName.toUpperCase()} ${formData?.user.lastName.toUpperCase()}`;
-      setValue("description", formData.concern);
-      setValue("requesterName", Requester);
-      setValue("departmentId", formData?.user?.department._id);
+      setValue('description', formData.concern);
+      setValue('requesterName', Requester);
+      setValue('departmentId', formData?.user?.department._id);
     }
   }, [formData, setValue]);
 
@@ -117,7 +114,7 @@ const DrawerTicket: React.FC<Iprops> = ({ isOpen, onClose, formData }) => {
           <DrawerHeader borderBottomWidth="1px">New Ticket</DrawerHeader>
 
           <DrawerBody>
-            <Stack direction={{ base: "column", md: "row" }} mt={5}>
+            <Stack direction={{ base: 'column', md: 'row' }} mt={5}>
               <Stack spacing="24px" w="full" p={4} borderWidth="1px">
                 <Text color="success">Requester Details</Text>
 
@@ -130,14 +127,14 @@ const DrawerTicket: React.FC<Iprops> = ({ isOpen, onClose, formData }) => {
                     <HStack>
                       <Text color="gray.400">Department: </Text>
                       <Text color="primary">
-                        {`${formData?.user.department.name.toUpperCase()}`}{" "}
+                        {`${formData?.user.department.name.toUpperCase()}`}{' '}
                       </Text>
                     </HStack>
                     <HStack>
                       <Text color="gray.400">Unit: </Text>
                       <Text color="primary">
                         {`${
-                          formData?.user.unit ? formData.user.unit.name : ""
+                          formData?.user.unit ? formData.user.unit.name : ''
                         }`}
                       </Text>
                     </HStack>

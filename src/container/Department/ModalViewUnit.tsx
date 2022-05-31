@@ -19,18 +19,18 @@ import {
   Thead,
   Tooltip,
   Tr,
-} from "@chakra-ui/react";
-import Pagination from "@choc-ui/paginator";
-import React, { useState } from "react";
-import { FaTrashAlt, FaUndo } from "react-icons/fa";
-import { toast } from "react-toastify";
+} from '@chakra-ui/react';
+import Pagination from '@choc-ui/paginator';
+import React, { useState } from 'react';
+import { FaTrashAlt, FaUndo } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 import {
   useAddUnitMutation,
   useChangeUnitStatusMutation,
   useListUnitQuery,
-} from "../../app/features/department-query";
-import ModalComponent from "../../components/Modal";
-import useTableControl from "../../hooks/useTableControl";
+} from '../../app/features/department-query';
+import ModalComponent from '../../components/Modal';
+import useTableControl from '../../hooks/useTableControl';
 
 interface Props {
   rowId: string;
@@ -39,13 +39,13 @@ interface Props {
 }
 
 const ModalViewUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
-  const [unit, setUnit] = useState("");
-  const [error, setError] = useState("");
+  const [unit, setUnit] = useState('');
+  const [error, setError] = useState('');
   const [isArchieve, setIsArchieve] = useState<boolean>(false);
-  const { page, pageLimit, search, setSearch, onChangePage, onChangeLimit } =
+  const { page, pageLimit, search, onChangePage, onChangeLimit } =
     useTableControl();
 
-  const { data, isError, isLoading } = useListUnitQuery({
+  const { data, isLoading } = useListUnitQuery({
     page,
     limit: pageLimit,
     search,
@@ -58,7 +58,7 @@ const ModalViewUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
   const onSubmitHandler = async () => {
     try {
       if (!unit) {
-        setError("Unit name is required");
+        setError('Unit name is required');
         return;
       }
       const input = {
@@ -68,7 +68,7 @@ const ModalViewUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
       const result = await addUnit(input).unwrap();
       if (result) {
         toast.success(`${unit} has been succesfully saved`);
-        setUnit("");
+        setUnit('');
       }
     } catch (err: any) {
       toast.error(err.data.message);
@@ -83,10 +83,10 @@ const ModalViewUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
       }).unwrap();
 
       if (result) {
-        let message = "successfully restored";
+        let message = 'successfully restored';
 
         if (!result.isActive) {
-          message = "successfully moved to archieve";
+          message = 'successfully moved to archieve';
         }
 
         toast.success(`${result.name} ${message}`);
@@ -98,7 +98,7 @@ const ModalViewUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
 
   return (
     <ModalComponent
-      title={"Unit list"}
+      title={'Unit list'}
       isOpen={isOpen}
       onClose={onClosed}
       size="lg"
@@ -129,9 +129,9 @@ const ModalViewUnit: React.FC<Props> = ({ isOpen, onClosed, rowId }) => {
             <Pagination
               currentPage={page}
               total={data?.totalDocs}
-              paginationProps={{ display: "flex" }}
-              baseStyles={{ border: "1px" }}
-              activeStyles={{ bg: "primary" }}
+              paginationProps={{ display: 'flex' }}
+              baseStyles={{ border: '1px' }}
+              activeStyles={{ bg: 'primary' }}
               onChange={(page) => onChangePage(page)}
               pageSize={pageLimit}
               showSizeChanger

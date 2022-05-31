@@ -1,5 +1,5 @@
-import React, { RefObject } from "react";
-import { Button } from "@chakra-ui/button";
+import React, { RefObject } from 'react';
+import { Button } from '@chakra-ui/button';
 import {
   Modal,
   ModalBody,
@@ -8,14 +8,14 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-} from "@chakra-ui/modal";
-import { useReactToPrint } from "react-to-print";
-import { Box, Flex, HStack, VStack } from "@chakra-ui/layout";
-import { Image } from "@chakra-ui/image";
-import CSS from "csstype";
-import moment from "moment";
+} from '@chakra-ui/modal';
+import { useReactToPrint } from 'react-to-print';
+import { Flex } from '@chakra-ui/layout';
+import { Image } from '@chakra-ui/image';
+import CSS from 'csstype';
+import moment from 'moment';
 
-import { IMember, ITicket } from "../../../../../models/interface";
+import { IMember, ITicket } from '../../../../../models/interface';
 
 interface Props {
   onClose: () => void;
@@ -26,7 +26,7 @@ interface Props {
 
 interface TickProps {
   title: string;
-  justify: "center" | "flex-start";
+  justify: 'center' | 'flex-start';
   tick: boolean;
   [x: string]: any;
 }
@@ -35,7 +35,7 @@ const RePrint: React.FC<Props> = ({ onClose, isOpen, componentRef, data }) => {
   const printHandler = useReactToPrint({
     content: () => componentRef.current,
   });
-  console.log("printing data", data);
+  console.log('printing data', data);
 
   return (
     <Modal onClose={onClose} size="full" isOpen={isOpen}>
@@ -44,7 +44,7 @@ const RePrint: React.FC<Props> = ({ onClose, isOpen, componentRef, data }) => {
         <ModalHeader>SR Preview</ModalHeader>
         <ModalCloseButton />
         <ModalBody padding={10}>
-          <div ref={componentRef} style={{ padding: "20px" }}>
+          <div ref={componentRef} style={{ padding: '20px' }}>
             <Flex direction="column" p={5} color="black">
               {/* <Header /> */}
               <Heading ticketNumber={data?.ticketNumber} />
@@ -67,6 +67,11 @@ const RePrint: React.FC<Props> = ({ onClose, isOpen, componentRef, data }) => {
               <Footer
                 ticketNumber={data?.ticketNumber}
                 createdBy={`${data?.createdBy.firstName} ${data?.createdBy.lastName}`}
+                closedBy={
+                  data?.closedBy
+                    ? `${data?.closedBy?.firstName} ${data?.closedBy?.lastName}`
+                    : ' .'
+                }
               />
             </Flex>
           </div>
@@ -81,52 +86,33 @@ const RePrint: React.FC<Props> = ({ onClose, isOpen, componentRef, data }) => {
 
 export default RePrint;
 
-const Header = () => {
-  return (
-    <div
-      style={{
-        display: "flex",
-        width: "100%",
-        justifyContent: "space-between",
-        fontWeight: "bold",
-        fontSize: "11px",
-      }}
-    >
-      <div>
-        Request Id: <u>234243</u>
-      </div>
-      <div>Ticket #: 12312</div>
-    </div>
-  );
-};
-
 const Heading = ({ ticketNumber }: { ticketNumber: string | undefined }) => {
   return (
     <div style={HeadingContainer}>
-      <div style={{ display: "flex", width: "100%", opacity: "0" }}>
+      <div style={{ display: 'flex', width: '100%', opacity: '0' }}>
         <div
           style={{
-            width: "15%",
-            borderRight: "solid gray 1px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            width: '15%',
+            borderRight: 'solid gray 1px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
           <Image src="/RDF Logo.png" alt="rdf_logo" width={20} />
         </div>
-        <div style={{ width: "85%" }}>
+        <div style={{ width: '85%' }}>
           <div
             style={{
-              fontStyle: "italic",
-              fontWeight: "normal",
-              fontSize: "9px",
-              borderBottom: "solid gray 1px",
-              display: "flex",
-              justifyContent: "space-between",
+              fontStyle: 'italic',
+              fontWeight: 'normal',
+              fontSize: '9px',
+              borderBottom: 'solid gray 1px',
+              display: 'flex',
+              justifyContent: 'space-between',
             }}
           >
-            <div style={{ padding: "2px" }}>
+            <div style={{ padding: '2px' }}>
               This document is for INTERNAL USE ONLY. Limited copies may be made
               only by RDF employees, or by contractors and third parties who
               have signed an appropriate nondisclosure agreement or with prior
@@ -134,13 +120,13 @@ const Heading = ({ ticketNumber }: { ticketNumber: string | undefined }) => {
             </div>
             <div
               style={{
-                borderLeft: "solid gray 1px",
-                paddingRight: "6px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "12px",
-                fontWeight: "bold",
+                borderLeft: 'solid gray 1px',
+                paddingRight: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '12px',
+                fontWeight: 'bold',
               }}
             >
               {`#${ticketNumber}`}
@@ -148,23 +134,23 @@ const Heading = ({ ticketNumber }: { ticketNumber: string | undefined }) => {
           </div>
           <div
             style={{
-              borderBottom: "solid gray 1px",
-              display: "flex",
-              justifyContent: "center",
-              padding: "2px",
-              fontSize: "11px",
-              fontWeight: "bold",
+              borderBottom: 'solid gray 1px',
+              display: 'flex',
+              justifyContent: 'center',
+              padding: '2px',
+              fontSize: '11px',
+              fontWeight: 'bold',
             }}
           >
             SERVICE REPORT
           </div>
           <div
             style={{
-              display: "flex",
-              justifyContent: "center",
-              padding: "2px",
-              fontSize: "11px",
-              fontWeight: "bold",
+              display: 'flex',
+              justifyContent: 'center',
+              padding: '2px',
+              fontSize: '11px',
+              fontWeight: 'bold',
             }}
           >
             MANAGEMENT INFORMATION SYSTEM
@@ -179,15 +165,15 @@ const TitleComponent = ({ title }: { title: string }) => {
   return (
     <div
       style={{
-        fontWeight: "normal",
-        display: "flex",
-        justifyContent: "center",
-        borderRight: "solid gray 1px",
-        borderLeft: "solid gray 1px",
-        borderBottom: "solid gray 1px",
-        backgroundColor: "lightgray",
-        fontSize: "11px",
-        opacity: "0",
+        fontWeight: 'normal',
+        display: 'flex',
+        justifyContent: 'center',
+        borderRight: 'solid gray 1px',
+        borderLeft: 'solid gray 1px',
+        borderBottom: 'solid gray 1px',
+        backgroundColor: 'lightgray',
+        fontSize: '11px',
+        opacity: '0',
       }}
     >
       {title}
@@ -199,12 +185,12 @@ const SubTitle = ({ title }: { title: string }) => {
   return (
     <div
       style={{
-        backgroundColor: "lightgray",
-        display: "flex",
-        justifyContent: "center",
-        fontSize: "11px",
-        borderBottom: "solid gray 1px",
-        opacity: "0",
+        backgroundColor: 'lightgray',
+        display: 'flex',
+        justifyContent: 'center',
+        fontSize: '11px',
+        borderBottom: 'solid gray 1px',
+        opacity: '0',
       }}
     >
       {title}
@@ -224,22 +210,22 @@ const JobOrder = ({
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "row",
-        borderBottom: "solid gray 1px",
-        opacity: "0",
+        display: 'flex',
+        flexDirection: 'row',
+        borderBottom: 'solid gray 1px',
+        opacity: '0',
       }}
     >
-      <div style={{ width: "50%", borderRight: "solid gray 1px" }}>
+      <div style={{ width: '50%', borderRight: 'solid gray 1px' }}>
         <div
           style={{
-            borderBottom: "solid gray 1px",
-            borderLeft: "solid gray 1px",
-            display: "flex",
-            justifyContent: "space-between",
-            paddingLeft: "5px",
-            paddingRight: "8px",
-            fontSize: "11px",
+            borderBottom: 'solid gray 1px',
+            borderLeft: 'solid gray 1px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            paddingLeft: '5px',
+            paddingRight: '8px',
+            fontSize: '11px',
           }}
         >
           <div>Site:</div>
@@ -251,35 +237,35 @@ const JobOrder = ({
 
         <div
           style={{
-            borderBottom: "solid gray 1px",
-            borderLeft: "solid gray 1px",
-            fontSize: "11px",
-            paddingLeft: "5px",
+            borderBottom: 'solid gray 1px',
+            borderLeft: 'solid gray 1px',
+            fontSize: '11px',
+            paddingLeft: '5px',
           }}
         >
           Dept. / Store / Farm: {department}
         </div>
         <div
           style={{
-            fontSize: "11px",
-            paddingLeft: "5px",
-            borderLeft: "solid gray 1px",
+            fontSize: '11px',
+            paddingLeft: '5px',
+            borderLeft: 'solid gray 1px',
           }}
         >
           Requested by: {requesterBy}
         </div>
       </div>
 
-      <div style={{ width: "50%" }}>
+      <div style={{ width: '50%' }}>
         <div
           style={{
-            borderBottom: "solid gray 1px",
-            borderRight: "solid gray 1px",
-            display: "flex",
-            justifyContent: "space-between",
-            paddingLeft: "5px",
-            paddingRight: "8px",
-            fontSize: "11px",
+            borderBottom: 'solid gray 1px',
+            borderRight: 'solid gray 1px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            paddingLeft: '5px',
+            paddingRight: '8px',
+            fontSize: '11px',
           }}
         >
           <div>Type of Request:</div>
@@ -289,19 +275,19 @@ const JobOrder = ({
 
         <div
           style={{
-            borderBottom: "solid gray 1px",
-            fontSize: "11px",
-            paddingLeft: "5px",
-            borderRight: "solid gray 1px",
+            borderBottom: 'solid gray 1px',
+            fontSize: '11px',
+            paddingLeft: '5px',
+            borderRight: 'solid gray 1px',
           }}
         >
-          Date & Time Started: {moment(dateStart).format("MM-DD-YYYY")}
+          Date & Time Started: {moment(dateStart).format('MM-DD-YYYY')}
         </div>
         <div
           style={{
-            fontSize: "11px",
-            paddingLeft: "5px",
-            borderRight: "solid gray 1px",
+            fontSize: '11px',
+            paddingLeft: '5px',
+            borderRight: 'solid gray 1px',
           }}
         >
           Date & Time Finished:
@@ -315,18 +301,18 @@ const Category = () => {
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "row",
-        borderRight: "solid gray 1px",
-        borderLeft: "solid gray 1px",
-        borderBottom: "solid gray 1px",
-        opacity: "0",
+        display: 'flex',
+        flexDirection: 'row',
+        borderRight: 'solid gray 1px',
+        borderLeft: 'solid gray 1px',
+        borderBottom: 'solid gray 1px',
+        opacity: '0',
       }}
     >
-      <div style={{ width: "40%", borderRight: "solid gray 1px" }}>
-        <div style={{ borderBottom: "solid gray 1px" }}>
+      <div style={{ width: '40%', borderRight: 'solid gray 1px' }}>
+        <div style={{ borderBottom: 'solid gray 1px' }}>
           <SubTitle title="Electronic Support" />
-          <div style={{ fontSize: "10px", padding: "5px" }}>
+          <div style={{ fontSize: '10px', padding: '5px' }}>
             <TickComponent
               tick={false}
               justify="flex-start"
@@ -358,7 +344,7 @@ const Category = () => {
 
         <div>
           <SubTitle title="POS Support" />
-          <div style={{ fontSize: "10px", padding: "5px" }}>
+          <div style={{ fontSize: '10px', padding: '5px' }}>
             <TickComponent
               tick={false}
               justify="flex-start"
@@ -393,30 +379,30 @@ const Category = () => {
 
       <div
         style={{
-          width: "80%",
+          width: '80%',
         }}
       >
         <SubTitle title=" MIS Hardware/Technical Support and Services" />
         <div
           style={{
-            display: "flex",
+            display: 'flex',
           }}
         >
           <div
             style={{
-              width: "50%",
-              paddingLeft: "5px",
-              paddingTop: "5px",
+              width: '50%',
+              paddingLeft: '5px',
+              paddingTop: '5px',
             }}
           >
-            <div style={{ fontSize: "12px", fontWeight: "bold" }}>
+            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>
               <TickComponent
                 tick={false}
                 justify="flex-start"
                 title="Desktop Support"
               />
             </div>
-            <div style={{ fontSize: "10px", paddingLeft: "5px" }}>
+            <div style={{ fontSize: '10px', paddingLeft: '5px' }}>
               <TickComponent
                 tick={false}
                 justify="flex-start"
@@ -447,9 +433,9 @@ const Category = () => {
 
             <div
               style={{
-                marginTop: "5px",
-                fontSize: "12px",
-                fontWeight: "bold",
+                marginTop: '5px',
+                fontSize: '12px',
+                fontWeight: 'bold',
               }}
             >
               <TickComponent
@@ -458,7 +444,7 @@ const Category = () => {
                 title="Laptop Support"
               />
             </div>
-            <div style={{ fontSize: "10px", paddingLeft: "5px" }}>
+            <div style={{ fontSize: '10px', paddingLeft: '5px' }}>
               <TickComponent
                 tick={false}
                 justify="flex-start"
@@ -483,15 +469,15 @@ const Category = () => {
             </div>
           </div>
 
-          <div style={{ width: "50%", paddingLeft: "5px", paddingTop: "5px" }}>
-            <div style={{ fontSize: "12px", fontWeight: "bold" }}>
+          <div style={{ width: '50%', paddingLeft: '5px', paddingTop: '5px' }}>
+            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>
               <TickComponent
                 tick={false}
                 justify="flex-start"
                 title="Network Connection Support"
               />
             </div>
-            <div style={{ fontSize: "11px", paddingLeft: "5px" }}>
+            <div style={{ fontSize: '11px', paddingLeft: '5px' }}>
               <TickComponent
                 tick={false}
                 justify="flex-start"
@@ -511,9 +497,9 @@ const Category = () => {
 
             <div
               style={{
-                marginTop: "5px",
-                fontSize: "12px",
-                fontWeight: "bold",
+                marginTop: '5px',
+                fontSize: '12px',
+                fontWeight: 'bold',
               }}
             >
               <TickComponent
@@ -522,7 +508,7 @@ const Category = () => {
                 title="Printer Support"
               />
             </div>
-            <div style={{ fontSize: "11px", paddingLeft: "5px" }}>
+            <div style={{ fontSize: '11px', paddingLeft: '5px' }}>
               <TickComponent
                 tick={false}
                 justify="flex-start"
@@ -542,9 +528,9 @@ const Category = () => {
 
             <div
               style={{
-                marginTop: "5px",
-                fontSize: "12px",
-                fontWeight: "bold",
+                marginTop: '5px',
+                fontSize: '12px',
+                fontWeight: 'bold',
               }}
             >
               <TickComponent
@@ -553,7 +539,7 @@ const Category = () => {
                 title="Electronics Support"
               />
             </div>
-            <div style={{ fontSize: "11px", paddingLeft: "5px" }}>
+            <div style={{ fontSize: '11px', paddingLeft: '5px' }}>
               <TickComponent tick={false} justify="flex-start" title="Tablet" />
               <TickComponent
                 tick={false}
@@ -569,8 +555,8 @@ const Category = () => {
 
             <div
               style={{
-                marginTop: "10px",
-                fontSize: "12px",
+                marginTop: '10px',
+                fontSize: '12px',
               }}
             >
               <div>Other Specify: ___________________</div>
@@ -593,16 +579,16 @@ const Activity = ({
     <div>
       <div
         style={{
-          display: "flex",
-          justifyContent: "space-around",
+          display: 'flex',
+          justifyContent: 'space-around',
           // padding: "5px",
-          borderRight: "solid gray 1px",
-          borderLeft: "solid gray 1px",
-          borderBottom: "solid gray 1px",
-          opacity: "0",
+          borderRight: 'solid gray 1px',
+          borderLeft: 'solid gray 1px',
+          borderBottom: 'solid gray 1px',
+          opacity: '0',
         }}
       >
-        <div style={{ fontSize: "11px" }}>
+        <div style={{ fontSize: '11px' }}>
           <TickComponent
             tick={false}
             justify="flex-start"
@@ -619,7 +605,7 @@ const Activity = ({
             title="Replacement"
           />
         </div>
-        <div style={{ fontSize: "11px" }}>
+        <div style={{ fontSize: '11px' }}>
           <TickComponent
             tick={false}
             justify="flex-start"
@@ -632,7 +618,7 @@ const Activity = ({
             title="Cleaning, Scan and Diagnose"
           />
         </div>
-        <div style={{ fontSize: "11px" }}>
+        <div style={{ fontSize: '11px' }}>
           <TickComponent
             tick={false}
             justify="flex-start"
@@ -653,100 +639,100 @@ const Activity = ({
 
       <div
         style={{
-          display: "flex",
-          borderBottom: "solid gray 1px",
-          borderRight: "solid gray 1px",
-          borderLeft: "solid gray 1px",
-          fontSize: "11px",
-          padding: "2px",
-          justifyContent: "flex-start",
-          opacity: "0",
+          display: 'flex',
+          borderBottom: 'solid gray 1px',
+          borderRight: 'solid gray 1px',
+          borderLeft: 'solid gray 1px',
+          fontSize: '11px',
+          padding: '2px',
+          justifyContent: 'flex-start',
+          opacity: '0',
         }}
       >
-        <div style={{ fontWeight: "bold" }}>Mode:</div>
-        <div style={{ marginLeft: "20px" }}>
+        <div style={{ fontWeight: 'bold' }}>Mode:</div>
+        <div style={{ marginLeft: '20px' }}>
           <TickComponent tick={false} justify="flex-start" title="On Site" />
         </div>
-        <div style={{ marginLeft: "10px" }}>
+        <div style={{ marginLeft: '10px' }}>
           <TickComponent tick={false} justify="flex-start" title="Phone Call" />
         </div>
-        <div style={{ marginLeft: "10px" }}>
+        <div style={{ marginLeft: '10px' }}>
           <TickComponent tick={false} justify="flex-start" title="Walk-in" />
         </div>
-        <div style={{ marginLeft: "10px" }}>
+        <div style={{ marginLeft: '10px' }}>
           <TickComponent tick={false} justify="flex-start" title="E-mail" />
         </div>
-        <div style={{ marginLeft: "10px" }}>
+        <div style={{ marginLeft: '10px' }}>
           <TickComponent tick={false} justify="flex-start" title="Web Form" />
         </div>
       </div>
 
       <div
         style={{
-          display: "flex",
-          borderBottom: "solid gray 1px",
-          borderRight: "solid gray 1px",
-          borderLeft: "solid gray 1px",
-          fontSize: "11px",
-          padding: "2px",
-          justifyContent: "flex-start",
-          opacity: "0",
+          display: 'flex',
+          borderBottom: 'solid gray 1px',
+          borderRight: 'solid gray 1px',
+          borderLeft: 'solid gray 1px',
+          fontSize: '11px',
+          padding: '2px',
+          justifyContent: 'flex-start',
+          opacity: '0',
         }}
       >
-        <div style={{ fontWeight: "bold" }}>Priority:</div>
-        <div style={{ marginLeft: "20px" }}>
+        <div style={{ fontWeight: 'bold' }}>Priority:</div>
+        <div style={{ marginLeft: '20px' }}>
           <TickComponent tick={false} justify="flex-start" title="Normal" />
         </div>
-        <div style={{ marginLeft: "10px" }}>
+        <div style={{ marginLeft: '10px' }}>
           <TickComponent tick={false} justify="flex-start" title="High" />
         </div>
       </div>
 
       <div
         style={{
-          display: "flex",
-          borderBottom: "solid gray 1px",
-          borderRight: "solid gray 1px",
-          borderLeft: "solid gray 1px",
-          fontSize: "11px",
-          padding: "2px",
-          justifyContent: "flex-start",
-          opacity: "0",
+          display: 'flex',
+          borderBottom: 'solid gray 1px',
+          borderRight: 'solid gray 1px',
+          borderLeft: 'solid gray 1px',
+          fontSize: '11px',
+          padding: '2px',
+          justifyContent: 'flex-start',
+          opacity: '0',
         }}
       >
-        <div style={{ fontWeight: "bold" }}>Status:</div>
-        <div style={{ marginLeft: "20px" }}>
+        <div style={{ fontWeight: 'bold' }}>Status:</div>
+        <div style={{ marginLeft: '20px' }}>
           <TickComponent tick={false} justify="flex-start" title="Open" />
         </div>
-        <div style={{ marginLeft: "10px" }}>
+        <div style={{ marginLeft: '10px' }}>
           <TickComponent tick={false} justify="flex-start" title="Closed" />
         </div>
-        <div style={{ marginLeft: "10px" }}>
+        <div style={{ marginLeft: '10px' }}>
           <TickComponent tick={false} justify="flex-start" title="On Hold" />
         </div>
       </div>
 
       <div
         style={{
-          display: "flex",
-          borderBottom: "solid gray 1px",
-          borderRight: "solid gray 1px",
-          borderLeft: "solid gray 1px",
-          fontSize: "11px",
-          opacity: "0",
+          display: 'flex',
+          borderBottom: 'solid gray 1px',
+          borderRight: 'solid gray 1px',
+          borderLeft: 'solid gray 1px',
+          fontSize: '11px',
+          opacity: '0',
         }}
       >
-        <div style={{ width: "40%", borderRight: "solid gray 1px" }}>
+        <div style={{ width: '40%', borderRight: 'solid gray 1px' }}>
           <SubTitle title="MACHINE/EQUIPMENT" />
-          <div style={{ height: "30px", borderBottom: "solid gray 1px" }}></div>
+          <div style={{ height: '30px', borderBottom: 'solid gray 1px' }}></div>
           <SubTitle title="STATUS" />
           <div
             style={{
-              display: "flex",
-              fontSize: "11px",
-              padding: "2px",
-              justifyContent: "space-around",
-              borderBottom: "solid gray 1px",
+              display: 'flex',
+              fontSize: '11px',
+              padding: '2px',
+              justifyContent: 'space-around',
+              borderBottom: 'solid gray 1px',
             }}
           >
             <TickComponent tick={false} justify="flex-start" title="Done" />
@@ -759,39 +745,39 @@ const Activity = ({
           </div>
           <div
             style={{
-              fontSize: "11px",
-              padding: "2px",
-              borderBottom: "solid gray 1px",
+              fontSize: '11px',
+              padding: '2px',
+              borderBottom: 'solid gray 1px',
             }}
           >
             Modal:
           </div>
           <div
             style={{
-              fontSize: "11px",
-              padding: "2px",
-              borderBottom: "solid gray 1px",
+              fontSize: '11px',
+              padding: '2px',
+              borderBottom: 'solid gray 1px',
             }}
           >
             Serial #:
           </div>
           <div
             style={{
-              fontSize: "11px",
-              padding: "2px",
+              fontSize: '11px',
+              padding: '2px',
             }}
           >
             Asset Tag #:
           </div>
         </div>
-        <div style={{ width: "80%" }}>
+        <div style={{ width: '80%' }}>
           <SubTitle title="ISSUE DESCRIPTION" />
           <div
             style={{
-              display: "flex",
-              justifyContent: "center",
-              fontSize: "13px",
-              padding: "3px",
+              display: 'flex',
+              justifyContent: 'center',
+              fontSize: '13px',
+              padding: '3px',
             }}
           >
             {concern}
@@ -801,24 +787,24 @@ const Activity = ({
 
       <div
         style={{
-          display: "flex",
+          display: 'flex',
           // borderBottom: "solid gray 1px",
           // borderRight: "solid gray 1px",
           // borderLeft: "solid gray 1px",
-          fontSize: "11px",
+          fontSize: '11px',
         }}
       >
         <div
-          style={{ width: "40%", borderRight: "solid gray 1px", opacity: "0" }}
+          style={{ width: '40%', borderRight: 'solid gray 1px', opacity: '0' }}
         >
           <SubTitle title="RENDERED SERVICE " />
           <div
             style={{
-              display: "flex",
-              fontSize: "11px",
-              padding: "2px",
-              justifyContent: "space-around",
-              borderBottom: "solid gray 1px",
+              display: 'flex',
+              fontSize: '11px',
+              padding: '2px',
+              justifyContent: 'space-around',
+              borderBottom: 'solid gray 1px',
             }}
           >
             <TickComponent
@@ -832,49 +818,49 @@ const Activity = ({
               title="Cannibalized parts"
             />
           </div>
-          <div style={{ height: "30px", borderBottom: "solid gray 1px" }}></div>
+          <div style={{ height: '30px', borderBottom: 'solid gray 1px' }}></div>
           <div
             style={{
-              fontSize: "11px",
-              padding: "2px",
-              borderBottom: "solid gray 1px",
+              fontSize: '11px',
+              padding: '2px',
+              borderBottom: 'solid gray 1px',
             }}
           >
             Item/Parts
           </div>
           <div
             style={{
-              fontSize: "11px",
-              padding: "2px",
-              borderBottom: "solid gray 1px",
+              fontSize: '11px',
+              padding: '2px',
+              borderBottom: 'solid gray 1px',
             }}
           >
             Equipment:
           </div>
           <div
             style={{
-              fontSize: "11px",
-              padding: "2px",
-              borderBottom: "solid gray 1px",
+              fontSize: '11px',
+              padding: '2px',
+              borderBottom: 'solid gray 1px',
             }}
           >
             Asset Tag #:
           </div>
           <div
             style={{
-              fontSize: "11px",
-              padding: "2px",
+              fontSize: '11px',
+              padding: '2px',
             }}
           >
             Asset Transfer Form:
           </div>
         </div>
-        <div style={{ width: "80%" }}>
+        <div style={{ width: '80%' }}>
           <SubTitle title="RESOLUTION/REMARKS" />
           <div
             style={{
-              fontSize: "12px",
-              padding: "3px",
+              fontSize: '12px',
+              padding: '3px',
             }}
           >
             {solution}
@@ -893,63 +879,63 @@ const Material = ({
   requester: string | undefined;
   user: string | undefined;
   coworker:
-    | [Pick<IMember, "_id" | "email" | "firstName" | "lastName">]
+    | [Pick<IMember, '_id' | 'email' | 'firstName' | 'lastName'>]
     | undefined;
 }) => {
   return (
-    <div style={{ opacity: "0" }}>
+    <div style={{ opacity: '0' }}>
       <div
         style={{
-          display: "flex",
-          borderRight: "solid gray 1px",
-          borderLeft: "solid gray 1px",
-          borderBottom: "solid gray 1px",
+          display: 'flex',
+          borderRight: 'solid gray 1px',
+          borderLeft: 'solid gray 1px',
+          borderBottom: 'solid gray 1px',
         }}
       >
-        <div style={{ width: "15%", borderRight: "solid gray 1px" }}>
+        <div style={{ width: '15%', borderRight: 'solid gray 1px' }}>
           <SubTitle title="MIR #" />
-          <div style={{ height: "40px" }}></div>
+          <div style={{ height: '40px' }}></div>
         </div>
-        <div style={{ width: "45%", borderRight: "solid gray 1px" }}>
+        <div style={{ width: '45%', borderRight: 'solid gray 1px' }}>
           <SubTitle title="ITEM DESCRIPTION" />
-          <div style={{ height: "40px" }}></div>
+          <div style={{ height: '40px' }}></div>
         </div>
-        <div style={{ width: "15%", borderRight: "solid gray 1px" }}>
+        <div style={{ width: '15%', borderRight: 'solid gray 1px' }}>
           <SubTitle title="QTY" />
-          <div style={{ height: "40px" }}></div>
+          <div style={{ height: '40px' }}></div>
         </div>
-        <div style={{ width: "25%" }}>
+        <div style={{ width: '25%' }}>
           <SubTitle title="COST" />
-          <div style={{ height: "40px" }}></div>
+          <div style={{ height: '40px' }}></div>
         </div>
       </div>
 
       <div
         style={{
-          display: "flex",
-          borderBottom: "solid gray 1px",
-          borderRight: "solid gray 1px",
-          borderLeft: "solid gray 1px",
-          fontSize: "11px",
+          display: 'flex',
+          borderBottom: 'solid gray 1px',
+          borderRight: 'solid gray 1px',
+          borderLeft: 'solid gray 1px',
+          fontSize: '11px',
         }}
       >
-        <div style={{ width: "40%", borderRight: "solid gray 1px" }}>
+        <div style={{ width: '40%', borderRight: 'solid gray 1px' }}>
           <div
             style={{
-              fontSize: "11px",
-              padding: "2px",
+              fontSize: '11px',
+              padding: '2px',
             }}
           >
             Prepared/Repaired by:
           </div>
           <div
             style={{
-              fontSize: "11px",
-              padding: "2px",
+              fontSize: '11px',
+              padding: '2px',
             }}
           >
             Main Tech :
-            <u style={{ display: "flex", justifyContent: "center" }}>
+            <u style={{ display: 'flex', justifyContent: 'center' }}>
               {user?.toUpperCase()}
             </u>
           </div>
@@ -957,47 +943,47 @@ const Material = ({
             <div
               key={x}
               style={{
-                fontSize: "11px",
-                padding: "2px",
+                fontSize: '11px',
+                padding: '2px',
               }}
             >
               Tech {x + 1} :
               <u
-                style={{ display: "flex", justifyContent: "center" }}
+                style={{ display: 'flex', justifyContent: 'center' }}
               >{`${worker.firstName?.toUpperCase()} ${worker.lastName?.toUpperCase()}`}</u>
             </div>
           ))}
 
           <div
             style={{
-              fontSize: "11px",
-              padding: "2px",
-              display: "flex",
-              justifyContent: "center",
+              fontSize: '11px',
+              padding: '2px',
+              display: 'flex',
+              justifyContent: 'center',
             }}
           >
             Signature Over Printed Name/Date
           </div>
         </div>
-        <div style={{ width: "80%", display: "flex", flexDirection: "column" }}>
+        <div style={{ width: '80%', display: 'flex', flexDirection: 'column' }}>
           <div
             style={{
-              padding: "5px",
-              display: "flex",
-              borderBottom: "solid gray 1px",
+              padding: '5px',
+              display: 'flex',
+              borderBottom: 'solid gray 1px',
             }}
           >
-            <div style={{ width: "60%" }}>
+            <div style={{ width: '60%' }}>
               <div>
                 Received the above equipment/s and/or service/s in good
                 condition and working properly:
               </div>
               <div
                 style={{
-                  marginTop: "10px",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
+                  marginTop: '10px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
                 }}
               >
                 <div>{requester}</div>
@@ -1005,16 +991,16 @@ const Material = ({
                 <div>Signature Over Printerd Name/Date</div>
               </div>
             </div>
-            <div style={{ width: "40%" }}>
+            <div style={{ width: '40%' }}>
               <div
                 style={{
-                  fontSize: "12px",
-                  fontWeight: "bold",
+                  fontSize: '12px',
+                  fontWeight: 'bold',
                 }}
               >
                 Customer's Satisfaction
               </div>
-              <div style={{ fontSize: "11px", paddingLeft: "5px" }}>
+              <div style={{ fontSize: '11px', paddingLeft: '5px' }}>
                 <TickComponent
                   tick={false}
                   justify="flex-start"
@@ -1030,9 +1016,9 @@ const Material = ({
               </div>
             </div>
           </div>
-          <div style={{ padding: "5px" }}>
+          <div style={{ padding: '5px' }}>
             <div>Comments/Suggestions:</div>
-            <div style={{ height: "20px" }}></div>
+            <div style={{ height: '20px' }}></div>
           </div>
         </div>
       </div>
@@ -1043,41 +1029,42 @@ const Material = ({
 const Footer = ({
   ticketNumber,
   createdBy,
+  closedBy,
 }: {
   ticketNumber: string | undefined;
   createdBy: string | undefined;
+  closedBy: string | undefined;
 }) => {
   return (
-    <div style={{ opacity: "0" }}>
+    <div>
       <div
         style={{
-          display: "flex",
-          justifyContent: "center",
-          fontSize: "11px",
-          borderBottom: "solid gray 1px",
-          borderRight: "solid gray 1px",
-          borderLeft: "solid gray 1px",
-          opacity: "0",
+          display: 'flex',
+          justifyContent: 'center',
+          fontSize: '11px',
+          borderBottom: 'solid gray 1px',
+          borderRight: 'solid gray 1px',
+          borderLeft: 'solid gray 1px',
+          opacity: '0',
         }}
       >
         FOR DATA AND ADMIN USE ONLY
       </div>
       <div
         style={{
-          display: "flex",
-          borderBottom: "solid gray 1px",
-          borderRight: "solid gray 1px",
-          borderLeft: "solid gray 1px",
-          fontSize: "11px",
+          display: 'flex',
+          fontSize: '11px',
         }}
       >
-        <div style={{ width: "50%", borderRight: "solid gray 1px" }}>
-          <div style={{ paddingLeft: "5px" }}>RECEIVED BY:</div>
+        <div
+          style={{ width: '50%', borderRight: 'solid gray 1px', opacity: '0' }}
+        >
+          <div style={{ paddingLeft: '5px' }}>RECEIVED BY:</div>
           <div
             style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
               // marginTop: "15px",
             }}
           >
@@ -1086,30 +1073,33 @@ const Footer = ({
             <div>Signature Over Printer Name/Date</div>
           </div>
         </div>
-        <div style={{ width: "50%" }}>
-          <div style={{ paddingLeft: "5px" }}>CLOSED BY:</div>
+        <div style={{ width: '50%' }}>
+          <div style={{ paddingLeft: '5px', opacity: '0' }}>CLOSED BY:</div>
           <div
             style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              // marginTop: "15px",
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
             }}
           >
-            <div>____________________________________________</div>
-            <div>Signature Over Printer Name/Date</div>
+            <div>{closedBy?.toUpperCase()}</div>
+            <div style={{ opacity: '0' }}>
+              ____________________________________________
+            </div>
+            <div style={{ opacity: '0' }}>Signature Over Printer Name/Date</div>
           </div>
         </div>
       </div>
 
       <div
         style={{
-          display: "flex",
-          borderBottom: "solid gray 1px",
-          borderRight: "solid gray 1px",
-          borderLeft: "solid gray 1px",
-          justifyContent: "space-between",
-          fontSize: "11px",
+          display: 'flex',
+          borderBottom: 'solid gray 1px',
+          borderRight: 'solid gray 1px',
+          borderLeft: 'solid gray 1px',
+          justifyContent: 'space-between',
+          fontSize: '11px',
+          opacity: '0',
         }}
       >
         <div>Request Id: 781923912023f</div>
@@ -1125,18 +1115,18 @@ const TickComponent: React.FC<TickProps> = (props) => {
   return (
     <div
       style={{
-        display: "flex",
+        display: 'flex',
         justifyContent: justify,
-        alignItems: "center",
+        alignItems: 'center',
       }}
     >
       <div
         style={{
-          height: "11px",
-          width: "11px",
-          border: "solid gray 1px",
-          marginRight: "5px",
-          backgroundColor: tick ? "lightgrey" : "none",
+          height: '11px',
+          width: '11px',
+          border: 'solid gray 1px',
+          marginRight: '5px',
+          backgroundColor: tick ? 'lightgrey' : 'none',
         }}
       ></div>
       <div>{title}</div>
@@ -1145,6 +1135,6 @@ const TickComponent: React.FC<TickProps> = (props) => {
 };
 
 const HeadingContainer: CSS.Properties = {
-  border: "solid gray 1px",
-  opacity: "0",
+  border: 'solid gray 1px',
+  opacity: '0',
 };

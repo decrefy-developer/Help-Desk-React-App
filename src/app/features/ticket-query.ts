@@ -3,7 +3,6 @@ import {
   IFormInputTicket,
   ITicket,
   ListResponse,
-  PageArgs,
   TicketArgs,
 } from "../../models/interface";
 import { baseQuery } from "../../services/auth-header";
@@ -86,6 +85,21 @@ export const ticketApi = createApi({
       }),
       invalidatesTags: (result, error, _id) => [{ type: "Ticket", _id }],
     }),
+    updateTargetDate: builder.mutation<
+      IFormInputTicket,
+      { _id: string; targetDate: string }
+    >({
+      query: ({ _id, ...patch }) => ({
+        url: `ticket/target-date/${_id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      invalidatesTags: (result, error, _id) => [{ type: "Ticket", _id }],
+    }),
+    reports: builder.query<Array<ITicket>, TicketArgs>({
+      query: ({ openDate, closedDate, team, channelId, statusTicket }) =>
+        `reports?status=${statusTicket}&team=${team}&channel=${channelId}&openDate=${openDate}&closedDate=${closedDate}`,
+    }),
   }),
 });
 
@@ -98,4 +112,6 @@ export const {
   useTicketsNotSeenQuery,
   useSeenTheTicketMutation,
   useGetTicketQuery,
+  useUpdateTargetDateMutation,
+  useReportsQuery
 } = ticketApi;
